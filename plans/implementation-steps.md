@@ -60,30 +60,34 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - [ ] **2.1.8** Create Scoped Resume models (scoped_resumes, scoped_professional_summaries, scoped_skills, scoped_work_experiences, scoped_work_experience_lines)
 
 ### 2.2 Service Layer
-- [ ] **2.2.1** Implement ResumeService class with all CRUD methods
-- [ ] **2.2.2** Add transaction support for work experience operations
+- [ ] **2.2.1** Implement ResumeService class with all CRUD methods using { data, error, message } format
+- [ ] **2.2.2** Add atomic transaction support for work experience + lines operations
 - [ ] **2.2.3** Implement ScopedResumeService class for scoped resume management
-- [ ] **2.2.4** Create validation schemas for backend (separate from frontend)
-- [ ] **2.2.5** Implement error handling and logging
+- [ ] **2.2.4** Create Zod validation schemas for backend (return raw Zod error details to client)
+- [ ] **2.2.5** Implement error handling with raw Zod error structure in response details
 - [ ] **2.2.6** Add development data seeding utilities (prisma db seed, npm run reset-db, npm run refresh-sample)
 
-### 2.3 API Endpoints
-- [ ] **2.3.1** Create `/api/resume` endpoint (GET complete resume)
-- [ ] **2.3.2** Create contact endpoints (GET, PUT)
-- [ ] **2.3.3** Create summary endpoints (GET, PUT)
-- [ ] **2.3.4** Create skills endpoints (GET, POST, PUT, DELETE) and category/subcategory endpoints
-- [ ] **2.3.5** Create education endpoints (GET, POST, PUT, DELETE)
-- [ ] **2.3.6** Create work experience endpoints (GET, POST, PUT, DELETE)
-- [ ] **2.3.7** Create scoped resume endpoints (GET, POST, PUT, DELETE, duplicate)
-- [ ] **2.3.8** Create scoped resume content endpoints (skills, summary, work experience filtering)
+### 2.3 API Endpoints (REST conventions with basic endpoint testing)
+- [ ] **2.3.1** Create `/api/resume` endpoint (GET complete resume) with basic tests
+- [ ] **2.3.2** Create contact endpoints (`GET /api/contact`, `PUT /api/contact`) with basic tests
+- [ ] **2.3.3** Create summary endpoints (`GET /api/summary`, `PUT /api/summary`) with basic tests
+- [ ] **2.3.4** Create skills endpoints (`GET /api/skills`, `POST /api/skills`, `PUT /api/skills/:id`, `DELETE /api/skills/:id`) and category/subcategory endpoints with basic tests
+- [ ] **2.3.5** Create education endpoints (`GET /api/education`, `POST /api/education`, `PUT /api/education/:id`, `DELETE /api/education/:id`) with basic tests
+- [ ] **2.3.6** Create work experience endpoints (`GET /api/work-experiences`, `POST /api/work-experiences`, `PUT /api/work-experiences/:id`, `DELETE /api/work-experiences/:id`) with transaction support and basic tests
+- [ ] **2.3.7** Create scoped resume endpoints (`GET /api/scoped-resumes`, `POST /api/scoped-resumes`, `PUT /api/scoped-resumes/:id`, `DELETE /api/scoped-resumes/:id`, `POST /api/scoped-resumes/:id/duplicate`) with basic tests
+- [ ] **2.3.8** Create nested scoped resume content endpoints (`GET/PUT /api/scoped-resumes/:id/skills`, `GET/PUT /api/scoped-resumes/:id/summary`, `GET/PUT /api/scoped-resumes/:id/work-experiences`) with basic tests
 
 **Phase 2 Completion Criteria:**
 - ✅ All Prisma models can be queried and modified with type safety
-- ✅ API endpoints return consistent `{ data, error, message }` format
-- ✅ Prisma transaction handling works for work experience + lines
-- ✅ Backend validation schemas prevent invalid data
-- ✅ Scoped resume operations work with copy-on-write functionality
-- ✅ All endpoints tested with tools like Postman/curl
+- ✅ API endpoints return consistent `{ data, error, message }` format with raw Zod errors in details
+- ✅ Work experience operations use atomic transactions (experience + lines)
+- ✅ Scoped resume endpoints follow nested structure under `/api/scoped-resumes/:id/`
+- ✅ Basic endpoint testing validates core functionality
+- ✅ Implementation follows basic-to-complex order (Contact/Summary → Skills/Education → Work Experience → Scoped Resumes)
+- ✅ Atomic Prisma transactions work for work experience + lines operations
+- ✅ Backend Zod validation returns raw error details for client-side message construction
+- ✅ Scoped resume operations work with copy-on-write functionality using nested endpoint structure
+- ✅ Basic endpoint tests validate CRUD operations and error handling
 
 ---
 
