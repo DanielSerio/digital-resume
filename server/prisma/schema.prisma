@@ -1,0 +1,183 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  title     String?
+  email     String?
+  phone     String?
+  github    String?
+  website   String?
+  linkedin  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("contacts")
+}
+
+model ProfessionalSummary {
+  id          Int      @id @default(autoincrement())
+  summaryText String   @map("summary_text")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("professional_summaries")
+}
+
+model SkillCategory {
+  id               Int              @id @default(autoincrement())
+  name             String           @unique
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  technicalSkills  TechnicalSkill[]
+
+  @@map("skill_categories")
+}
+
+model SkillSubcategory {
+  id               Int              @id @default(autoincrement())
+  name             String           @unique
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  technicalSkills  TechnicalSkill[]
+
+  @@map("skill_subcategories")
+}
+
+model TechnicalSkill {
+  id            Int              @id @default(autoincrement())
+  name          String
+  categoryId    Int              @map("category_id")
+  subcategoryId Int              @map("subcategory_id")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+  
+  category      SkillCategory    @relation(fields: [categoryId], references: [id])
+  subcategory   SkillSubcategory @relation(fields: [subcategoryId], references: [id])
+  scopedSkills  ScopedSkill[]
+
+  @@map("technical_skills")
+}
+
+model Education {
+  id           Int       @id @default(autoincrement())
+  schoolName   String    @map("school_name")
+  schoolCity   String    @map("school_city")
+  schoolState  String    @map("school_state")
+  degreeType   String    @map("degree_type")
+  degreeTitle  String    @map("degree_title")
+  dateStarted  DateTime  @map("date_started")
+  dateFinished DateTime? @map("date_finished")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("education")
+}
+
+model WorkExperience {
+  id                        Int                        @id @default(autoincrement())
+  companyName               String                     @map("company_name")
+  companyTagline            String?                    @map("company_tagline")
+  companyCity               String                     @map("company_city")
+  companyState              String                     @map("company_state")
+  jobTitle                  String                     @map("job_title")
+  dateStarted               DateTime                   @map("date_started")
+  dateEnded                 DateTime?                  @map("date_ended")
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+  
+  workExperienceLines       WorkExperienceLine[]
+  scopedWorkExperiences     ScopedWorkExperience[]
+
+  @@map("work_experiences")
+}
+
+model WorkExperienceLine {
+  id                           Int                           @id @default(autoincrement())
+  workExperienceId             Int                           @map("work_experience_id")
+  lineText                     String                        @map("line_text")
+  lineId                       Int                           @map("line_id")
+  createdAt                    DateTime                      @default(now()) @map("created_at")
+  updatedAt                    DateTime                      @updatedAt @map("updated_at")
+  
+  workExperience               WorkExperience                @relation(fields: [workExperienceId], references: [id])
+  scopedWorkExperienceLines    ScopedWorkExperienceLine[]
+
+  @@map("work_experience_lines")
+}
+
+model ScopedResume {
+  id                            Int                            @id @default(autoincrement())
+  name                          String
+  createdAt                     DateTime                       @default(now()) @map("created_at")
+  updatedAt                     DateTime                       @updatedAt @map("updated_at")
+  
+  scopedProfessionalSummaries   ScopedProfessionalSummary[]
+  scopedSkills                  ScopedSkill[]
+  scopedWorkExperiences         ScopedWorkExperience[]
+  scopedWorkExperienceLines     ScopedWorkExperienceLine[]
+
+  @@map("scoped_resumes")
+}
+
+model ScopedProfessionalSummary {
+  id             Int          @id @default(autoincrement())
+  scopedResumeId Int          @map("scoped_resume_id")
+  summaryText    String       @map("summary_text")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  
+  scopedResume   ScopedResume @relation(fields: [scopedResumeId], references: [id])
+
+  @@map("scoped_professional_summaries")
+}
+
+model ScopedSkill {
+  id               Int            @id @default(autoincrement())
+  scopedResumeId   Int            @map("scoped_resume_id")
+  technicalSkillId Int            @map("technical_skill_id")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  
+  scopedResume     ScopedResume   @relation(fields: [scopedResumeId], references: [id])
+  technicalSkill   TechnicalSkill @relation(fields: [technicalSkillId], references: [id])
+
+  @@map("scoped_skills")
+}
+
+model ScopedWorkExperience {
+  id               Int            @id @default(autoincrement())
+  scopedResumeId   Int            @map("scoped_resume_id")
+  workExperienceId Int            @map("work_experience_id")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  
+  scopedResume     ScopedResume   @relation(fields: [scopedResumeId], references: [id])
+  workExperience   WorkExperience @relation(fields: [workExperienceId], references: [id])
+
+  @@map("scoped_work_experiences")
+}
+
+model ScopedWorkExperienceLine {
+  id                     Int                @id @default(autoincrement())
+  scopedResumeId         Int                @map("scoped_resume_id")
+  workExperienceLineId   Int                @map("work_experience_line_id")
+  lineText               String             @map("line_text")
+  createdAt              DateTime           @default(now()) @map("created_at")
+  updatedAt              DateTime           @updatedAt @map("updated_at")
+  
+  scopedResume           ScopedResume       @relation(fields: [scopedResumeId], references: [id])
+  workExperienceLine     WorkExperienceLine @relation(fields: [workExperienceLineId], references: [id])
+
+  @@map("scoped_work_experience_lines")
+}

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Backend API Service
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+      - resume-db:/app/prisma
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - PORT=3001
+      - NODE_ENV=development
+    depends_on:
+      - db-init
+    networks:
+      - resume-network
+
+  # Frontend Web Service
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - api
+    networks:
+      - resume-network
+
+  # Database initialization service
+  db-init:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+      - resume-db:/app/prisma
+    environment:
+      - DATABASE_URL=file:./dev.db
+    command: >
+      sh -c "
+        npx prisma migrate deploy &&
+        npx prisma db seed
+      "
+    networks:
+      - resume-network
+
+volumes:
+  resume-db:
+    driver: local
+
+networks:
+  resume-network:
+    driver: bridge
