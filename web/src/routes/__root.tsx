@@ -2,12 +2,12 @@ import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanstackDevtools } from "@tanstack/react-devtools";
 
-import Header from "../components/common/Header";
+import { Layout } from "@/components/common";
 
 export const Route = createRootRoute({
   component: () => (
-    <>
-      <Header />
+    <Layout>
+      <Layout.Header />
       <Outlet />
       <TanstackDevtools
         config={{
@@ -20,6 +20,6 @@ export const Route = createRootRoute({
           },
         ]}
       />
-    </>
+    </Layout>
   ),
 });
