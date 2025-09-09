@@ -1,0 +1,52 @@
+  ┌─────────────────────────────────────────────────────────────────────────────────┐
+  │ Digital Resume Manager                                [Export PDF] [Export DOC] │
+  ├─────────────────────────────────────────────────────────────────────────────────┤
+  │                                                                                 │
+  │ Resume View: [●Main Resume] [○Posting 1] [○Posting 2] [+New]                    │
+  │                                                                                 │
+  ├─────────────────────────────────────────────────────────────────────────────────┤
+  │                                                                                 │
+  │ ┌─ CONTACT INFORMATION ─────────────────────────────────────────────── [Edit] ┐ │
+  │ │  John Doe                                    john.doe@email.com             │ │
+  │ │  Senior Software Engineer                    (555) 123-4567                 │ │
+  │ │  GitHub: github.com/johndoe                  Website: johndoe.dev           │ │
+  │ │  LinkedIn: linkedin.com/in/johndoe                                          │ │
+  │ └─────────────────────────────────────────────────────────────────────────────┘ │
+  │                                                                                 │
+  │ ┌─ PROFESSIONAL SUMMARY ────────────────────────────────────────────── [Edit] ┐ │
+  │ │  Experienced full-stack developer with 8+ years building scalable web       │ │
+  │ │  applications. Specializes in React, Node.js, and cloud architecture...     │ │
+  │ └─────────────────────────────────────────────────────────────────────────────┘ │
+  │                                                                                 │
+  │ ┌─ TECHNICAL SKILLS ────────────────────────────────────────────────── [Edit] ┐ │
+  │ │  Frontend:     React • Vue.js • TypeScript • HTML/CSS                       │ │
+  │ │  Backend:      Node.js • Python • Express • FastAPI                         │ │
+  │ │  Database:     PostgreSQL • MongoDB • Redis                                 │ │
+  │ │  Cloud:        AWS • Docker • Kubernetes                                    │ │
+  │ │  Tools:        Git • Webpack • Jenkins • Figma                              │ │
+  │ └─────────────────────────────────────────────────────────────────────────────┘ │
+  │                                                                                 │
+  │ ┌─ EDUCATION ───────────────────────────────────────────────────────── [Edit] ┐ │
+  │ │  B.S. Computer Science                        University of Technology      │ │
+  │ │  2012 - 2016                                  San Francisco, CA             │ │
+  │ └─────────────────────────────────────────────────────────────────────────────┘ │
+  │                                                                                 │
+  │ ┌─ WORK EXPERIENCE ─────────────────────────────────────────────────── [Edit] ┐ │
+  │ │  Senior Software Engineer               Tech Solutions Inc                  │ │
+  │ │  Jan 2020 - Present                    San Francisco, CA                    │ │
+  │ │  Leading web development team                                               │ │
+  │ │                                                                             │ │
+  │ │  • Led development of microservices architecture reducing load by 40%       │ │
+  │ │  • Implemented React-based dashboard serving 100k+ daily active users       │ │
+  │ │  • Mentored 5 junior developers and established code review processes       │ │
+  │ │  • Deployed cloud infrastructure using AWS and Docker containers            │ │
+  │ │                                                                             │ │
+  │ │  Software Engineer                      StartupCorp                         │ │
+  │ │  Jun 2016 - Dec 2019                   Remote                               │ │
+  │ │  Full-stack development role                                                │ │
+  │ │                                                                             │ │
+  │ │  • Built customer portal using React and Node.js from ground up             │ │
+  │ │  • Integrated payment systems and third-party APIs                          │ │
+  │ └─────────────────────────────────────────────────────────────────────────────┘ │
+  │                                                                                 │
+  └─────────────────────────────────────────────────────────────────────────────────┘

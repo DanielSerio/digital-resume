@@ -1,0 +1,166 @@
+// Digital Resume Database Schema
+// Database: SQLite
+// Description: Schema for single-user resume management application
+
+Table contacts {
+  id integer [primary key]
+  name varchar(255) [not null]
+  title varchar(255)
+  email varchar(255)
+  phone varchar(50)
+  github varchar(255)
+  website varchar(255)
+  linkedin varchar(255)
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table professional_summaries {
+  id integer [primary key]
+  summary_text text [not null]
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table skill_categories {
+  id integer [primary key]
+  name varchar(100) [not null, unique, note: 'Back-end, Front-end, Project Management, Methodology, etc.']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table skill_subcategories {
+  id integer [primary key]
+  name varchar(100) [not null, unique, note: 'Framework/Language, Database, Tool, etc.']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table technical_skills {
+  id integer [primary key]
+  name varchar(255) [not null]
+  category_id integer [not null, ref: > skill_categories.id]
+  subcategory_id integer [not null, ref: > skill_subcategories.id]
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table education {
+  id integer [primary key]
+  school_name varchar(255) [not null]
+  school_city varchar(100) [not null]
+  school_state varchar(100) [not null, note: 'state/province']
+  degree_type varchar(50) [not null, note: 'BFA, MBA, etc.']
+  degree_title varchar(255) [not null, note: 'Graphic Design, etc.']
+  date_started date [not null]
+  date_finished date [null, note: 'nullable if still in school']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table work_experiences {
+  id integer [primary key]
+  company_name varchar(255) [not null]
+  company_tagline varchar(255)
+  company_city varchar(100) [not null]
+  company_state varchar(100) [not null, note: 'state/province']
+  job_title varchar(255) [not null]
+  date_started date [not null]
+  date_ended date [null, note: 'nullable if current job']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table work_experience_lines {
+  id integer [primary key]
+  work_experience_id integer [not null, ref: > work_experiences.id]
+  line_text text [not null, note: 'markdown text describing accomplishment']
+  line_id integer [not null, note: 'for sorting lines within a work experience']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table scoped_resumes {
+  id integer [primary key]
+  name varchar(255) [not null, note: 'user-defined name like "Frontend Developer Role"']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table scoped_professional_summaries {
+  id integer [primary key]
+  scoped_resume_id integer [not null, ref: > scoped_resumes.id]
+  summary_text text [not null, note: 'scoped version of professional summary']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table scoped_skills {
+  id integer [primary key]
+  scoped_resume_id integer [not null, ref: > scoped_resumes.id]
+  technical_skill_id integer [not null, ref: > technical_skills.id]
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table scoped_work_experiences {
+  id integer [primary key]
+  scoped_resume_id integer [not null, ref: > scoped_resumes.id]
+  work_experience_id integer [not null, ref: > work_experiences.id]
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+Table scoped_work_experience_lines {
+  id integer [primary key]
+  scoped_resume_id integer [not null, ref: > scoped_resumes.id]
+  work_experience_line_id integer [not null, ref: > work_experience_lines.id]
+  line_text text [not null, note: 'modified text for this scoped resume']
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+}
+
+
+// Notes
+// Note: '''
+// # Digital Resume Schema
+
+// This schema supports a single-user resume management application with the following sections:
+
+// ## Resume Sections:
+// 1. **Header/Contact Info** - contacts table (always included in scoped resumes)
+// 2. **Professional Summary** - professional_summaries table (can be scoped/modified)
+// 3. **Technical Skills** - technical_skills table (can be filtered in scoped resumes)
+// 4. **Education** - education table (always included in scoped resumes)
+// 5. **Work Experience** - work_experiences table (can be filtered/modified in scoped resumes)
+
+// ## Scoped Resume System:
+// - scoped_resumes: Named resume variations (e.g., "Frontend Developer Role")
+// - scoped_professional_summaries: Custom summaries per scoped resume
+// - scoped_skills: Skills selected for each scoped resume (include/exclude)
+// - scoped_work_experiences: Work experiences included in each scoped resume
+// - scoped_work_experience_lines: Modified work experience lines (original remains unchanged)
+
+// ## Key Design Decisions:
+// - Main resume data remains unchanged when creating scoped versions
+// - Scoped resumes only store differences/selections from main resume
+// - Work experience lines can be modified per scope without affecting original
+// - Professional summaries can be customized per scope
+// - Contact info and education always included as-is in scoped resumes
+// - Normalized skill categories and subcategories for data consistency
+// - Work experience lines use line_id for custom sorting
+// - Date fields allow nulls for ongoing education/employment
+// - Markdown support in work_experience_lines.line_text
+// - SQLite-compatible data types and constraints
+
+// ## Skill Organization:
+// - skill_categories: High-level groupings (Back-end, Front-end, etc.)
+// - skill_subcategories: Detailed classifications (Framework/Language, Database, etc.)
+// - technical_skills: Links to both category and subcategory via foreign keys
+
+// ## Usage Notes:
+// - All tables include created_at/updated_at timestamps
+// - Foreign key constraints on technical_skills and work_experience_lines
+// - Indexes on commonly queried fields for performance
+// - Unique constraints on category and subcategory names
+// '''
