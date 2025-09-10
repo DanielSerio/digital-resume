@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ export const ContactSection: React.FC = () => {
 
   // Form setup
   const form = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+    resolver: standardSchemaResolver(contactSchema),
     defaultValues: {
       name: "",
       title: "",

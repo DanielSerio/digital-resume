@@ -11,7 +11,8 @@ This is a **digital resume management application** with a React frontend built 
 - **Backend**: Node.js/Express API application (outside `/web` directory) with Prisma ORM and SQLite database
 - **Database**: Prisma ORM with SQLite for type-safe queries and simplified development
 - **State Management**: Zustand for client state, TanStack React Query for server state
-- **Forms**: React Hook Form + Hookform Resolvers + Zod for validation
+- **Forms**: React Hook Form + Hookform Resolvers + Zod v4 for validation
+  - **IMPORTANT**: Using Zod v4 requires `standardSchemaResolver` from `@hookform/resolvers/standard-schema` instead of `zodResolver`
 - **Authentication**: Local/single-user application (no authentication required)
 - **Testing**: Vitest with jsdom environment
 - **Styling**: Tailwind CSS with utility-first approach and Shadcn components

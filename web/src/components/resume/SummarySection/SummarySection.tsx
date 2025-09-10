@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ export const SummarySection: React.FC = () => {
 
   // Form setup
   const form = useForm<ProfessionalSummaryFormData>({
-    resolver: zodResolver(professionalSummarySchema),
+    resolver: standardSchemaResolver(professionalSummarySchema),
     defaultValues: {
       summaryText: "",
     },
