@@ -64,7 +64,7 @@ npm run test
 # Preview production build
 npm run serve
 
-# Add Shadcn components
+# Add Shadcn components (check /web/src/components/ui first to see what's already available)
 pnpx shadcn@latest add [component-name]
 ```
 
@@ -79,7 +79,9 @@ pnpx shadcn@latest add [component-name]
 - **Components**:
 
   - Custom components in `/web/src/components/`
-  - Shadcn UI components configured with aliases (`@/components/ui`)
+  - Shadcn UI components in `/web/src/components/ui` with aliases (`@/components/ui`)
+  - **IMPORTANT**: Always check `/web/src/components/ui` directory first to see existing Shadcn components before adding new ones
+  - Available Shadcn components: Button, Input, Label, Textarea, Checkbox, Select, Calendar, Card, Separator, Tabs, Dialog, Drawer, Popover, Alert, Badge, Skeleton, Sonner, Breadcrumb, Command
   - Utility classes in `/web/src/lib/utils.ts`
 
 - **State Management**:

@@ -140,44 +140,78 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ---
 
-## Phase 4: Basic UI Components ⏳ [0/16 completed]
+## Phase 4: Basic UI Components ⏳ [0/19 completed]
 
-**Goal**: Build the fundamental UI components and layout structure.
+**Goal**: Build the fundamental UI components and layout structure with modern form handling and conditional navigation.
 
-### 4.1 Layout and Navigation
-- [ ] **4.1.1** Update root layout with proper header/navigation
-- [ ] **4.1.2** Create main resume display page component
-- [ ] **4.1.3** Implement section-based editing UI patterns
-- [ ] **4.1.4** Add loading states and error boundaries
+**Component Architecture Guidelines:**
+- **Single Component Pattern**: Each section uses one component handling both display/edit modes internally
+- **200 Line Limit**: If components exceed 200 lines, extract sub-components within the main component
+- **Local State Management**: React Hook Form state local to each section component
+- **Unsaved Changes**: Colored border indicator on sections with unsaved changes
+- **Implementation Order**: Header/navigation first, then main resume sections, finally scoped resume features
 
-### 4.2 Resume Section Components
-- [ ] **4.2.1** Create `ContactSection` component (display + edit)
-- [ ] **4.2.2** Create `SummarySection` component (display + edit)
-- [ ] **4.2.3** Create `SkillsSection` component (display + edit)
-- [ ] **4.2.4** Create `EducationSection` component (display + edit)
-- [ ] **4.2.5** Create `WorkExperienceSection` component (display + edit)
-- [ ] **4.2.6** Create `ScopedResumeSelector` component (tabs or toggle to switch between main/scoped resume views)
-- [ ] **4.2.7** Create `ScopedResumeManager` component (create, rename, duplicate, delete)
+### 4.1 Header and Navigation (Priority Implementation)
+- [ ] **4.1.1** Setup Sonner toast container below Outlet in `__root.tsx`
+- [ ] **4.1.2** Update header with application title and export buttons (PDF/DOCX)
+- [ ] **4.1.3** Implement tab navigation using custom styled TanStack Router links (Main Resume • Scoped Resumes)
+- [ ] **4.1.4** Add loading states and error boundaries for main layout structure
 
-### 4.3 Form Components
-- [ ] **4.3.1** Setup React Hook Form with Zod resolvers
-- [ ] **4.3.2** Create reusable form input components
-- [ ] **4.3.3** Create skill category/subcategory hybrid dropdowns (existing options + "Add new")
-- [ ] **4.3.4** Create date picker components
-- [ ] **4.3.5** Create work experience line editor (simple textarea initially)
+### 4.2 Main Resume Section Components (Single Component Pattern - Local Form State)
+- [ ] **4.2.1** Create `ContactSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes
+- [ ] **4.2.2** Create `SummarySection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes
+- [ ] **4.2.3** Create `SkillsSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, category grouping
+- [ ] **4.2.4** Create `EducationSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, date handling
+- [ ] **4.2.5** Create `WorkExperienceSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, up/down arrow reordering
+- [ ] **4.2.6** Create main resume display page component integrating all sections
 
-### 4.4 UI Polish
-- [ ] **4.4.1** Apply consistent Tailwind styling
-- [ ] **4.4.2** Add Shadcn UI components where needed
-- [ ] **4.4.3** Implement responsive design
-- [ ] **4.4.4** Add hover states and transitions
+### 4.3 Scoped Resume Features (Implement After Main Resume Complete)
+- [ ] **4.3.1** Add conditional scoped resume dropdown selector in header (shows all scoped resumes, disabled when none exist)
+- [ ] **4.3.2** Add "Create Scoped Resume" button in header (visible on scoped page)
+- [ ] **4.3.3** Create `ScopedResumeSelector` component using existing Shadcn Select component
+- [ ] **4.3.4** Create `ScopedResumeManager` component (create, rename, duplicate, delete operations)
+
+### 4.4 Form Infrastructure (Using New Dependencies)
+- [ ] **4.4.1** Setup React Hook Form with Hookform Resolvers and Zod validation integration (inline field errors)
+- [ ] **4.4.2** Create reusable form components using existing Shadcn UI components (check `/web/src/components/ui` first)
+- [ ] **4.4.3** Create hybrid dropdown components for skill categories/subcategories using existing Select component
+- [ ] **4.4.4** Setup date picker components using existing Shadcn Calendar component
+- [ ] **4.4.5** Create work experience line editor with up/down arrow reordering (no drag-and-drop yet)
+
+### 4.5 UI Polish and Styling
+- [ ] **4.5.1** Apply consistent Tailwind CSS styling following design system
+- [ ] **4.5.2** Use existing Shadcn UI components from `/web/src/components/ui` (Button, Dialog, Card, etc.) - check directory first before adding new components
+- [ ] **4.5.3** Implement responsive design with vertical section stacking (no horizontal layouts)
+- [ ] **4.5.4** Add hover states, transitions, and loading indicators
+
+**Available Shadcn UI Components** (check `/web/src/components/ui` before adding new ones):
+- Form components: Button, Input, Label, Textarea, Checkbox, Select, Calendar
+- Layout components: Card, Separator, Tabs, Dialog, Drawer, Popover
+- Feedback components: Alert, Badge, Skeleton, Sonner (toasts)
+- Navigation components: Breadcrumb, Command
+
+**Additional Dependencies:**
+- React Hook Form + Hookform Resolvers for form handling
+- Sonner for toast notifications (already available as Shadcn component)
+- Next Themes for theme support (if needed)
+- CMDK for command palette functionality (already available as Shadcn component)
 
 **Phase 4 Completion Criteria:**
-- ✅ All resume sections display data correctly
-- ✅ Edit mode toggles work per section
-- ✅ Forms validate and submit data successfully
-- ✅ UI is responsive and visually polished
-- ✅ Error states are handled gracefully
+- ✅ Sonner toast container setup below Outlet in `__root.tsx`
+- ✅ Header displays application title with PDF/DOCX export buttons
+- ✅ Tab navigation works using custom styled TanStack Router links (Main Resume • Scoped Resumes)
+- ✅ Main resume sections use single component pattern with internal display/edit toggle (max 200 lines each)
+- ✅ Local React Hook Form state management per section component
+- ✅ Colored border indicators show unsaved changes on sections
+- ✅ Save/cancel actions work explicitly per section (no auto-save)
+- ✅ Toast notifications using Sonner directly in components for submission feedback
+- ✅ Shadcn Calendar components work correctly for education and work experience dates
+- ✅ Skill category/subcategory hybrid dropdowns support adding new items using existing Select component
+- ✅ Work experience lines have up/down arrow reordering functionality
+- ✅ UI uses vertical section stacking (no horizontal layouts) for all screen sizes
+- ✅ Scoped resume features implemented after main resume completion (conditional selector, create button, manager)
+- ✅ All components use existing Shadcn UI components from `/web/src/components/ui`
+- ✅ Forms validate and submit data successfully to backend API
 
 ---
 
@@ -326,14 +360,14 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ## Progress Tracking
 
-### Overall Progress: 41/97 tasks completed (42.3%)
+### Overall Progress: 41/100 tasks completed (41.0%)
 
 | Phase | Progress | Status |
 |-------|----------|--------|
 | Phase 1: Foundation Setup | 12/12 (100%) | ✅ Completed |
 | Phase 2: Core Data Layer | 16/16 (100%) | ✅ Completed |
 | Phase 3: Frontend State Management | 13/13 (100%) | ✅ Completed |
-| Phase 4: Basic UI Components | 0/16 (0%) | ⏳ Pending |
+| Phase 4: Basic UI Components | 0/19 (0%) | ⏳ Pending |
 | Phase 5: Advanced Features | 0/14 (0%) | ⏳ Pending |
 | Phase 6: Export System | 0/12 (0%) | ⏳ Pending |
 | Phase 7: Testing & QA | 0/10 (0%) | ⏳ Pending |
@@ -341,8 +375,10 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ### Current Focus
 **Active Phase**: Phase 4 - Basic UI Components  
-**Next Task**: 4.1.1 - Update root layout with proper header/navigation
-**Ready for**: Frontend component implementation with full data layer support
+**Next Task**: 4.1.1 - Setup Sonner toast container below Outlet in `__root.tsx`
+**Implementation Order**: Header/navigation → Main resume sections → Scoped resume features
+**Component Pattern**: Single components (max 200 lines) with internal display/edit toggle and local form state
+**Layout Reference**: See `plans/layout.txt` for exact design specifications
 
 ### Major Accomplishments
 - **✅ Complete Backend API**: All database models, services, and REST endpoints implemented

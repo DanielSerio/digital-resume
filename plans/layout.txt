@@ -2,7 +2,7 @@
   │ Digital Resume Manager                                [Export PDF] [Export DOC] │
   ├─────────────────────────────────────────────────────────────────────────────────┤
   │                                                                                 │
-  │ Resume View: [●Main Resume] [○Posting 1] [○Posting 2] [+New]                    │
+  │ [●Main Resume] [○Scoped Resumes] (if scoped [Scoped Resume Select field])       │
   │                                                                                 │
   ├─────────────────────────────────────────────────────────────────────────────────┤
   │                                                                                 │
