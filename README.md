@@ -1,6 +1,6 @@
 # 📄 Digital Resume Manager
 
-A modern, full-stack application for creating, managing, and exporting professional resumes with advanced scoping capabilities.
+A modern, single-user local application for creating, managing, and exporting professional resumes with advanced scoping capabilities.
 
 ![Tech Stack](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat&logo=typescript&logoColor=white)
@@ -131,7 +131,8 @@ digital-resume/
 
 The application uses a normalized SQLite database with the following main entities:
 
-- **Users** - Basic user information and settings
+- **ContactInfo** - Personal contact information and details
+- **ProfessionalSummary** - Professional overview and summary text
 - **WorkExperience** - Job history with sortable accomplishment lines
 - **Education** - Academic background and certifications
 - **TechnicalSkills** - Categorized technical competencies
@@ -186,12 +187,12 @@ npm run db:studio  # Open Prisma Studio
 
 ## 📈 Roadmap
 
-- [ ] **Authentication System** - Multi-user support with secure login
 - [ ] **Template System** - Multiple resume templates and themes
-- [ ] **Collaboration Features** - Share and collaborate on resumes
-- [ ] **Analytics Dashboard** - Track resume performance and engagement
-- [ ] **Cloud Storage** - Online backup and synchronization
-- [ ] **Mobile App** - React Native companion application
+- [ ] **Export Enhancements** - Additional formats and styling options
+- [ ] **Data Import/Export** - JSON/XML backup and restore functionality
+- [ ] **Resume Analytics** - Track different resume versions and usage
+- [ ] **Advanced Editing** - Drag-and-drop reordering and rich text
+- [ ] **Cloud Sync** - Optional cloud backup for local data
 
 ## 🤝 Contributing
 
