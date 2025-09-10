@@ -451,6 +451,25 @@ This document outlines a detailed multi-phase implementation plan for the digita
   - Update validation schemas to use new v4 syntax if needed
   - Test all API endpoints for compatibility
   - Update any breaking changes in validation logic
+
+### Testing Infrastructure
+- [ ] **Integrate Playwright for E2E Testing** - Add fixture-based integration testing
+  - Install @playwright/test and configure for React applications
+  - Setup Playwright config with test directory structure
+  - Create test fixtures for database seeding and cleanup
+  - Implement page object models for resume sections
+  - Add tests for core user flows: editing sections, creating scoped resumes, export functionality
+  - Configure CI/CD pipeline integration
+  - Setup Docker support for headless testing
+
+- [ ] **Integrate Storybook for Component Testing** - Add component development and testing environment
+  - Install Storybook with React/Vite support
+  - Configure Storybook with Tailwind CSS and Shadcn UI
+  - Create stories for all resume section components
+  - Add interaction testing with @storybook/testing-library
+  - Implement visual regression testing with Chromatic
+  - Document component props and usage patterns
+  - Setup Storybook build and deployment
 - [ ] Resume version history
 - [ ] Data import/export (JSON, XML)
 

@@ -135,6 +135,8 @@ digital-resume/
 - **Docker** - Containerized development environment
 - **Vitest** - Fast unit testing with jsdom (frontend)
 - **Jest** - Testing framework (backend)
+- **Playwright** - End-to-end testing with fixture-based integration tests (planned)
+- **Storybook** - Component development and visual testing environment (planned)
 - **ts-node-dev** - TypeScript hot reload for development
 - **TypeScript** - End-to-end type safety
 
@@ -182,6 +184,11 @@ npm run start      # Start development server (alias for dev)
 npm run build      # Build for production (includes TypeScript compilation)
 npm run serve      # Preview production build
 npm run test       # Run unit tests
+
+# Testing & Development (planned)
+npm run test:e2e   # Run Playwright end-to-end tests
+npm run storybook  # Start Storybook development server
+npm run build-storybook # Build Storybook for production
 ```
 
 ### Backend (`/server` directory)
@@ -203,6 +210,12 @@ npm run db:studio  # Open Prisma Studio
 
 ## 📈 Roadmap
 
+### Testing & Quality Assurance
+- [ ] **Playwright Integration** - End-to-end testing with database fixtures
+- [ ] **Storybook Setup** - Component development and visual testing
+- [ ] **Visual Regression Testing** - Automated UI consistency checks
+
+### Core Features
 - [ ] **Template System** - Multiple resume templates and themes
 - [ ] **Export Enhancements** - Additional formats and styling options
 - [ ] **Data Import/Export** - JSON/XML backup and restore functionality
@@ -214,9 +227,11 @@ npm run db:studio  # Open Prisma Studio
 
 1. Follow the established component patterns
 2. Maintain TypeScript strict mode compliance
-3. Write tests for new features
-4. Keep components under 200 lines
-5. Use consistent naming conventions
+3. Write tests for new features (unit with Vitest, integration with Playwright)
+4. Create Storybook stories for new components
+5. Keep components under 200 lines
+6. Use consistent naming conventions
+7. Ensure accessibility compliance (WCAG guidelines)
 
 ## 📄 License
 
