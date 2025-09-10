@@ -2,7 +2,7 @@
 
 This document outlines a detailed multi-phase implementation plan for the digital resume management application with process tracking.
 
-## Phase 1: Foundation Setup ✅ [12/12 completed]
+## Phase 1: Foundation Setup ✅ [16/16 completed]
 
 **Goal**: Establish the basic project structure, tooling, and infrastructure.
 
@@ -30,6 +30,10 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - [x] **1.3.6** Setup docker-compose.prod.yml for production environment
 - [x] **1.3.7** Configure volume mounts for source code and SQLite database (resume-db volume)
 - [x] **1.3.8** Setup environment variables and development optimizations
+- [x] **1.3.9** Fix OpenSSL compatibility issues (Alpine vs Debian base images)
+- [x] **1.3.10** Configure Prisma binary targets for Docker containers
+- [x] **1.3.11** Setup proper networking for frontend accessibility from host
+- [x] **1.3.12** Configure Vite HMR for Docker environment with polling and proper host binding
 
 **Phase 1 Completion Criteria:**
 - ✅ Backend server running on port (e.g., 3001) with ts-node-dev hot reloading
@@ -42,6 +46,9 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - ✅ Prisma seeding script populates comprehensive sample data covering all major skill categories
 - ✅ Selective database reset preserves custom data while refreshing sample resume
 - ✅ Basic API health check accessible from frontend
+- ✅ OpenSSL compatibility resolved between container environments
+- ✅ Frontend accessible from host machine at localhost:3000
+- ✅ Hot module replacement works properly in Docker without container restarts
 
 ---
 
@@ -140,7 +147,7 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ---
 
-## Phase 4: Basic UI Components ⏳ [0/19 completed]
+## Phase 4: Basic UI Components ⏳ [10/19 completed]
 
 **Goal**: Build the fundamental UI components and layout structure with modern form handling and conditional navigation.
 
@@ -152,18 +159,19 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - **Implementation Order**: Header/navigation first, then main resume sections, finally scoped resume features
 
 ### 4.1 Header and Navigation (Priority Implementation)
-- [ ] **4.1.1** Setup Sonner toast container below Outlet in `__root.tsx`
-- [ ] **4.1.2** Update header with application title and export buttons (PDF/DOCX)
-- [ ] **4.1.3** Implement tab navigation using custom styled TanStack Router links (Main Resume • Scoped Resumes)
-- [ ] **4.1.4** Add loading states and error boundaries for main layout structure
+- [x] **4.1.1** Setup Sonner toast container below Outlet in `__root.tsx`
+- [x] **4.1.2** Update header with application title and export buttons (PDF/DOCX)
+- [x] **4.1.3** Implement tab navigation using custom styled TanStack Router links (Main Resume • Scoped Resumes)
+- [x] **4.1.4** Add loading states and error boundaries for main layout structure
+- [x] **4.1.5** Fix navigation active state for main resume page routing
 
 ### 4.2 Main Resume Section Components (Single Component Pattern - Local Form State)
-- [ ] **4.2.1** Create `ContactSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes
-- [ ] **4.2.2** Create `SummarySection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes
-- [ ] **4.2.3** Create `SkillsSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, category grouping
-- [ ] **4.2.4** Create `EducationSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, date handling
-- [ ] **4.2.5** Create `WorkExperienceSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, up/down arrow reordering
-- [ ] **4.2.6** Create main resume display page component integrating all sections
+- [x] **4.2.1** Create `ContactSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes
+- [x] **4.2.2** Create `SummarySection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes
+- [x] **4.2.3** Create `SkillsSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, category grouping
+- [x] **4.2.4** Create `EducationSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, date handling
+- [x] **4.2.5** Create `WorkExperienceSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, up/down arrow reordering
+- [x] **4.2.6** Create main resume display page component integrating all sections
 
 ### 4.3 Scoped Resume Features (Implement After Main Resume Complete)
 - [ ] **4.3.1** Add conditional scoped resume dropdown selector in header (shows all scoped resumes, disabled when none exist)
@@ -200,6 +208,7 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - ✅ Sonner toast container setup below Outlet in `__root.tsx`
 - ✅ Header displays application title with PDF/DOCX export buttons
 - ✅ Tab navigation works using custom styled TanStack Router links (Main Resume • Scoped Resumes)
+- ✅ Navigation active state correctly highlights current page (main/scoped)
 - ✅ Main resume sections use single component pattern with internal display/edit toggle (max 200 lines each)
 - ✅ Local React Hook Form state management per section component
 - ✅ Colored border indicators show unsaved changes on sections
@@ -209,9 +218,12 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - ✅ Skill category/subcategory hybrid dropdowns support adding new items using existing Select component
 - ✅ Work experience lines have up/down arrow reordering functionality
 - ✅ UI uses vertical section stacking (no horizontal layouts) for all screen sizes
-- ✅ Scoped resume features implemented after main resume completion (conditional selector, create button, manager)
 - ✅ All components use existing Shadcn UI components from `/web/src/components/ui`
 - ✅ Forms validate and submit data successfully to backend API
+- ✅ Work experience data structure mapping fixed for proper API integration
+- [ ] Scoped resume features implemented after main resume completion (conditional selector, create button, manager)
+- [ ] Form infrastructure completed with hybrid dropdowns and reusable components
+- [ ] UI polish and styling applied consistently
 
 ---
 
@@ -360,14 +372,14 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ## Progress Tracking
 
-### Overall Progress: 41/100 tasks completed (41.0%)
+### Overall Progress: 55/104 tasks completed (52.9%)
 
 | Phase | Progress | Status |
 |-------|----------|--------|
-| Phase 1: Foundation Setup | 12/12 (100%) | ✅ Completed |
+| Phase 1: Foundation Setup | 16/16 (100%) | ✅ Completed |
 | Phase 2: Core Data Layer | 16/16 (100%) | ✅ Completed |
 | Phase 3: Frontend State Management | 13/13 (100%) | ✅ Completed |
-| Phase 4: Basic UI Components | 0/19 (0%) | ⏳ Pending |
+| Phase 4: Basic UI Components | 10/19 (52.6%) | ⏳ In Progress |
 | Phase 5: Advanced Features | 0/14 (0%) | ⏳ Pending |
 | Phase 6: Export System | 0/12 (0%) | ⏳ Pending |
 | Phase 7: Testing & QA | 0/10 (0%) | ⏳ Pending |
@@ -375,8 +387,8 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ### Current Focus
 **Active Phase**: Phase 4 - Basic UI Components  
-**Next Task**: 4.1.1 - Setup Sonner toast container below Outlet in `__root.tsx`
-**Implementation Order**: Header/navigation → Main resume sections → Scoped resume features
+**Next Task**: 4.3.1 - Add conditional scoped resume dropdown selector in header
+**Implementation Order**: ✅ Header/navigation → ✅ Main resume sections → Scoped resume features
 **Component Pattern**: Single components (max 200 lines) with internal display/edit toggle and local form state
 **Layout Reference**: See `plans/layout.txt` for exact design specifications
 
@@ -391,7 +403,7 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - **✅ Error Handling**: Functional component error boundaries with graceful failure recovery
 
 ### Development Environment Features
-- **Hot Reloading**: Both frontend (Vite HMR) and backend (ts-node-dev) support hot reloading in Docker
+- **Hot Reloading**: Both frontend (Vite HMR with polling) and backend (ts-node-dev) support hot reloading in Docker
 - **Auto-Start**: Single `docker-compose up` command starts both frontend and backend automatically
 - **Data Seeding**: Realistic sample resume data with single comprehensive work experience using generic company (e.g., "Tech Solutions Inc") and flexible skill categorization
 - **Database Persistence**: Prisma with SQLite stored in Docker volume, persistent across container rebuilds
@@ -400,6 +412,9 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - **Multi-Environment**: Separate Docker configurations for development and production
 - **TypeScript**: Full TypeScript support with ts-node-dev for backend development
 - **Sequential Implementation**: Tasks follow exact sequence for optimal dependency management
+- **Docker Compatibility**: OpenSSL compatibility resolved for Prisma across different base images
+- **Network Access**: Frontend properly accessible from host machine at localhost:3000
+- **File Watching**: Vite configured with polling for reliable file change detection in Docker volumes
 
 ### Success Metrics
 - [ ] Application runs in Docker containers

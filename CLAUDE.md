@@ -148,3 +148,4 @@ The project follows strict TypeScript and React conventions defined in Cursor ru
 - File upload patterns will be added later (not currently implemented)
 - Reference the `plans` directory for information about our application plan
 - Reference `plans/layout.txt` for an ascii image of the main page layout
+- keep files under 200 lines

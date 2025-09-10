@@ -1,28 +1,35 @@
-import React, { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
-import { Plus, X, GripVertical, Calendar as CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import React, { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { Plus, X, GripVertical, Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ErrorBoundary } from '@/components/common';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ErrorBoundary } from "@/components/common";
 
-import { 
-  useWorkExperiencesData, 
-  useCreateWorkExperience, 
-  useUpdateWorkExperience, 
-  useDeleteWorkExperience 
-} from '@/hooks';
-import { workExperienceSchema, type WorkExperienceFormData } from '@/lib/validation';
-import { cn } from '@/lib/utils';
-import type { WorkExperience } from '@/types';
+import {
+  useWorkExperiencesData,
+  useCreateWorkExperience,
+  useUpdateWorkExperience,
+  useDeleteWorkExperience,
+} from "@/hooks";
+import {
+  completeWorkExperienceSchema,
+  type CompleteWorkExperienceFormData,
+} from "@/lib/validation";
+import { cn } from "@/lib/utils";
+import type { WorkExperience } from "@/types";
 
 // Sub-component for work experience line entry
 const LineEntryForm: React.FC<{
@@ -38,16 +45,16 @@ const LineEntryForm: React.FC<{
       </div>
       <div className="flex-1">
         <Textarea
-          {...register(`lines.${index}.text`)}
+          {...register(`lines.${index}.lineText`)}
           placeholder="Describe an accomplishment or responsibility..."
           className={cn(
             "min-h-[60px] resize-y",
-            errors?.lines?.[index]?.text && "border-red-500"
+            errors?.lines?.[index]?.lineText && "border-red-500"
           )}
         />
-        {errors?.lines?.[index]?.text && (
+        {errors?.lines?.[index]?.lineText && (
           <p className="text-xs text-red-600 mt-1">
-            {errors.lines[index].text.message}
+            {errors.lines[index].lineText.message}
           </p>
         )}
       </div>
@@ -67,59 +74,75 @@ const LineEntryForm: React.FC<{
 // Sub-component for a single work experience entry form
 const WorkExperienceEntryForm: React.FC<{
   workExperience?: WorkExperience;
-  onSave: (data: WorkExperienceFormData) => Promise<void>;
+  onSave: (data: CompleteWorkExperienceFormData) => Promise<void>;
   onCancel: () => void;
   onDelete?: () => Promise<void>;
   isSubmitting: boolean;
 }> = ({ workExperience, onSave, onCancel, onDelete, isSubmitting }) => {
-  const form = useForm<WorkExperienceFormData>({
-    resolver: zodResolver(workExperienceSchema),
+  const form = useForm<CompleteWorkExperienceFormData>({
+    resolver: zodResolver(completeWorkExperienceSchema),
     defaultValues: {
-      company: workExperience?.company || '',
-      position: workExperience?.position || '',
-      location: workExperience?.location || '',
-      startDate: workExperience?.startDate ? new Date(workExperience.startDate) : null,
-      endDate: workExperience?.endDate ? new Date(workExperience.endDate) : null,
-      isCurrentPosition: workExperience?.isCurrentPosition || false,
-      lines: workExperience?.lines?.map(line => ({ text: line.content })) || [{ text: '' }],
+      companyName: workExperience?.companyName || "",
+      jobTitle: workExperience?.jobTitle || "",
+      location: workExperience?.location || "",
+      startDate: workExperience?.startDate
+        ? new Date(workExperience.startDate)
+        : null,
+      endDate: workExperience?.endDate
+        ? new Date(workExperience.endDate)
+        : null,
+      description: workExperience?.description || "",
+      lines: workExperience?.workExperienceLines?.map((line) => ({
+        lineText: line.lineText,
+        sortOrder: line.sortOrder || 0,
+      })) || [{ lineText: "", sortOrder: 0 }],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'lines',
+    name: "lines",
   });
 
-  const { formState: { errors } } = form;
+  const {
+    formState: { errors },
+  } = form;
 
   const handleAddLine = () => {
-    append({ text: '' });
+    append({ lineText: "", sortOrder: fields.length });
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSave)} className="space-y-4 p-4 border rounded-lg">
+    <form
+      onSubmit={form.handleSubmit(onSave)}
+      className="space-y-4 p-4 border rounded-lg"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="company">Company *</Label>
+          <Label htmlFor="companyName">Company *</Label>
           <Input
-            id="company"
-            {...form.register('company')}
-            className={cn(errors.company && "border-red-500")}
+            id="companyName"
+            {...form.register("companyName")}
+            className={cn(errors.companyName && "border-red-500")}
           />
-          {errors.company && (
-            <p className="text-xs text-red-600 mt-1">{errors.company.message}</p>
+          {errors.companyName && (
+            <p className="text-xs text-red-600 mt-1">
+              {errors.companyName.message}
+            </p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="position">Position *</Label>
+          <Label htmlFor="jobTitle">Position *</Label>
           <Input
-            id="position"
-            {...form.register('position')}
-            className={cn(errors.position && "border-red-500")}
+            id="jobTitle"
+            {...form.register("jobTitle")}
+            className={cn(errors.jobTitle && "border-red-500")}
           />
-          {errors.position && (
-            <p className="text-xs text-red-600 mt-1">{errors.position.message}</p>
+          {errors.jobTitle && (
+            <p className="text-xs text-red-600 mt-1">
+              {errors.jobTitle.message}
+            </p>
           )}
         </div>
 
@@ -127,21 +150,20 @@ const WorkExperienceEntryForm: React.FC<{
           <Label htmlFor="location">Location</Label>
           <Input
             id="location"
-            {...form.register('location')}
+            {...form.register("location")}
             placeholder="City, State"
             className={cn(errors.location && "border-red-500")}
           />
           {errors.location && (
-            <p className="text-xs text-red-600 mt-1">{errors.location.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {errors.location.message}
+            </p>
           )}
         </div>
 
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              {...form.register('isCurrentPosition')}
-            />
+            <input type="checkbox" {...form.register("isCurrentPosition")} />
             <span className="text-sm">Current Position</span>
           </label>
         </div>
@@ -154,25 +176,27 @@ const WorkExperienceEntryForm: React.FC<{
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
-                  !form.watch('startDate') && "text-muted-foreground"
+                  !form.watch("startDate") && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {form.watch('startDate') ? format(form.watch('startDate')!, "PPP") : "Pick start date"}
+                {form.watch("startDate")
+                  ? format(form.watch("startDate")!, "PPP")
+                  : "Pick start date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={form.watch('startDate') || undefined}
-                onSelect={(date) => form.setValue('startDate', date || null)}
+                selected={form.watch("startDate") || undefined}
+                onSelect={(date) => form.setValue("startDate", date || null)}
                 initialFocus
               />
             </PopoverContent>
           </Popover>
         </div>
 
-        {!form.watch('isCurrentPosition') && (
+        {!form.watch("isCurrentPosition") && (
           <div>
             <Label>End Date</Label>
             <Popover>
@@ -181,18 +205,20 @@ const WorkExperienceEntryForm: React.FC<{
                   variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !form.watch('endDate') && "text-muted-foreground"
+                    !form.watch("endDate") && "text-muted-foreground"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {form.watch('endDate') ? format(form.watch('endDate')!, "PPP") : "Pick end date"}
+                  {form.watch("endDate")
+                    ? format(form.watch("endDate")!, "PPP")
+                    : "Pick end date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={form.watch('endDate') || undefined}
-                  onSelect={(date) => form.setValue('endDate', date || null)}
+                  selected={form.watch("endDate") || undefined}
+                  onSelect={(date) => form.setValue("endDate", date || null)}
                   initialFocus
                 />
               </PopoverContent>
@@ -252,7 +278,7 @@ const WorkExperienceEntryForm: React.FC<{
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : 'Save'}
+            {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
@@ -283,34 +309,46 @@ const WorkExperienceDisplay: React.FC<{
               <p className="text-muted-foreground">{experience.companyName}</p>
               {(experience.location || experience.companyCity) && (
                 <p className="text-sm text-muted-foreground">
-                  {experience.location || `${experience.companyCity}${experience.companyState ? `, ${experience.companyState}` : ''}`}
+                  {experience.location ||
+                    `${experience.companyCity}${experience.companyState ? `, ${experience.companyState}` : ""}`}
                 </p>
               )}
               <div className="text-sm text-muted-foreground">
                 {(experience.startDate || experience.dateStarted) && (
                   <p>
-                    {format(new Date(experience.startDate || experience.dateStarted), "MMM yyyy")} - {" "}
+                    {format(
+                      new Date(experience.startDate || experience.dateStarted),
+                      "MMM yyyy"
+                    )}{" "}
+                    -{" "}
                     {experience.isCurrentPosition || !experience.dateEnded
-                      ? "Present" 
-                      : (experience.endDate || experience.dateEnded)
-                        ? format(new Date(experience.endDate || experience.dateEnded), "MMM yyyy")
-                        : "Present"
-                    }
+                      ? "Present"
+                      : experience.endDate || experience.dateEnded
+                        ? format(
+                            new Date(
+                              experience.endDate || experience.dateEnded
+                            ),
+                            "MMM yyyy"
+                          )
+                        : "Present"}
                   </p>
                 )}
               </div>
-              {experience.workExperienceLines && experience.workExperienceLines.length > 0 && (
-                <div className="mt-3">
-                  <ul className="text-sm space-y-1">
-                    {experience.workExperienceLines.map((line) => (
-                      <li key={line.id} className="flex items-start gap-2">
-                        <span className="text-muted-foreground mt-1.5">•</span>
-                        <span>{line.lineText}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {experience.workExperienceLines &&
+                experience.workExperienceLines.length > 0 && (
+                  <div className="mt-3">
+                    <ul className="text-sm space-y-1">
+                      {experience.workExperienceLines.map((line) => (
+                        <li key={line.id} className="flex items-start gap-2">
+                          <span className="text-muted-foreground mt-1.5">
+                            •
+                          </span>
+                          <span>{line.lineText}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
             </div>
             <Button
               variant="outline"
@@ -329,10 +367,15 @@ const WorkExperienceDisplay: React.FC<{
 export const WorkExperienceSection: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingExperience, setEditingExperience] = useState<WorkExperience | null>(null);
-  
+  const [editingExperience, setEditingExperience] =
+    useState<WorkExperience | null>(null);
+
   // Data fetching
-  const { data: workExperiences = [], isLoading, error } = useWorkExperiencesData();
+  const {
+    data: workExperiences = [],
+    isLoading,
+    error,
+  } = useWorkExperiencesData();
   const createExperienceMutation = useCreateWorkExperience();
   const updateExperienceMutation = useUpdateWorkExperience();
   const deleteExperienceMutation = useDeleteWorkExperience();
@@ -355,41 +398,47 @@ export const WorkExperienceSection: React.FC = () => {
     setEditingExperience(experience);
   };
 
-  const handleSaveNew = async (data: WorkExperienceFormData) => {
+  const handleSaveNew = async (data: CompleteWorkExperienceFormData) => {
     try {
       await createExperienceMutation.mutateAsync(data);
-      toast.success('Work experience added successfully');
+      toast.success("Work experience added successfully");
       setIsAdding(false);
     } catch (error) {
-      toast.error('Failed to add work experience');
-      console.error('Add work experience error:', error);
+      toast.error("Failed to add work experience");
+      console.error("Add work experience error:", error);
     }
   };
 
-  const handleSaveEdit = async (data: WorkExperienceFormData) => {
+  const handleSaveEdit = async (data: CompleteWorkExperienceFormData) => {
     if (!editingExperience) return;
     try {
-      await updateExperienceMutation.mutateAsync({ id: editingExperience.id, data });
-      toast.success('Work experience updated successfully');
+      await updateExperienceMutation.mutateAsync({
+        id: editingExperience.id,
+        data,
+      });
+      toast.success("Work experience updated successfully");
       setEditingExperience(null);
     } catch (error) {
-      toast.error('Failed to update work experience');
-      console.error('Update work experience error:', error);
+      toast.error("Failed to update work experience");
+      console.error("Update work experience error:", error);
     }
   };
 
   const handleDelete = async (experienceId: number) => {
     try {
       await deleteExperienceMutation.mutateAsync(experienceId);
-      toast.success('Work experience deleted successfully');
+      toast.success("Work experience deleted successfully");
       setEditingExperience(null);
     } catch (error) {
-      toast.error('Failed to delete work experience');
-      console.error('Delete work experience error:', error);
+      toast.error("Failed to delete work experience");
+      console.error("Delete work experience error:", error);
     }
   };
 
-  const isSubmitting = createExperienceMutation.isPending || updateExperienceMutation.isPending || deleteExperienceMutation.isPending;
+  const isSubmitting =
+    createExperienceMutation.isPending ||
+    updateExperienceMutation.isPending ||
+    deleteExperienceMutation.isPending;
 
   if (isLoading) {
     return (
@@ -424,10 +473,11 @@ export const WorkExperienceSection: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <Card 
+      <Card
         className={cn(
           "p-6 transition-colors",
-          isEditing && "border-orange-500 border-2"
+          isEditing && "border-orange-500 border-2",
+          "max-w-4xl mx-auto"
         )}
       >
         <div className="flex justify-between items-center mb-6">
@@ -441,7 +491,7 @@ export const WorkExperienceSection: React.FC = () => {
 
         {isEditing ? (
           <div className="space-y-6">
-            <WorkExperienceDisplay 
+            <WorkExperienceDisplay
               workExperiences={workExperiences}
               onEditWorkExperience={handleEditExperience}
             />
@@ -481,7 +531,7 @@ export const WorkExperienceSection: React.FC = () => {
             </div>
           </div>
         ) : (
-          <WorkExperienceDisplay 
+          <WorkExperienceDisplay
             workExperiences={workExperiences}
             onEditWorkExperience={handleEditExperience}
           />

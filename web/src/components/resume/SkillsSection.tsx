@@ -1,26 +1,35 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
-import { Plus, X } from 'lucide-react';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { Plus, X } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ErrorBoundary } from '@/components/common';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ErrorBoundary } from "@/components/common";
 
-import { 
-  useTechnicalSkillsData, 
-  useCreateTechnicalSkill, 
+import {
+  useTechnicalSkillsData,
+  useCreateTechnicalSkill,
   useDeleteTechnicalSkill,
-  useSkillTaxonomy 
-} from '@/hooks';
-import { technicalSkillSchema, type TechnicalSkillFormData } from '@/lib/validation';
-import { cn } from '@/lib/utils';
-import type { TechnicalSkill } from '@/types';
+  useSkillTaxonomy,
+} from "@/hooks";
+import {
+  technicalSkillSchema,
+  type TechnicalSkillFormData,
+} from "@/lib/validation";
+import { cn } from "@/lib/utils";
+import type { TechnicalSkill } from "@/types";
 
 // Sub-component for adding new skills
 const AddSkillForm: React.FC<{
@@ -33,7 +42,7 @@ const AddSkillForm: React.FC<{
   const form = useForm<TechnicalSkillFormData>({
     resolver: zodResolver(technicalSkillSchema),
     defaultValues: {
-      name: '',
+      name: "",
       categoryId: 0,
       subcategoryId: 0,
     },
@@ -42,36 +51,45 @@ const AddSkillForm: React.FC<{
   const handleSubmit = async (data: TechnicalSkillFormData) => {
     try {
       await createSkillMutation.mutateAsync(data);
-      toast.success('Skill added successfully');
+      toast.success("Skill added successfully");
       form.reset();
       onSuccess();
     } catch (error) {
-      toast.error('Failed to add skill');
-      console.error('Add skill error:', error);
+      toast.error("Failed to add skill");
+      console.error("Add skill error:", error);
     }
   };
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3 p-4 border rounded-lg bg-muted/50">
+    <form
+      onSubmit={form.handleSubmit(handleSubmit)}
+      className="space-y-3 p-4 border rounded-lg bg-muted/50"
+    >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
           <Label htmlFor="skillName">Skill Name *</Label>
           <Input
             id="skillName"
-            {...form.register('name')}
+            {...form.register("name")}
             placeholder="e.g., React"
             className={cn(form.formState.errors.name && "border-red-500")}
           />
           {form.formState.errors.name && (
-            <p className="text-xs text-red-600 mt-1">{form.formState.errors.name.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {form.formState.errors.name.message}
+            </p>
           )}
         </div>
 
         <div>
           <Label htmlFor="category">Category *</Label>
-          <Select 
-            value={form.watch('categoryId')?.toString() || ''}
-            onValueChange={(value) => form.setValue('categoryId', parseInt(value), { shouldValidate: true })}
+          <Select
+            value={form.watch("categoryId")?.toString() || ""}
+            onValueChange={(value) =>
+              form.setValue("categoryId", parseInt(value), {
+                shouldValidate: true,
+              })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Select category..." />
@@ -85,15 +103,21 @@ const AddSkillForm: React.FC<{
             </SelectContent>
           </Select>
           {form.formState.errors.categoryId && (
-            <p className="text-xs text-red-600 mt-1">{form.formState.errors.categoryId.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {form.formState.errors.categoryId.message}
+            </p>
           )}
         </div>
 
         <div>
           <Label htmlFor="subcategory">Subcategory *</Label>
           <Select
-            value={form.watch('subcategoryId')?.toString() || ''}
-            onValueChange={(value) => form.setValue('subcategoryId', parseInt(value), { shouldValidate: true })}
+            value={form.watch("subcategoryId")?.toString() || ""}
+            onValueChange={(value) =>
+              form.setValue("subcategoryId", parseInt(value), {
+                shouldValidate: true,
+              })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Select subcategory..." />
@@ -107,7 +131,9 @@ const AddSkillForm: React.FC<{
             </SelectContent>
           </Select>
           {form.formState.errors.subcategoryId && (
-            <p className="text-xs text-red-600 mt-1">{form.formState.errors.subcategoryId.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {form.formState.errors.subcategoryId.message}
+            </p>
           )}
         </div>
       </div>
@@ -127,7 +153,7 @@ const AddSkillForm: React.FC<{
           size="sm"
           disabled={createSkillMutation.isPending || !form.formState.isValid}
         >
-          {createSkillMutation.isPending ? 'Adding...' : 'Add Skill'}
+          {createSkillMutation.isPending ? "Adding..." : "Add Skill"}
         </Button>
       </div>
     </form>
@@ -142,14 +168,17 @@ const SkillsByCategory: React.FC<{
   onDeleteSkill: (id: number) => Promise<void>;
 }> = ({ skills, getCategoryName, isEditing, onDeleteSkill }) => {
   // Group skills by category
-  const skillsByCategory = skills.reduce((acc, skill) => {
-    const categoryName = getCategoryName(skill.categoryId);
-    if (!acc[categoryName]) {
-      acc[categoryName] = [];
-    }
-    acc[categoryName].push(skill);
-    return acc;
-  }, {} as Record<string, TechnicalSkill[]>);
+  const skillsByCategory = skills.reduce(
+    (acc, skill) => {
+      const categoryName = getCategoryName(skill.categoryId);
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
+      }
+      acc[categoryName].push(skill);
+      return acc;
+    },
+    {} as Record<string, TechnicalSkill[]>
+  );
 
   if (Object.keys(skillsByCategory).length === 0) {
     return (
@@ -161,26 +190,30 @@ const SkillsByCategory: React.FC<{
 
   return (
     <div className="space-y-6">
-      {Object.entries(skillsByCategory).map(([categoryName, categorySkills]) => (
-        <div key={categoryName}>
-          <h4 className="font-medium text-foreground mb-3">{categoryName}:</h4>
-          <div className="flex flex-wrap gap-2">
-            {categorySkills.map((skill) => (
-              <Badge key={skill.id} variant="secondary" className="text-sm">
-                {skill.name}
-                {isEditing && (
-                  <button
-                    onClick={() => onDeleteSkill(skill.id)}
-                    className="ml-2 hover:text-red-600 transition-colors"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                )}
-              </Badge>
-            ))}
+      {Object.entries(skillsByCategory).map(
+        ([categoryName, categorySkills]) => (
+          <div key={categoryName}>
+            <h4 className="font-medium text-foreground mb-3">
+              {categoryName}:
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {categorySkills.map((skill) => (
+                <Badge key={skill.id} variant="secondary" className="text-sm">
+                  {skill.name}
+                  {isEditing && (
+                    <button
+                      onClick={() => onDeleteSkill(skill.id)}
+                      className="ml-2 hover:text-red-600 transition-colors"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
+                </Badge>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 };
@@ -188,7 +221,7 @@ const SkillsByCategory: React.FC<{
 export const SkillsSection: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isAddingSkill, setIsAddingSkill] = useState(false);
-  
+
   // Data fetching
   const { data: skills = [], isLoading, error } = useTechnicalSkillsData();
   const { getCategoryName } = useSkillTaxonomy();
@@ -210,10 +243,10 @@ export const SkillsSection: React.FC = () => {
   const handleDeleteSkill = async (skillId: number) => {
     try {
       await deleteSkillMutation.mutateAsync(skillId);
-      toast.success('Skill removed successfully');
+      toast.success("Skill removed successfully");
     } catch (error) {
-      toast.error('Failed to remove skill');
-      console.error('Delete skill error:', error);
+      toast.error("Failed to remove skill");
+      console.error("Delete skill error:", error);
     }
   };
 
@@ -250,10 +283,11 @@ export const SkillsSection: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <Card 
+      <Card
         className={cn(
           "p-6 transition-colors",
-          isEditing && "border-orange-500 border-2"
+          isEditing && "border-orange-500 border-2",
+          "max-w-4xl mx-auto"
         )}
       >
         <div className="flex justify-between items-center mb-6">
@@ -292,11 +326,7 @@ export const SkillsSection: React.FC = () => {
             )}
 
             <div className="flex justify-end gap-2 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCancel}
-              >
+              <Button type="button" variant="outline" onClick={handleCancel}>
                 Done
               </Button>
             </div>

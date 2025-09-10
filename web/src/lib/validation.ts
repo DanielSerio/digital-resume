@@ -94,8 +94,7 @@ export const workExperienceLineSchema = z.object({
 export type WorkExperienceLineFormData = z.infer<typeof workExperienceLineSchema>;
 
 // Complete Work Experience with Lines validation schema
-export const completeWorkExperienceSchema = z.object({
-  workExperience: workExperienceSchema,
+export const completeWorkExperienceSchema = workExperienceSchema.extend({
   lines: z.array(workExperienceLineSchema).default([]),
 });
 
@@ -118,10 +117,10 @@ export const dateStringSchema = z
   });
 
 // Form validation utility functions
-export const validateForm = <T>(schema: z.ZodSchema<T>, data: unknown): { 
-  success: boolean; 
-  data?: T; 
-  errors?: Record<string, string[]> 
+export const validateForm = <T>(schema: z.ZodSchema<T>, data: unknown): {
+  success: boolean;
+  data?: T;
+  errors?: Record<string, string[]>;
 } => {
   try {
     const validatedData = schema.parse(data);
@@ -138,9 +137,9 @@ export const validateForm = <T>(schema: z.ZodSchema<T>, data: unknown): {
       });
       return { success: false, errors };
     }
-    return { 
-      success: false, 
-      errors: { _general: ['Validation failed'] } 
+    return {
+      success: false,
+      errors: { _general: ['Validation failed'] }
     };
   }
 };

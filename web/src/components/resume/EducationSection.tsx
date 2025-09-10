@@ -1,28 +1,32 @@
-import React, { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
-import { Plus, X, Calendar as CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import React, { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { Plus, X, Calendar as CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ErrorBoundary } from '@/components/common';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ErrorBoundary } from "@/components/common";
 
-import { 
-  useEducationData, 
-  useCreateEducation, 
-  useUpdateEducation, 
-  useDeleteEducation 
-} from '@/hooks';
-import { educationSchema, type EducationFormData } from '@/lib/validation';
-import { cn } from '@/lib/utils';
-import type { Education } from '@/types';
+import {
+  useEducationData,
+  useCreateEducation,
+  useUpdateEducation,
+  useDeleteEducation,
+} from "@/hooks";
+import { educationSchema, type EducationFormData } from "@/lib/validation";
+import { cn } from "@/lib/utils";
+import type { Education } from "@/types";
 
 // Sub-component for a single education entry form
 const EducationEntryForm: React.FC<{
@@ -35,32 +39,39 @@ const EducationEntryForm: React.FC<{
   const form = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
-      schoolName: education?.schoolName || '',
-      location: education?.location || '',
-      degree: education?.degree || '',
-      fieldOfStudy: education?.fieldOfStudy || '',
+      schoolName: education?.schoolName || "",
+      location: education?.location || "",
+      degree: education?.degree || "",
+      fieldOfStudy: education?.fieldOfStudy || "",
       startDate: education?.startDate ? new Date(education.startDate) : null,
       endDate: education?.endDate ? new Date(education.endDate) : null,
-      gpa: education?.gpa || '',
-      honors: education?.honors || '',
-      relevantCoursework: education?.relevantCoursework || '',
+      gpa: education?.gpa || "",
+      honors: education?.honors || "",
+      relevantCoursework: education?.relevantCoursework || "",
     },
   });
 
-  const { formState: { errors } } = form;
+  const {
+    formState: { errors },
+  } = form;
 
   return (
-    <form onSubmit={form.handleSubmit(onSave)} className="space-y-4 p-4 border rounded-lg">
+    <form
+      onSubmit={form.handleSubmit(onSave)}
+      className="space-y-4 p-4 border rounded-lg"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="schoolName">School Name *</Label>
           <Input
             id="schoolName"
-            {...form.register('schoolName')}
+            {...form.register("schoolName")}
             className={cn(errors.schoolName && "border-red-500")}
           />
           {errors.schoolName && (
-            <p className="text-xs text-red-600 mt-1">{errors.schoolName.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {errors.schoolName.message}
+            </p>
           )}
         </div>
 
@@ -68,12 +79,14 @@ const EducationEntryForm: React.FC<{
           <Label htmlFor="location">Location</Label>
           <Input
             id="location"
-            {...form.register('location')}
+            {...form.register("location")}
             placeholder="City, State"
             className={cn(errors.location && "border-red-500")}
           />
           {errors.location && (
-            <p className="text-xs text-red-600 mt-1">{errors.location.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {errors.location.message}
+            </p>
           )}
         </div>
 
@@ -81,7 +94,7 @@ const EducationEntryForm: React.FC<{
           <Label htmlFor="degree">Degree</Label>
           <Input
             id="degree"
-            {...form.register('degree')}
+            {...form.register("degree")}
             placeholder="e.g., Bachelor of Science"
             className={cn(errors.degree && "border-red-500")}
           />
@@ -94,12 +107,14 @@ const EducationEntryForm: React.FC<{
           <Label htmlFor="fieldOfStudy">Field of Study</Label>
           <Input
             id="fieldOfStudy"
-            {...form.register('fieldOfStudy')}
+            {...form.register("fieldOfStudy")}
             placeholder="e.g., Computer Science"
             className={cn(errors.fieldOfStudy && "border-red-500")}
           />
           {errors.fieldOfStudy && (
-            <p className="text-xs text-red-600 mt-1">{errors.fieldOfStudy.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {errors.fieldOfStudy.message}
+            </p>
           )}
         </div>
 
@@ -111,18 +126,20 @@ const EducationEntryForm: React.FC<{
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
-                  !form.watch('startDate') && "text-muted-foreground"
+                  !form.watch("startDate") && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {form.watch('startDate') ? format(form.watch('startDate')!, "PPP") : "Pick start date"}
+                {form.watch("startDate")
+                  ? format(form.watch("startDate")!, "PPP")
+                  : "Pick start date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={form.watch('startDate') || undefined}
-                onSelect={(date) => form.setValue('startDate', date || null)}
+                selected={form.watch("startDate") || undefined}
+                onSelect={(date) => form.setValue("startDate", date || null)}
                 initialFocus
               />
             </PopoverContent>
@@ -137,18 +154,20 @@ const EducationEntryForm: React.FC<{
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
-                  !form.watch('endDate') && "text-muted-foreground"
+                  !form.watch("endDate") && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {form.watch('endDate') ? format(form.watch('endDate')!, "PPP") : "Pick end date"}
+                {form.watch("endDate")
+                  ? format(form.watch("endDate")!, "PPP")
+                  : "Pick end date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={form.watch('endDate') || undefined}
-                onSelect={(date) => form.setValue('endDate', date || null)}
+                selected={form.watch("endDate") || undefined}
+                onSelect={(date) => form.setValue("endDate", date || null)}
                 initialFocus
               />
             </PopoverContent>
@@ -159,7 +178,7 @@ const EducationEntryForm: React.FC<{
           <Label htmlFor="gpa">GPA</Label>
           <Input
             id="gpa"
-            {...form.register('gpa')}
+            {...form.register("gpa")}
             placeholder="e.g., 3.8"
             className={cn(errors.gpa && "border-red-500")}
           />
@@ -172,7 +191,7 @@ const EducationEntryForm: React.FC<{
           <Label htmlFor="honors">Honors</Label>
           <Input
             id="honors"
-            {...form.register('honors')}
+            {...form.register("honors")}
             placeholder="e.g., Magna Cum Laude"
             className={cn(errors.honors && "border-red-500")}
           />
@@ -185,12 +204,14 @@ const EducationEntryForm: React.FC<{
           <Label htmlFor="relevantCoursework">Relevant Coursework</Label>
           <Textarea
             id="relevantCoursework"
-            {...form.register('relevantCoursework')}
+            {...form.register("relevantCoursework")}
             placeholder="List relevant courses..."
             className={cn(errors.relevantCoursework && "border-red-500")}
           />
           {errors.relevantCoursework && (
-            <p className="text-xs text-red-600 mt-1">{errors.relevantCoursework.message}</p>
+            <p className="text-xs text-red-600 mt-1">
+              {errors.relevantCoursework.message}
+            </p>
           )}
         </div>
       </div>
@@ -219,7 +240,7 @@ const EducationEntryForm: React.FC<{
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : 'Save'}
+            {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
@@ -248,11 +269,15 @@ const EducationDisplay: React.FC<{
             <div className="space-y-1">
               <h4 className="font-semibold">{education.schoolName}</h4>
               {education.location && (
-                <p className="text-sm text-muted-foreground">{education.location}</p>
+                <p className="text-sm text-muted-foreground">
+                  {education.location}
+                </p>
               )}
               <div className="text-sm">
                 {education.degree && education.fieldOfStudy ? (
-                  <p>{education.degree} in {education.fieldOfStudy}</p>
+                  <p>
+                    {education.degree} in {education.fieldOfStudy}
+                  </p>
                 ) : education.degree ? (
                   <p>{education.degree}</p>
                 ) : education.fieldOfStudy ? (
@@ -261,13 +286,21 @@ const EducationDisplay: React.FC<{
               </div>
               <div className="text-sm text-muted-foreground">
                 {education.startDate && education.endDate ? (
-                  <p>{format(new Date(education.startDate), "MMM yyyy")} - {format(new Date(education.endDate), "MMM yyyy")}</p>
+                  <p>
+                    {format(new Date(education.startDate), "MMM yyyy")} -{" "}
+                    {format(new Date(education.endDate), "MMM yyyy")}
+                  </p>
                 ) : education.startDate ? (
-                  <p>{format(new Date(education.startDate), "MMM yyyy")} - Present</p>
+                  <p>
+                    {format(new Date(education.startDate), "MMM yyyy")} -
+                    Present
+                  </p>
                 ) : null}
               </div>
               {education.gpa && <p className="text-sm">GPA: {education.gpa}</p>}
-              {education.honors && <p className="text-sm italic">{education.honors}</p>}
+              {education.honors && (
+                <p className="text-sm italic">{education.honors}</p>
+              )}
               {education.relevantCoursework && (
                 <p className="text-sm mt-2">{education.relevantCoursework}</p>
               )}
@@ -289,8 +322,10 @@ const EducationDisplay: React.FC<{
 export const EducationSection: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [editingEducation, setEditingEducation] = useState<Education | null>(null);
-  
+  const [editingEducation, setEditingEducation] = useState<Education | null>(
+    null
+  );
+
   // Data fetching
   const { data: educations = [], isLoading, error } = useEducationData();
   const createEducationMutation = useCreateEducation();
@@ -318,38 +353,44 @@ export const EducationSection: React.FC = () => {
   const handleSaveNew = async (data: EducationFormData) => {
     try {
       await createEducationMutation.mutateAsync(data);
-      toast.success('Education entry added successfully');
+      toast.success("Education entry added successfully");
       setIsAdding(false);
     } catch (error) {
-      toast.error('Failed to add education entry');
-      console.error('Add education error:', error);
+      toast.error("Failed to add education entry");
+      console.error("Add education error:", error);
     }
   };
 
   const handleSaveEdit = async (data: EducationFormData) => {
     if (!editingEducation) return;
     try {
-      await updateEducationMutation.mutateAsync({ id: editingEducation.id, data });
-      toast.success('Education entry updated successfully');
+      await updateEducationMutation.mutateAsync({
+        id: editingEducation.id,
+        data,
+      });
+      toast.success("Education entry updated successfully");
       setEditingEducation(null);
     } catch (error) {
-      toast.error('Failed to update education entry');
-      console.error('Update education error:', error);
+      toast.error("Failed to update education entry");
+      console.error("Update education error:", error);
     }
   };
 
   const handleDelete = async (educationId: number) => {
     try {
       await deleteEducationMutation.mutateAsync(educationId);
-      toast.success('Education entry deleted successfully');
+      toast.success("Education entry deleted successfully");
       setEditingEducation(null);
     } catch (error) {
-      toast.error('Failed to delete education entry');
-      console.error('Delete education error:', error);
+      toast.error("Failed to delete education entry");
+      console.error("Delete education error:", error);
     }
   };
 
-  const isSubmitting = createEducationMutation.isPending || updateEducationMutation.isPending || deleteEducationMutation.isPending;
+  const isSubmitting =
+    createEducationMutation.isPending ||
+    updateEducationMutation.isPending ||
+    deleteEducationMutation.isPending;
 
   if (isLoading) {
     return (
@@ -380,10 +421,11 @@ export const EducationSection: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <Card 
+      <Card
         className={cn(
           "p-6 transition-colors",
-          isEditing && "border-orange-500 border-2"
+          isEditing && "border-orange-500 border-2",
+          "max-w-4xl mx-auto"
         )}
       >
         <div className="flex justify-between items-center mb-6">
@@ -397,7 +439,7 @@ export const EducationSection: React.FC = () => {
 
         {isEditing ? (
           <div className="space-y-6">
-            <EducationDisplay 
+            <EducationDisplay
               educations={educations}
               onEditEducation={handleEditEducation}
             />
@@ -437,7 +479,7 @@ export const EducationSection: React.FC = () => {
             </div>
           </div>
         ) : (
-          <EducationDisplay 
+          <EducationDisplay
             educations={educations}
             onEditEducation={handleEditEducation}
           />

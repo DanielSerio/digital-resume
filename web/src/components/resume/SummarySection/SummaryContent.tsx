@@ -1,0 +1,31 @@
+import { Button } from "@/components/ui/button";
+import type { ProfessionalSummary } from "@/types";
+
+interface SummaryContentProps {
+  summary: ProfessionalSummary | undefined;
+  isEditing: boolean;
+  onEdit: () => void;
+}
+
+export function SummaryContent({ summary, isEditing, onEdit }: SummaryContentProps) {
+  if (isEditing) return null;
+
+  if (summary?.summaryText) {
+    return (
+      <div className="prose prose-sm max-w-none">
+        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+          {summary.summaryText}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center text-muted-foreground py-8">
+      <p>No professional summary available</p>
+      <Button variant="outline" size="sm" onClick={onEdit} className="mt-2">
+        Add Professional Summary
+      </Button>
+    </div>
+  );
+}
