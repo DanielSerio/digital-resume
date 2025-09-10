@@ -81,12 +81,15 @@ digital-resume/
 │   │   ├── lib/           # Utilities and validation
 │   │   └── types/         # TypeScript type definitions
 │   └── package.json
-├── src/                    # Node.js backend application
-│   ├── routes/            # Express API routes
-│   ├── lib/               # Backend utilities
-│   └── prisma/            # Database schema and migrations
+├── server/                 # Node.js backend application
+│   ├── src/               # Backend source code
+│   │   ├── routes/        # Express API routes
+│   │   └── lib/           # Backend utilities
+│   ├── prisma/            # Database schema and migrations
+│   └── package.json
 ├── plans/                  # Architecture and design docs
-├── docker-compose.yml      # Container orchestration
+├── docker-compose.yml      # Development container orchestration
+├── docker-compose.prod.yml # Production container orchestration
 ├── CLAUDE.md              # Development guidelines
 └── README.md              # This file
 ```
@@ -101,21 +104,27 @@ digital-resume/
 - **Tailwind CSS v4** - Utility-first styling with latest features
 - **Shadcn UI** - Beautiful, accessible component library
 - **React Hook Form** - Performant forms with validation
-- **Zod v4** - Schema validation and type inference
+- **Zod** - Schema validation and type inference (v4 frontend, v3 backend)
 - **TanStack Query** - Server state management and caching
 - **Zustand** - Lightweight client state management
+- **Date-fns** - Modern date utility library
+- **Sonner** - Beautiful toast notifications
+- **Lucide React** - Beautiful icon library
+- **React Day Picker** - Date picker component
 
 ### Backend
 - **Node.js & Express** - RESTful API server
-- **Prisma ORM** - Type-safe database queries
+- **Prisma ORM** - Type-safe database queries and migrations
 - **SQLite** - Lightweight, file-based database
-- **Zod** - Runtime validation and type safety
-- **PDF/DOCX Libraries** - Document generation
+- **Zod v3** - Runtime validation and type safety
+- **CORS** - Cross-origin resource sharing
+- **PDF/DOCX Libraries** - Document generation (planned)
 
 ### Development
 - **Docker** - Containerized development environment
-- **Vitest** - Fast unit testing with jsdom
-- **ESLint & Prettier** - Code quality and formatting
+- **Vitest** - Fast unit testing with jsdom (frontend)
+- **Jest** - Testing framework (backend)
+- **ts-node-dev** - TypeScript hot reload for development
 - **TypeScript** - End-to-end type safety
 
 ## 📊 Database Schema
@@ -153,18 +162,26 @@ The application uses a normalized SQLite database with the following main entiti
 ### Frontend (`/web` directory)
 ```bash
 npm run dev        # Start development server
-npm run build      # Build for production
-npm run preview    # Preview production build
+npm run start      # Start development server (alias for dev)
+npm run build      # Build for production (includes TypeScript compilation)
+npm run serve      # Preview production build
 npm run test       # Run unit tests
-npm run lint       # Lint code
 ```
 
-### Backend (root directory)
+### Backend (`/server` directory)
 ```bash
 npm run dev        # Start development server with hot reload
 npm run build      # Compile TypeScript
 npm run start      # Start production server
 npm run test       # Run tests
+npm run test:watch # Run tests in watch mode
+
+# Database management
+npm run db:migrate # Run database migrations
+npm run db:generate # Generate Prisma client
+npm run db:seed    # Seed database with sample data
+npm run db:reset   # Reset database
+npm run db:studio  # Open Prisma Studio
 ```
 
 ## 📈 Roadmap

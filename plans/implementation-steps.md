@@ -442,6 +442,15 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - [ ] Drag-and-drop reordering for work experience lines
 - [ ] File upload support (profile photos, documents)
 - [ ] Multiple resume templates/themes
+
+## Technical Debt & Improvements
+
+### Backend Improvements
+- [ ] **Update Backend Zod to v4** - Upgrade backend from Zod v3 to v4 for consistency with frontend
+  - Update package.json dependency
+  - Update validation schemas to use new v4 syntax if needed
+  - Test all API endpoints for compatibility
+  - Update any breaking changes in validation logic
 - [ ] Resume version history
 - [ ] Data import/export (JSON, XML)
 
