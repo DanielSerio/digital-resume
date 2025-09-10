@@ -147,6 +147,7 @@ The project follows strict TypeScript and React conventions defined in Cursor ru
 - Export templates use single fixed format (simple approach)
 - API validation errors preserve raw Zod error structure in response details
 - File upload patterns will be added later (not currently implemented)
-- Reference the `plans` directory for information about our application plan
+- Reference the `plans` directory for information about our application plan, architecture patterns, and design decisions
 - Reference `plans/layout.txt` for an ascii image of the main page layout
+- Reference `plans/patterns.md` for common UI patterns and component architecture guidelines
 - keep files under 200 lines

@@ -146,7 +146,7 @@ export const WorkExperienceSection: React.FC = () => {
       <Card
         className={cn(
           "p-6 transition-colors",
-          isEditing && "border-orange-500 border-2",
+          isEditing && (isAdding || editingExperience) && "border-orange-500 border-2",
           "max-w-4xl mx-auto"
         )}
       >
