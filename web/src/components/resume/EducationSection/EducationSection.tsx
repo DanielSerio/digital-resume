@@ -140,6 +140,7 @@ export const EducationSection: React.FC = () => {
           <div className="space-y-6">
             <EducationDisplay
               educations={educations}
+              isEditing={isEditing}
               onEditEducation={handleEditEducation}
             />
 
@@ -180,6 +181,7 @@ export const EducationSection: React.FC = () => {
         ) : (
           <EducationDisplay
             educations={educations}
+            isEditing={isEditing}
             onEditEducation={handleEditEducation}
           />
         )}

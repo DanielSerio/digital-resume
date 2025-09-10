@@ -54,21 +54,15 @@ export const skillSubcategorySchema = z.object({
 
 export type SkillSubcategoryFormData = z.infer<typeof skillSubcategorySchema>;
 
-// Education validation schema
+// Education validation schema (matches database schema)
 export const educationSchema = z.object({
   schoolName: z.string().min(1, 'School name is required').max(255, 'School name is too long'),
-  location: z.string().max(255, 'Location is too long').optional().or(z.literal('')),
-  degree: z.string().max(255, 'Degree is too long').optional().or(z.literal('')),
-  fieldOfStudy: z.string().max(255, 'Field of study is too long').optional().or(z.literal('')),
-  startDate: z.date().optional().or(z.literal(null)),
-  endDate: z.date().optional().or(z.literal(null)),
-  gpa: z.string().max(10, 'GPA is too long').optional().or(z.literal('')),
-  honors: z.string().max(255, 'Honors is too long').optional().or(z.literal('')),
-  relevantCoursework: z
-    .string()
-    .max(1000, 'Relevant coursework is too long')
-    .optional()
-    .or(z.literal('')),
+  schoolCity: z.string().min(1, 'School city is required').max(100, 'School city is too long'),
+  schoolState: z.string().min(1, 'School state is required').max(100, 'School state is too long'),
+  degreeType: z.string().min(1, 'Degree type is required').max(50, 'Degree type is too long'),
+  degreeTitle: z.string().min(1, 'Degree title is required').max(255, 'Degree title is too long'),
+  dateStarted: z.date({required_error: 'Start date is required'}),
+  dateFinished: z.date().optional().or(z.literal(null)),
 });
 
 export type EducationFormData = z.infer<typeof educationSchema>;

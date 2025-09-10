@@ -163,6 +163,7 @@ export const WorkExperienceSection: React.FC = () => {
           <div className="space-y-6">
             <WorkExperienceDisplay
               workExperiences={workExperiences}
+              isEditing={isEditing}
               onEditWorkExperience={handleEditExperience}
             />
 
@@ -203,6 +204,7 @@ export const WorkExperienceSection: React.FC = () => {
         ) : (
           <WorkExperienceDisplay
             workExperiences={workExperiences}
+            isEditing={false}
             onEditWorkExperience={handleEditExperience}
           />
         )}

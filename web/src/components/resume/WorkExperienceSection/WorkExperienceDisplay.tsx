@@ -5,11 +5,13 @@ import type { WorkExperience } from "@/types";
 
 interface WorkExperienceDisplayProps {
   workExperiences: WorkExperience[];
+  isEditing?: boolean;
   onEditWorkExperience: (workExperience: WorkExperience) => void;
 }
 
 export const WorkExperienceDisplay: React.FC<WorkExperienceDisplayProps> = ({
   workExperiences,
+  isEditing,
   onEditWorkExperience,
 }) => {
   if (workExperiences.length === 0) {
@@ -71,13 +73,15 @@ export const WorkExperienceDisplay: React.FC<WorkExperienceDisplayProps> = ({
                   </div>
                 )}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEditWorkExperience(experience)}
-            >
-              Edit
-            </Button>
+            {isEditing && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEditWorkExperience(experience)}
+              >
+                Edit
+              </Button>
+            )}
           </div>
         </div>
       ))}

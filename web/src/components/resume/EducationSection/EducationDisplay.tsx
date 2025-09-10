@@ -5,11 +5,13 @@ import type { Education } from "@/types";
 
 interface EducationDisplayProps {
   educations: Education[];
+  isEditing: boolean;
   onEditEducation: (education: Education) => void;
 }
 
 export const EducationDisplay: React.FC<EducationDisplayProps> = ({
   educations,
+  isEditing,
   onEditEducation,
 }) => {
   if (educations.length === 0) {
@@ -27,50 +29,37 @@ export const EducationDisplay: React.FC<EducationDisplayProps> = ({
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <h4 className="font-semibold">{education.schoolName}</h4>
-              {education.location && (
-                <p className="text-sm text-muted-foreground">
-                  {education.location}
-                </p>
-              )}
+              <p className="text-sm text-muted-foreground">
+                {education.schoolCity}, {education.schoolState}
+              </p>
               <div className="text-sm">
-                {education.degree && education.fieldOfStudy ? (
-                  <p>
-                    {education.degree} in {education.fieldOfStudy}
-                  </p>
-                ) : education.degree ? (
-                  <p>{education.degree}</p>
-                ) : education.fieldOfStudy ? (
-                  <p>{education.fieldOfStudy}</p>
-                ) : null}
+                <p>
+                  {education.degreeType} in {education.degreeTitle}
+                </p>
               </div>
               <div className="text-sm text-muted-foreground">
-                {education.startDate && education.endDate ? (
+                {education.dateStarted && education.dateFinished ? (
                   <p>
-                    {format(new Date(education.startDate), "MMM yyyy")} -{" "}
-                    {format(new Date(education.endDate), "MMM yyyy")}
+                    {format(new Date(education.dateStarted), "MMM yyyy")} -{" "}
+                    {format(new Date(education.dateFinished), "MMM yyyy")}
                   </p>
-                ) : education.startDate ? (
+                ) : education.dateStarted ? (
                   <p>
-                    {format(new Date(education.startDate), "MMM yyyy")} -
+                    {format(new Date(education.dateStarted), "MMM yyyy")} -
                     Present
                   </p>
                 ) : null}
               </div>
-              {education.gpa && <p className="text-sm">GPA: {education.gpa}</p>}
-              {education.honors && (
-                <p className="text-sm italic">{education.honors}</p>
-              )}
-              {education.relevantCoursework && (
-                <p className="text-sm mt-2">{education.relevantCoursework}</p>
-              )}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEditEducation(education)}
-            >
-              Edit
-            </Button>
+            {isEditing && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEditEducation(education)}
+              >
+                Edit
+              </Button>
+            )}
           </div>
         </div>
       ))}

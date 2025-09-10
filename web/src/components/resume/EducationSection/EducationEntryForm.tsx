@@ -38,14 +38,12 @@ export const EducationEntryForm: React.FC<EducationEntryFormProps> = ({
     resolver: standardSchemaResolver(educationSchema),
     defaultValues: {
       schoolName: education?.schoolName || "",
-      location: education?.location || "",
-      degree: education?.degree || "",
-      fieldOfStudy: education?.fieldOfStudy || "",
-      startDate: education?.startDate ? new Date(education.startDate) : null,
-      endDate: education?.endDate ? new Date(education.endDate) : null,
-      gpa: education?.gpa || "",
-      honors: education?.honors || "",
-      relevantCoursework: education?.relevantCoursework || "",
+      schoolCity: education?.schoolCity || "",
+      schoolState: education?.schoolState || "",
+      degreeType: education?.degreeType || "",
+      degreeTitle: education?.degreeTitle || "",
+      dateStarted: education?.dateStarted ? new Date(education.dateStarted) : undefined,
+      dateFinished: education?.dateFinished ? new Date(education.dateFinished) : null,
     },
   });
 
@@ -74,74 +72,94 @@ export const EducationEntryForm: React.FC<EducationEntryFormProps> = ({
         </div>
 
         <div>
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="schoolCity">School City *</Label>
           <Input
-            id="location"
-            {...form.register("location")}
-            placeholder="City, State"
-            className={cn(errors.location && "border-red-500")}
+            id="schoolCity"
+            {...form.register("schoolCity")}
+            placeholder="e.g., Boston"
+            className={cn(errors.schoolCity && "border-red-500")}
           />
-          {errors.location && (
+          {errors.schoolCity && (
             <p className="text-xs text-red-600 mt-1">
-              {errors.location.message}
+              {errors.schoolCity.message}
             </p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="degree">Degree</Label>
+          <Label htmlFor="schoolState">School State *</Label>
           <Input
-            id="degree"
-            {...form.register("degree")}
-            placeholder="e.g., Bachelor of Science"
-            className={cn(errors.degree && "border-red-500")}
+            id="schoolState"
+            {...form.register("schoolState")}
+            placeholder="e.g., MA"
+            className={cn(errors.schoolState && "border-red-500")}
           />
-          {errors.degree && (
-            <p className="text-xs text-red-600 mt-1">{errors.degree.message}</p>
+          {errors.schoolState && (
+            <p className="text-xs text-red-600 mt-1">{errors.schoolState.message}</p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="fieldOfStudy">Field of Study</Label>
+          <Label htmlFor="degreeType">Degree Type *</Label>
           <Input
-            id="fieldOfStudy"
-            {...form.register("fieldOfStudy")}
+            id="degreeType"
+            {...form.register("degreeType")}
+            placeholder="e.g., BFA, MBA, BS"
+            className={cn(errors.degreeType && "border-red-500")}
+          />
+          {errors.degreeType && (
+            <p className="text-xs text-red-600 mt-1">
+              {errors.degreeType.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="degreeTitle">Degree Title *</Label>
+          <Input
+            id="degreeTitle"
+            {...form.register("degreeTitle")}
             placeholder="e.g., Computer Science"
-            className={cn(errors.fieldOfStudy && "border-red-500")}
+            className={cn(errors.degreeTitle && "border-red-500")}
           />
-          {errors.fieldOfStudy && (
+          {errors.degreeTitle && (
             <p className="text-xs text-red-600 mt-1">
-              {errors.fieldOfStudy.message}
+              {errors.degreeTitle.message}
             </p>
           )}
         </div>
 
         <div>
-          <Label>Start Date</Label>
+          <Label>Start Date *</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
-                  !form.watch("startDate") && "text-muted-foreground"
+                  !form.watch("dateStarted") && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {form.watch("startDate")
-                  ? format(form.watch("startDate")!, "PPP")
+                {form.watch("dateStarted")
+                  ? format(form.watch("dateStarted")!, "PPP")
                   : "Pick start date"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={form.watch("startDate") || undefined}
-                onSelect={(date) => form.setValue("startDate", date || null)}
+                selected={form.watch("dateStarted") || undefined}
+                onSelect={(date) => form.setValue("dateStarted", date)}
                 autoFocus
               />
             </PopoverContent>
           </Popover>
+          {errors.dateStarted && (
+            <p className="text-xs text-red-600 mt-1">
+              {errors.dateStarted.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -152,65 +170,24 @@ export const EducationEntryForm: React.FC<EducationEntryFormProps> = ({
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
-                  !form.watch("endDate") && "text-muted-foreground"
+                  !form.watch("dateFinished") && "text-muted-foreground"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {form.watch("endDate")
-                  ? format(form.watch("endDate")!, "PPP")
-                  : "Pick end date"}
+                {form.watch("dateFinished")
+                  ? format(form.watch("dateFinished")!, "PPP")
+                  : "Pick end date (optional)"}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
-                selected={form.watch("endDate") || undefined}
-                onSelect={(date) => form.setValue("endDate", date || null)}
+                selected={form.watch("dateFinished") || undefined}
+                onSelect={(date) => form.setValue("dateFinished", date || null)}
                 autoFocus
               />
             </PopoverContent>
           </Popover>
-        </div>
-
-        <div>
-          <Label htmlFor="gpa">GPA</Label>
-          <Input
-            id="gpa"
-            {...form.register("gpa")}
-            placeholder="e.g., 3.8"
-            className={cn(errors.gpa && "border-red-500")}
-          />
-          {errors.gpa && (
-            <p className="text-xs text-red-600 mt-1">{errors.gpa.message}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="honors">Honors</Label>
-          <Input
-            id="honors"
-            {...form.register("honors")}
-            placeholder="e.g., Magna Cum Laude"
-            className={cn(errors.honors && "border-red-500")}
-          />
-          {errors.honors && (
-            <p className="text-xs text-red-600 mt-1">{errors.honors.message}</p>
-          )}
-        </div>
-
-        <div className="md:col-span-2">
-          <Label htmlFor="relevantCoursework">Relevant Coursework</Label>
-          <Textarea
-            id="relevantCoursework"
-            {...form.register("relevantCoursework")}
-            placeholder="List relevant courses..."
-            className={cn(errors.relevantCoursework && "border-red-500")}
-          />
-          {errors.relevantCoursework && (
-            <p className="text-xs text-red-600 mt-1">
-              {errors.relevantCoursework.message}
-            </p>
-          )}
         </div>
       </div>
 
