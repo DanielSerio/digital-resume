@@ -18,6 +18,17 @@ export default defineConfig({
       '@/components': resolve(__dirname, './src/components'),
     },
   },
+  server: {
+    host: '0.0.0.0', // Bind to all interfaces for Docker
+    port: 3000,
+    watch: {
+      usePolling: true, // Enable polling for file changes in Docker
+      interval: 1000, // Poll every second
+    },
+    hmr: {
+      port: 3000, // Use same port for HMR
+    },
+  },
   // Vitest configuration
   test: {
     globals: true,

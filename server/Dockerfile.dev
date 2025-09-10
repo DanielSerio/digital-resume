@@ -1,4 +1,10 @@
-FROM node:18-alpine
+FROM node:18-slim
+
+# Install OpenSSL and other necessary packages
+RUN apt-get update && apt-get install -y \
+    openssl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -7,9 +13,15 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
-# Generate Prisma client
+# Clear any existing Prisma client files completely
+RUN rm -rf node_modules/.prisma node_modules/@prisma/client || true
+
+# Set environment variable to force correct binary target detection
+ENV PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
+
+# Generate Prisma client with explicit binary target
 RUN npx prisma generate
 
 # Copy source code

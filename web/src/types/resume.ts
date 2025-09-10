@@ -64,14 +64,20 @@ export interface Education {
 export interface WorkExperience {
   id: number;
   companyName: string;
+  companyTagline?: string | null;
+  companyCity: string;
+  companyState: string;
   jobTitle: string;
   location?: string | null;
   startDate?: Date | null;
   endDate?: Date | null;
+  dateStarted?: Date | null;
+  dateEnded?: Date | null;
   description?: string | null;
   createdAt: Date;
   updatedAt: Date;
-  lines: WorkExperienceLine[];
+  lines?: WorkExperienceLine[];
+  workExperienceLines?: WorkExperienceLine[];
 }
 
 export interface WorkExperienceLine {

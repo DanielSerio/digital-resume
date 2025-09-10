@@ -49,6 +49,7 @@ services:
       - resume-db:/app/prisma
     environment:
       - DATABASE_URL=file:./dev.db
+      - PRISMA_CLI_BINARY_TARGETS=debian-openssl-3.0.x
     command: >
       sh -c "
         npx prisma migrate deploy &&

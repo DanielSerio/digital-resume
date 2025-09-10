@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react';
+import React, { type ReactNode } from "react";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -7,10 +7,10 @@ interface ErrorBoundaryProps {
 }
 
 // Simple error fallback component
-const DefaultErrorFallback: React.FC<{ error?: Error; resetError?: () => void }> = ({ 
-  error, 
-  resetError 
-}) => (
+const DefaultErrorFallback: React.FC<{
+  error?: Error;
+  resetError?: () => void;
+}> = ({ error, resetError }) => (
   <div className="min-h-[200px] flex items-center justify-center border border-red-200 rounded-lg bg-red-50">
     <div className="text-center p-6">
       <h2 className="text-lg font-semibold text-red-800 mb-2">
@@ -42,13 +42,12 @@ const DefaultErrorFallback: React.FC<{ error?: Error; resetError?: () => void }>
 );
 
 // Modern functional error boundary using React 18+ patterns
-export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ 
-  children, 
+export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
+  children,
   fallback,
-  className 
 }) => {
   return (
-    <div className={className}>
+    <>
       <React.Suspense
         fallback={
           <div className="min-h-[100px] flex items-center justify-center">
@@ -56,18 +55,16 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
           </div>
         }
       >
-        <ErrorCatcher fallback={fallback}>
-          {children}
-        </ErrorCatcher>
+        <ErrorCatcher fallback={fallback}>{children}</ErrorCatcher>
       </React.Suspense>
-    </div>
+    </>
   );
 };
 
 // Internal error catching component using error boundaries pattern
-const ErrorCatcher: React.FC<{ children: ReactNode; fallback?: ReactNode }> = ({ 
-  children, 
-  fallback 
+const ErrorCatcher: React.FC<{ children: ReactNode; fallback?: ReactNode }> = ({
+  children,
+  fallback,
 }) => {
   const [error, setError] = React.useState<Error | null>(null);
 
@@ -86,12 +83,15 @@ const ErrorCatcher: React.FC<{ children: ReactNode; fallback?: ReactNode }> = ({
       setError(new Error(event.reason));
     };
 
-    window.addEventListener('error', handleError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
     return () => {
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener("error", handleError);
+      window.removeEventListener(
+        "unhandledrejection",
+        handleUnhandledRejection
+      );
     };
   }, []);
 
@@ -110,7 +110,7 @@ const ErrorCatcher: React.FC<{ children: ReactNode; fallback?: ReactNode }> = ({
     if (caughtError instanceof Error) {
       setError(caughtError);
     } else {
-      setError(new Error('An unknown error occurred'));
+      setError(new Error("An unknown error occurred"));
     }
     return null;
   }
@@ -120,7 +120,7 @@ const ErrorCatcher: React.FC<{ children: ReactNode; fallback?: ReactNode }> = ({
 export const SectionErrorBoundary: React.FC<{
   children: ReactNode;
   sectionName?: string;
-}> = ({ children, sectionName = 'section' }) => {
+}> = ({ children, sectionName = "section" }) => {
   return (
     <ErrorBoundary
       fallback={
