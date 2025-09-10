@@ -12,18 +12,21 @@ A modern, single-user local application for creating, managing, and exporting pr
 ## ✨ Features
 
 ### 🎯 Core Functionality
+
 - **Single-Page Editing Interface** - Intuitive, section-by-section editing with visual feedback
 - **Comprehensive Resume Sections** - Contact info, professional summary, technical skills, education, and work experience
 - **Real-time Form Validation** - Powered by Zod v4 and React Hook Form
 - **Multi-Format Export** - Generate PDF and DOCX files with professional formatting
 
 ### 🎨 Advanced Resume Management
+
 - **Scoped Resumes** - Create multiple targeted versions (e.g., "Frontend Developer", "Full-Stack Position")
 - **Selective Content Inclusion** - Choose which skills and experiences to include per scope
 - **Copy-on-Write Editing** - Customize content for specific scopes without affecting original data
 - **Data Integrity** - Original resume data remains unchanged; scoped versions store only differences
 
 ### 🛠️ Technical Highlights
+
 - **Modern React 19** with latest JSX transform and concurrent features
 - **Type-Safe Routing** with TanStack Router and auto-generated route trees
 - **Responsive Design** using Tailwind CSS v4 and Shadcn UI components
@@ -34,25 +37,30 @@ A modern, single-user local application for creating, managing, and exporting pr
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Docker & Docker Compose** (recommended)
 - **Node.js 18+** and **npm** (for local development)
 
 ### Development Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd digital-resume
    ```
 
 2. **Start with Docker** (recommended)
+
    ```bash
    docker compose up
    ```
+
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:3001
 
 3. **Manual Setup** (alternative)
+
    ```bash
    # Backend
    npm install
@@ -97,6 +105,7 @@ digital-resume/
 ## 🎨 Technology Stack
 
 ### Frontend
+
 - **React 19** - Latest features with concurrent rendering
 - **TypeScript** - Strict type safety and enhanced DX
 - **TanStack Router** - Type-safe, file-based routing
@@ -113,6 +122,7 @@ digital-resume/
 - **React Day Picker** - Date picker component
 
 ### Backend
+
 - **Node.js & Express** - RESTful API server
 - **Prisma ORM** - Type-safe database queries and migrations
 - **SQLite** - Lightweight, file-based database
@@ -121,6 +131,7 @@ digital-resume/
 - **PDF/DOCX Libraries** - Document generation (planned)
 
 ### Development
+
 - **Docker** - Containerized development environment
 - **Vitest** - Fast unit testing with jsdom (frontend)
 - **Jest** - Testing framework (backend)
@@ -142,17 +153,20 @@ The application uses a normalized SQLite database with the following main entiti
 ## 🎯 Development Patterns
 
 ### Component Architecture
+
 - **Modular Design** - Components under 200 lines each
 - **Composition over Inheritance** - Flexible, reusable patterns
 - **Section-based Organization** - Logical grouping with sub-components
 - **Consistent Props Interface** - Standardized component APIs
 
 ### State Management
+
 - **Server State** - TanStack Query for API data, caching, and optimistic updates
 - **Client State** - Zustand for UI state and user preferences
 - **Form State** - React Hook Form with Zod validation schemas
 
 ### Code Quality
+
 - **Strict TypeScript** - No `any` types, comprehensive interfaces
 - **Modern React Patterns** - Hooks, context, and functional components
 - **Performance Optimization** - React.memo, lazy loading, efficient queries
@@ -161,6 +175,7 @@ The application uses a normalized SQLite database with the following main entiti
 ## 🔧 Available Scripts
 
 ### Frontend (`/web` directory)
+
 ```bash
 npm run dev        # Start development server
 npm run start      # Start development server (alias for dev)
@@ -170,6 +185,7 @@ npm run test       # Run unit tests
 ```
 
 ### Backend (`/server` directory)
+
 ```bash
 npm run dev        # Start development server with hot reload
 npm run build      # Compile TypeScript
@@ -194,11 +210,8 @@ npm run db:studio  # Open Prisma Studio
 - [ ] **Advanced Editing** - Drag-and-drop reordering and rich text
 - [ ] **Cloud Sync** - Optional cloud backup for local data
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our development guidelines in `CLAUDE.md` and architecture patterns in `plans/patterns.md`.
-
 ### Development Guidelines
+
 1. Follow the established component patterns
 2. Maintain TypeScript strict mode compliance
 3. Write tests for new features
