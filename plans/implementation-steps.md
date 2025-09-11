@@ -147,7 +147,7 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ---
 
-## Phase 4: Basic UI Components ⏳ [10/19 completed]
+## Phase 4: Basic UI Components ✅ [19/19 completed]
 
 **Goal**: Build the fundamental UI components and layout structure with modern form handling and conditional navigation.
 
@@ -173,24 +173,26 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - [x] **4.2.5** Create `WorkExperienceSection` component with internal display/edit toggle, local React Hook Form state, colored border for unsaved changes, up/down arrow reordering
 - [x] **4.2.6** Create main resume display page component integrating all sections
 
-### 4.3 Scoped Resume Features (Implement After Main Resume Complete)
-- [ ] **4.3.1** Add conditional scoped resume dropdown selector in header (shows all scoped resumes, disabled when none exist)
-- [ ] **4.3.2** Add "Create Scoped Resume" button in header (visible on scoped page)
-- [ ] **4.3.3** Create `ScopedResumeSelector` component using existing Shadcn Select component
-- [ ] **4.3.4** Create `ScopedResumeManager` component (create, rename, duplicate, delete operations)
+### 4.3 Scoped Resume Features (Page-Based Implementation)
+- [x] **4.3.1** ~~Add conditional scoped resume dropdown selector in header using TanStack Router~~ Moved selector to page for better UX
+- [x] **4.3.2** Create `ScopedResumeSelectorRouter` component using router state and URL params for selection (moved to page)
+- [x] **4.3.3** Create `ScopedResumeManager` component (create, rename, duplicate, delete operations)  
+- [x] **4.3.4** Implement URL-based scoped resume selection (`/scoped?resumeId=123`)
+- [x] **4.3.5** Add route loader to fetch scoped resumes data using TanStack Router
+- [x] **4.3.6** Move scoped resume selector from header to page content (eliminates infinite loop issues and simplifies state management)
 
 ### 4.4 Form Infrastructure (Using New Dependencies)
-- [ ] **4.4.1** Setup React Hook Form with Hookform Resolvers and Zod validation integration (inline field errors)
-- [ ] **4.4.2** Create reusable form components using existing Shadcn UI components (check `/web/src/components/ui` first)
-- [ ] **4.4.3** Create hybrid dropdown components for skill categories/subcategories using existing Select component
-- [ ] **4.4.4** Setup date picker components using existing Shadcn Calendar component
-- [ ] **4.4.5** Create work experience line editor with up/down arrow reordering (no drag-and-drop yet)
+- [x] **4.4.1** Setup React Hook Form with Hookform Resolvers and Zod validation integration (inline field errors)
+- [x] **4.4.2** Create reusable form components using existing Shadcn UI components (check `/web/src/components/ui` first)
+- [x] **4.4.3** Create hybrid dropdown components for skill categories/subcategories using existing Select component
+- [x] **4.4.4** Setup date picker components using existing Shadcn Calendar component
+- [x] **4.4.5** Create work experience line editor with up/down arrow reordering (no drag-and-drop yet)
 
 ### 4.5 UI Polish and Styling
-- [ ] **4.5.1** Apply consistent Tailwind CSS styling following design system
-- [ ] **4.5.2** Use existing Shadcn UI components from `/web/src/components/ui` (Button, Dialog, Card, etc.) - check directory first before adding new components
-- [ ] **4.5.3** Implement responsive design with vertical section stacking (no horizontal layouts)
-- [ ] **4.5.4** Add hover states, transitions, and loading indicators
+- [x] **4.5.1** Apply consistent Tailwind CSS styling following design system
+- [x] **4.5.2** Use existing Shadcn UI components from `/web/src/components/ui` (Button, Dialog, Card, etc.) - check directory first before adding new components
+- [x] **4.5.3** Implement responsive design with vertical section stacking (no horizontal layouts)
+- [x] **4.5.4** Add hover states, transitions, and loading indicators
 
 **Available Shadcn UI Components** (check `/web/src/components/ui` before adding new ones):
 - Form components: Button, Input, Label, Textarea, Checkbox, Select, Calendar
@@ -221,43 +223,80 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - ✅ All components use existing Shadcn UI components from `/web/src/components/ui`
 - ✅ Forms validate and submit data successfully to backend API
 - ✅ Work experience data structure mapping fixed for proper API integration
-- [ ] Scoped resume features implemented after main resume completion (conditional selector, create button, manager)
-- [ ] Form infrastructure completed with hybrid dropdowns and reusable components
-- [ ] UI polish and styling applied consistently
+- ✅ Scoped resume features implemented with page-based selector (create, duplicate, delete operations work)
+- ✅ Form infrastructure completed with hybrid dropdowns and reusable components
+- ✅ UI polish and styling applied consistently with proper responsive design
 
 ---
 
-## Phase 5: Advanced Features ⏳ [0/14 completed]
+## Phase 5: Testing & Quality Assurance ⏳ [0/12 completed]
+
+**Goal**: Implement comprehensive testing infrastructure with Playwright E2E testing and Storybook component development/testing.
+
+### 5.1 Testing Infrastructure Setup
+- [ ] **5.1.1** Install and configure Playwright for E2E testing with React applications
+- [ ] **5.1.2** Setup Playwright config with test directory structure and Docker support
+- [ ] **5.1.3** Install and configure Storybook with React/Vite support
+- [ ] **5.1.4** Configure Storybook with Tailwind CSS and Shadcn UI integration
+- [ ] **5.1.5** Setup test fixtures for database seeding and cleanup
+
+### 5.2 Component Testing with Storybook
+- [ ] **5.2.1** Create stories for all resume section components (Contact, Summary, Skills, Education, Work Experience)
+- [ ] **5.2.2** Create stories for scoped resume components (Manager, selector)
+- [ ] **5.2.3** Add interaction testing with @storybook/testing-library
+- [ ] **5.2.4** Document component props and usage patterns in stories
+
+### 5.3 E2E Testing with Playwright
+- [ ] **5.3.1** Implement page object models for resume sections
+- [ ] **5.3.2** Create E2E tests for core user flows: editing resume sections
+- [ ] **5.3.3** Add E2E tests for scoped resume management (create, duplicate, delete, select)
+- [ ] **5.3.4** Test form validation and error handling flows
+
+### 5.4 Backend Testing
+- [ ] **5.4.1** Write integration tests for all API endpoints using existing test patterns
+- [ ] **5.4.2** Test database transactions and rollbacks for complex operations
+
+**Phase 5 Completion Criteria:**
+- ✅ Storybook provides comprehensive component documentation and testing
+- ✅ Playwright E2E tests cover all critical user workflows
+- ✅ Component isolation testing ensures UI reliability
+- ✅ Integration tests validate API functionality
+- ✅ Test coverage meets quality standards for production readiness
+- ✅ CI/CD pipeline can run all tests automatically
+
+---
+
+## Phase 6: Advanced Features ⏳ [0/14 completed]
 
 **Goal**: Add sophisticated functionality and user experience improvements.
 
-### 5.1 Scoped Resume Management
-- [ ] **5.1.1** Implement scoped resume creation and naming
-- [ ] **5.1.2** Add scoped resume duplication functionality
-- [ ] **5.1.3** Create skill filtering interface for scoped resumes
-- [ ] **5.1.4** Create work experience filtering interface for scoped resumes
-- [ ] **5.1.5** Implement scoped professional summary editing (copy-on-write)
-- [ ] **5.1.6** Implement scoped work experience line editing (copy-on-write)
+### 6.1 Scoped Resume Management
+- [ ] **6.1.1** Implement scoped resume creation and naming
+- [ ] **6.1.2** Add scoped resume duplication functionality
+- [ ] **6.1.3** Create skill filtering interface for scoped resumes
+- [ ] **6.1.4** Create work experience filtering interface for scoped resumes
+- [ ] **6.1.5** Implement scoped professional summary editing (copy-on-write)
+- [ ] **6.1.6** Implement scoped work experience line editing (copy-on-write)
 
-### 5.2 Work Experience Management
-- [ ] **5.2.1** Implement adding/removing work experience entries
-- [ ] **5.2.2** Add work experience line management (add, edit, delete)
-- [ ] **5.2.3** Implement basic line ordering (up/down buttons)
-- [ ] **5.2.4** Add markdown preview for work experience lines
+### 6.2 Work Experience Management
+- [ ] **6.2.1** Implement adding/removing work experience entries
+- [ ] **6.2.2** Add work experience line management (add, edit, delete)
+- [ ] **6.2.3** Implement basic line ordering (up/down buttons)
+- [ ] **6.2.4** Add markdown preview for work experience lines
 
-### 5.3 Skills Management
-- [ ] **5.3.1** Implement dynamic skill category/subcategory creation via hybrid dropdowns
-- [ ] **5.3.2** Add skill grouping and filtering in UI
-- [ ] **5.3.3** Create skill search/autocomplete functionality
-- [ ] **5.3.4** Implement bulk skill operations
+### 6.3 Skills Management
+- [ ] **6.3.1** Implement dynamic skill category/subcategory creation via hybrid dropdowns
+- [ ] **6.3.2** Add skill grouping and filtering in UI
+- [ ] **6.3.3** Create skill search/autocomplete functionality
+- [ ] **6.3.4** Implement bulk skill operations
 
-### 5.4 Data Persistence
-- [ ] **5.4.1** Add auto-save functionality (debounced)
-- [ ] **5.4.2** Implement optimistic UI updates where appropriate
-- [ ] **5.4.3** Add data validation feedback
-- [ ] **5.4.4** Create data backup/restore functionality
+### 6.4 Data Persistence
+- [ ] **6.4.1** Add auto-save functionality (debounced)
+- [ ] **6.4.2** Implement optimistic UI updates where appropriate
+- [ ] **6.4.3** Add data validation feedback
+- [ ] **6.4.4** Create data backup/restore functionality
 
-**Phase 5 Completion Criteria:**
+**Phase 6 Completion Criteria:**
 - ✅ Scoped resume system works seamlessly (create, rename, duplicate, filter)
 - ✅ Copy-on-write editing preserves original data while allowing customization
 - ✅ Complex data operations work smoothly
@@ -267,76 +306,44 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ---
 
-## Phase 6: Export System ⏳ [0/12 completed]
+## Phase 7: Export System ⏳ [0/12 completed]
 
 **Goal**: Implement PDF and DOCX export functionality with template system.
 
-### 6.1 Template System
-- [ ] **6.1.1** Create export template directory structure
-- [ ] **6.1.2** Design HTML template for PDF export (basic professional layout - specific formatting preferences to be addressed later)
-- [ ] **6.1.3** Create CSS styling for PDF layout (clean, standard formatting)
-- [ ] **6.1.4** Design DOCX template structure (basic professional layout)
-- [ ] **6.1.5** Implement template engine (Handlebars or similar)
+### 7.1 Template System
+- [ ] **7.1.1** Create export template directory structure
+- [ ] **7.1.2** Design HTML template for PDF export (basic professional layout - specific formatting preferences to be addressed later)
+- [ ] **7.1.3** Create CSS styling for PDF layout (clean, standard formatting)
+- [ ] **7.1.4** Design DOCX template structure (basic professional layout)
+- [ ] **7.1.5** Implement template engine (Handlebars or similar)
 
-### 6.2 PDF Generation
-- [ ] **6.2.1** Install and configure Puppeteer
-- [ ] **6.2.2** Create PDF generation service
-- [ ] **6.2.3** Implement template rendering for PDF
-- [ ] **6.2.4** Add PDF styling and layout optimization
-- [ ] **6.2.5** Create `/api/resume/export/pdf` endpoint
+### 7.2 PDF Generation
+- [ ] **7.2.1** Install and configure Puppeteer
+- [ ] **7.2.2** Create PDF generation service
+- [ ] **7.2.3** Implement template rendering for PDF
+- [ ] **7.2.4** Add PDF styling and layout optimization
+- [ ] **7.2.5** Create `/api/resume/export/pdf` endpoint
 
-### 6.3 DOCX Generation
-- [ ] **6.3.1** Install and configure docx library
-- [ ] **6.3.2** Create DOCX generation service
-- [ ] **6.3.3** Implement document structure template
-- [ ] **6.3.4** Add formatting and styling for DOCX
-- [ ] **6.3.5** Create `/api/resume/export/docx` endpoint
+### 7.3 DOCX Generation
+- [ ] **7.3.1** Install and configure docx library
+- [ ] **7.3.2** Create DOCX generation service
+- [ ] **7.3.3** Implement document structure template
+- [ ] **7.3.4** Add formatting and styling for DOCX
+- [ ] **7.3.5** Create `/api/resume/export/docx` endpoint
 
-### 6.4 Frontend Export UI
-- [ ] **6.4.1** Add export buttons to main interface (main + scoped resume support)
-- [ ] **6.4.2** Implement download functionality
-- [ ] **6.4.3** Add export loading states
-- [ ] **6.4.4** Handle export errors gracefully
+### 7.4 Frontend Export UI
+- [ ] **7.4.1** Add export buttons to main interface (main + scoped resume support)
+- [ ] **7.4.2** Implement download functionality
+- [ ] **7.4.3** Add export loading states
+- [ ] **7.4.4** Handle export errors gracefully
 
-**Phase 6 Completion Criteria:**
+**Phase 7 Completion Criteria:**
 - ✅ PDF exports generate properly formatted resumes (main and scoped)
 - ✅ DOCX exports create editable documents (main and scoped)
 - ✅ Templates can be easily modified
 - ✅ Export process is fast and reliable
 - ✅ Users can download exported files successfully
 - ✅ Export UI clearly indicates which resume (main/scoped) is being exported
-
----
-
-## Phase 7: Testing & Quality Assurance ⏳ [0/10 completed]
-
-**Goal**: Ensure application reliability through comprehensive testing.
-
-### 7.1 Backend Testing
-- [ ] **7.1.1** Setup Jest for backend testing
-- [ ] **7.1.2** Write unit tests for all service methods
-- [ ] **7.1.3** Write integration tests for API endpoints
-- [ ] **7.1.4** Test database transactions and rollbacks
-- [ ] **7.1.5** Test export functionality with sample data
-
-### 7.2 Frontend Testing
-- [ ] **7.2.1** Setup Vitest testing environment
-- [ ] **7.2.2** Write component tests for all major components
-- [ ] **7.2.3** Test form validation and submission
-- [ ] **7.2.4** Test state management and API integration
-- [ ] **7.2.5** Test export download functionality
-
-### 7.3 End-to-End Testing
-- [ ] **7.3.1** Setup Playwright or Cypress for E2E tests
-- [ ] **7.3.2** Test complete user workflows
-- [ ] **7.3.3** Test Docker container functionality
-- [ ] **7.3.4** Validate export file generation
-
-**Phase 7 Completion Criteria:**
-- ✅ All critical functionality is tested
-- ✅ Test coverage meets quality standards
-- ✅ CI/CD can run tests automatically
-- ✅ Manual testing confirms all features work
 
 ---
 
@@ -372,25 +379,25 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ## Progress Tracking
 
-### Overall Progress: 55/104 tasks completed (52.9%)
+### Overall Progress: 64/106 tasks completed (60.4%)
 
 | Phase | Progress | Status |
 |-------|----------|--------|
 | Phase 1: Foundation Setup | 16/16 (100%) | ✅ Completed |
 | Phase 2: Core Data Layer | 16/16 (100%) | ✅ Completed |
 | Phase 3: Frontend State Management | 13/13 (100%) | ✅ Completed |
-| Phase 4: Basic UI Components | 10/19 (52.6%) | ⏳ In Progress |
-| Phase 5: Advanced Features | 0/14 (0%) | ⏳ Pending |
-| Phase 6: Export System | 0/12 (0%) | ⏳ Pending |
-| Phase 7: Testing & QA | 0/10 (0%) | ⏳ Pending |
+| Phase 4: Basic UI Components | 19/19 (100%) | ✅ Completed |
+| Phase 5: Testing & Quality Assurance | 0/12 (0%) | ⏳ **PRIORITY** |
+| Phase 6: Advanced Features | 0/14 (0%) | ⏳ Pending |
+| Phase 7: Export System | 0/12 (0%) | ⏳ Pending |
 | Phase 8: Polish & Documentation | 0/6 (0%) | ⏳ Pending |
 
 ### Current Focus
-**Active Phase**: Phase 4 - Basic UI Components  
-**Next Task**: 4.3.1 - Add conditional scoped resume dropdown selector in header
-**Implementation Order**: ✅ Header/navigation → ✅ Main resume sections → Scoped resume features
-**Component Pattern**: Single components (max 200 lines) with internal display/edit toggle and local form state
-**Layout Reference**: See `plans/layout.txt` for exact design specifications
+**Active Phase**: Phase 5 - Testing & Quality Assurance (**HIGH PRIORITY**)  
+**Next Task**: 5.1.1 - Install and configure Playwright for E2E testing with React applications
+**Implementation Order**: ✅ Foundation → ✅ Backend → ✅ Frontend → ✅ UI → **Testing Infrastructure** → Advanced Features → Export → Polish
+**Testing Priority**: Playwright E2E testing and Storybook component development/testing
+**Layout References**: See `plans/layout.txt` for main resume design and `plans/scoped-layout.txt` for scoped resume page design
 
 ### Major Accomplishments
 - **✅ Complete Backend API**: All database models, services, and REST endpoints implemented
@@ -401,6 +408,10 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - **✅ TypeScript Integration**: Full type safety with generated types from Prisma client
 - **✅ Form Validation**: Compatible Zod schemas for frontend validation matching backend structure
 - **✅ Error Handling**: Functional component error boundaries with graceful failure recovery
+- **✅ Complete UI Components**: All main resume sections with edit/display modes and form handling
+- **✅ Scoped Resume Management**: Page-based selector, CRUD operations, URL-based state management
+- **✅ Form Infrastructure**: React Hook Form + Zod validation with hybrid dropdowns and date pickers
+- **✅ Responsive Design**: Clean, vertical-stacked layout using Shadcn UI components
 
 ### Development Environment Features
 - **Hot Reloading**: Both frontend (Vite HMR with polling) and backend (ts-node-dev) support hot reloading in Docker
@@ -452,24 +463,7 @@ This document outlines a detailed multi-phase implementation plan for the digita
   - Test all API endpoints for compatibility
   - Update any breaking changes in validation logic
 
-### Testing Infrastructure
-- [ ] **Integrate Playwright for E2E Testing** - Add fixture-based integration testing
-  - Install @playwright/test and configure for React applications
-  - Setup Playwright config with test directory structure
-  - Create test fixtures for database seeding and cleanup
-  - Implement page object models for resume sections
-  - Add tests for core user flows: editing sections, creating scoped resumes, export functionality
-  - Configure CI/CD pipeline integration
-  - Setup Docker support for headless testing
-
-- [ ] **Integrate Storybook for Component Testing** - Add component development and testing environment
-  - Install Storybook with React/Vite support
-  - Configure Storybook with Tailwind CSS and Shadcn UI
-  - Create stories for all resume section components
-  - Add interaction testing with @storybook/testing-library
-  - Implement visual regression testing with Chromatic
-  - Document component props and usage patterns
-  - Setup Storybook build and deployment
+### Future Enhancements
 - [ ] Resume version history
 - [ ] Data import/export (JSON, XML)
 

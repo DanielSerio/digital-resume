@@ -7,13 +7,17 @@ interface SummaryContentProps {
   onEdit: () => void;
 }
 
-export function SummaryContent({ summary, isEditing, onEdit }: SummaryContentProps) {
+export function SummaryContent({
+  summary,
+  isEditing,
+  onEdit,
+}: SummaryContentProps) {
   if (isEditing) return null;
 
   if (summary?.summaryText) {
     return (
       <div className="prose prose-sm max-w-none">
-        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+        <p className="text-foreground leading-relaxed whitespace-pre-wrap max-w-[70ch] mx-auto mb-16">
           {summary.summaryText}
         </p>
       </div>

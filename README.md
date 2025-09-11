@@ -113,7 +113,7 @@ digital-resume/
 - **Tailwind CSS v4** - Utility-first styling with latest features
 - **Shadcn UI** - Beautiful, accessible component library
 - **React Hook Form** - Performant forms with validation
-- **Zod** - Schema validation and type inference (v4 frontend, v3 backend)
+- **Zod v4** - Schema validation and type inference (standardSchemaResolver)
 - **TanStack Query** - Server state management and caching
 - **Zustand** - Lightweight client state management
 - **Date-fns** - Modern date utility library
@@ -126,17 +126,18 @@ digital-resume/
 - **Node.js & Express** - RESTful API server
 - **Prisma ORM** - Type-safe database queries and migrations
 - **SQLite** - Lightweight, file-based database
-- **Zod v3** - Runtime validation and type safety
+- **Zod v3** - Runtime validation and type safety (to be upgraded to v4)
 - **CORS** - Cross-origin resource sharing
 - **PDF/DOCX Libraries** - Document generation (planned)
 
-### Development
+### Testing & Development
 
 - **Docker** - Containerized development environment
 - **Vitest** - Fast unit testing with jsdom (frontend)
 - **Jest** - Testing framework (backend)
-- **Playwright** - End-to-end testing with fixture-based integration tests (planned)
-- **Storybook** - Component development and visual testing environment (planned)
+- **Playwright** - End-to-end testing with fixture-based integration tests (**NEXT PRIORITY**)
+- **Storybook** - Component development and visual testing environment (**NEXT PRIORITY**)
+- **@storybook/testing-library** - Component interaction testing
 - **ts-node-dev** - TypeScript hot reload for development
 - **TypeScript** - End-to-end type safety
 
@@ -210,9 +211,11 @@ npm run db:studio  # Open Prisma Studio
 
 ## 📈 Roadmap
 
-### Testing & Quality Assurance
-- [ ] **Playwright Integration** - End-to-end testing with database fixtures
-- [ ] **Storybook Setup** - Component development and visual testing
+### Testing & Quality Assurance (Next Priority)
+- [ ] **Playwright Integration** - End-to-end testing with database fixtures (**HIGH PRIORITY**)
+- [ ] **Storybook Setup** - Component development and visual testing (**HIGH PRIORITY**)
+- [ ] **Component Testing** - Comprehensive story coverage for all resume sections
+- [ ] **E2E Test Coverage** - User workflows, form validation, scoped resume operations
 - [ ] **Visual Regression Testing** - Automated UI consistency checks
 
 ### Core Features

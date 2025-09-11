@@ -33,7 +33,7 @@ export function ContactLinkControl({
 
   return (
     <div className="text-sm">
-      <span className="font-medium">{label}: </span>
+      <span className="font-medium inline-block min-w-[9ch]">{label}: </span>
       <a
         href={href}
         className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"

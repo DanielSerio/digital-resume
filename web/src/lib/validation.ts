@@ -61,7 +61,7 @@ export const educationSchema = z.object({
   schoolState: z.string().min(1, 'School state is required').max(100, 'School state is too long'),
   degreeType: z.string().min(1, 'Degree type is required').max(50, 'Degree type is too long'),
   degreeTitle: z.string().min(1, 'Degree title is required').max(255, 'Degree title is too long'),
-  dateStarted: z.date({required_error: 'Start date is required'}),
+  dateStarted: z.date({ message: 'Start date is required' }),
   dateFinished: z.date().optional().or(z.literal(null)),
 });
 

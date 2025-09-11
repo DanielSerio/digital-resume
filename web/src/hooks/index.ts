@@ -2,3 +2,4 @@
 export * from './useResumeData';
 export * from './useResumeMutations';
 export * from './useSkillCategories';
+export * from './useScopedResumeData';

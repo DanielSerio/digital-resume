@@ -14,7 +14,7 @@ This is a **digital resume management application** with a React frontend built 
 - **Forms**: React Hook Form + Hookform Resolvers + Zod v4 for validation
   - **IMPORTANT**: Using Zod v4 requires `standardSchemaResolver` from `@hookform/resolvers/standard-schema` instead of `zodResolver`
 - **Authentication**: Local/single-user application (no authentication required)
-- **Testing**: Vitest with jsdom environment
+- **Testing**: Vitest with jsdom environment, Playwright for E2E testing (NEXT PRIORITY), Storybook for component development (NEXT PRIORITY)
 - **Styling**: Tailwind CSS with utility-first approach and Shadcn components
 
 ## Application Purpose
@@ -148,6 +148,8 @@ The project follows strict TypeScript and React conventions defined in Cursor ru
 - API validation errors preserve raw Zod error structure in response details
 - File upload patterns will be added later (not currently implemented)
 - Reference the `plans` directory for information about our application plan, architecture patterns, and design decisions
-- Reference `plans/layout.txt` for an ascii image of the main page layout
+- Reference `plans/layout.txt` for an ascii image of the main page layout and `plans/scoped-layout.txt` for scoped resume page layout
 - Reference `plans/patterns.md` for common UI patterns and component architecture guidelines
-- keep files under 200 lines
+- Keep files under 200 lines
+- **Current Development Phase**: Testing & Quality Assurance - implementing Playwright E2E testing and Storybook component development (HIGH PRIORITY)
+- **Next Phase**: Advanced Features - scoped resume functionality enhancement and user experience improvements

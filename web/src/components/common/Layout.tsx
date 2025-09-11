@@ -64,16 +64,6 @@ function Header() {
         >
           Scoped Resumes
         </Link>
-
-        {/* Conditional scoped resume selector - will be implemented later */}
-        {currentPath === "/scoped" && (
-          <div className="ml-auto flex items-center gap-2">
-            {/* Placeholder for scoped resume selector */}
-            <span className="text-sm text-muted-foreground">
-              Scoped resume selector will be added here
-            </span>
-          </div>
-        )}
       </nav>
     </header>
   );

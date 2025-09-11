@@ -13,7 +13,7 @@ interface ContactLinksProps {
 
 export function ContactLinks({ isEditing, contact, form }: ContactLinksProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-w-[320px]">
       <ContactLinkControl
         isEditing={isEditing}
         label="Email"

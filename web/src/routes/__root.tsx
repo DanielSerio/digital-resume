@@ -13,17 +13,6 @@ export const Route = createRootRoute({
         <Outlet />
       </ErrorBoundary>
       <Toaster />
-      <TanstackDevtools
-        config={{
-          position: "bottom-left",
-        }}
-        plugins={[
-          {
-            name: "Tanstack Router",
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
     </Layout>
   ),
   pendingComponent: () => (
@@ -42,7 +31,9 @@ export const Route = createRootRoute({
       <Layout.Header />
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center max-w-md">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">Something went wrong</h2>
+          <h2 className="text-lg font-semibold text-red-600 mb-2">
+            Something went wrong
+          </h2>
           <p className="text-muted-foreground mb-4">
             An error occurred while loading the application.
           </p>
@@ -51,7 +42,7 @@ export const Route = createRootRoute({
               Show error details
             </summary>
             <pre className="mt-2 text-xs bg-red-50 p-2 rounded border overflow-auto max-w-full">
-              {error?.message || 'Unknown error'}
+              {error?.message || "Unknown error"}
             </pre>
           </details>
           <button
