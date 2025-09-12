@@ -186,10 +186,10 @@ npm run build      # Build for production (includes TypeScript compilation)
 npm run serve      # Preview production build
 npm run test       # Run unit tests
 
-# Testing & Development (planned)
-npm run test:e2e   # Run Playwright end-to-end tests
-npm run storybook  # Start Storybook development server
-npm run build-storybook # Build Storybook for production
+# Testing & Development
+npm run test:e2e   # Run Playwright end-to-end tests (Phase 5)
+npm run storybook  # Start Storybook development server (Port 6006, Phase 5)
+npm run build-storybook # Build Storybook for production (Phase 5)
 ```
 
 ### Backend (`/server` directory)
@@ -211,12 +211,18 @@ npm run db:studio  # Open Prisma Studio
 
 ## 📈 Roadmap
 
-### Testing & Quality Assurance (Next Priority)
-- [ ] **Playwright Integration** - End-to-end testing with database fixtures (**HIGH PRIORITY**)
-- [ ] **Storybook Setup** - Component development and visual testing (**HIGH PRIORITY**)
-- [ ] **Component Testing** - Comprehensive story coverage for all resume sections
-- [ ] **E2E Test Coverage** - User workflows, form validation, scoped resume operations
-- [ ] **Visual Regression Testing** - Automated UI consistency checks
+### Testing & Quality Assurance (Next Priority - Phase 5)
+- [ ] **Playwright E2E Testing** - Host machine setup with separate `test.db`, functional testing priority (**HIGH PRIORITY**)
+- [ ] **Storybook Component Testing** - Port 6006, mock data, display/edit mode stories for all sections (**HIGH PRIORITY**)
+- [ ] **Priority Test Coverage**:
+  - Priority 1: Core resume editing (save/cancel each section)
+  - Priority 2: Form validation (required fields, error states) 
+  - Priority 3: Scoped resume management (CRUD operations)
+  - Priority 4: Skills management (hybrid dropdowns)
+  - Priority 5: Work experience reordering (up/down arrows)
+- [ ] **Component Interaction Testing** - @storybook/testing-library for user workflows
+- [ ] **Basic Accessibility Testing** - Playwright ARIA support for WCAG compliance
+- [ ] **API Integration Testing** - Backend endpoint validation with fixtures
 
 ### Core Features
 - [ ] **Template System** - Multiple resume templates and themes

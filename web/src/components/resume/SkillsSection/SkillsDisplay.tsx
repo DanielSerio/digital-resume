@@ -42,12 +42,16 @@ export const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
       {Object.entries(skillsByCategory).map(
         ([categoryName, categorySkills]) => (
           <div key={categoryName}>
-            <h4 className="font-medium text-foreground mb-3">
-              {categoryName}:
+            <h4 className="font-regular text-foreground pt-2 pb-2 px-2 border rounded-t-sm bg-background">
+              {categoryName}
             </h4>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 border p-2 border-t-0 rounded-b-sm bg-muted-foreground/5">
               {categorySkills.map((skill) => (
-                <Badge key={skill.id} variant="secondary" className="text-sm">
+                <Badge
+                  key={skill.id}
+                  variant="outline"
+                  className="text-sm bg-background"
+                >
                   {skill.name}
                   {isEditing && (
                     <button

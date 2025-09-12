@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 import type { WorkExperience } from "@/types";
 
 export const WorkExperienceSection: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingExperience, setEditingExperience] =
     useState<WorkExperience | null>(null);
@@ -33,16 +32,6 @@ export const WorkExperienceSection: React.FC = () => {
   const createExperienceMutation = useCreateWorkExperience();
   const updateExperienceMutation = useUpdateWorkExperience();
   const deleteExperienceMutation = useDeleteWorkExperience();
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setIsAdding(false);
-    setEditingExperience(null);
-  };
 
   const handleAddExperience = () => {
     setIsAdding(true);
@@ -146,68 +135,51 @@ export const WorkExperienceSection: React.FC = () => {
       <Card
         className={cn(
           "p-6 transition-colors",
-          isEditing && (isAdding || editingExperience) && "border-orange-500 border-2",
+          (isAdding || editingExperience) && "border-orange-500 border-2",
           "max-w-4xl mx-auto"
         )}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold">Work Experience</h2>
-          {!isEditing && (
-            <Button variant="outline" size="sm" onClick={handleEdit}>
-              Edit
+        </div>
+
+        <div className="space-y-6">
+          <WorkExperienceDisplay
+            workExperiences={workExperiences}
+            isEditing={true}
+            onEditWorkExperience={handleEditExperience}
+          />
+
+          {editingExperience && (
+            <WorkExperienceEntryForm
+              workExperience={editingExperience}
+              onSave={handleSaveEdit}
+              onCancel={() => setEditingExperience(null)}
+              onDelete={() => handleDelete(editingExperience.id)}
+              isSubmitting={isSubmitting}
+            />
+          )}
+
+          {isAdding && (
+            <WorkExperienceEntryForm
+              onSave={handleSaveNew}
+              onCancel={() => setIsAdding(false)}
+              isSubmitting={isSubmitting}
+            />
+          )}
+
+          {!isAdding && !editingExperience && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddExperience}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Work Experience
             </Button>
           )}
         </div>
-
-        {isEditing ? (
-          <div className="space-y-6">
-            <WorkExperienceDisplay
-              workExperiences={workExperiences}
-              isEditing={isEditing}
-              onEditWorkExperience={handleEditExperience}
-            />
-
-            {editingExperience && (
-              <WorkExperienceEntryForm
-                workExperience={editingExperience}
-                onSave={handleSaveEdit}
-                onCancel={() => setEditingExperience(null)}
-                onDelete={() => handleDelete(editingExperience.id)}
-                isSubmitting={isSubmitting}
-              />
-            )}
-
-            {isAdding && (
-              <WorkExperienceEntryForm
-                onSave={handleSaveNew}
-                onCancel={() => setIsAdding(false)}
-                isSubmitting={isSubmitting}
-              />
-            )}
-
-            {!isAdding && !editingExperience && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleAddExperience}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add Work Experience
-              </Button>
-            )}
-
-            <div className="flex justify-end pt-4 border-t">
-              <Button onClick={handleCancel}>Done</Button>
-            </div>
-          </div>
-        ) : (
-          <WorkExperienceDisplay
-            workExperiences={workExperiences}
-            isEditing={false}
-            onEditWorkExperience={handleEditExperience}
-          />
-        )}
       </Card>
     </ErrorBoundary>
   );

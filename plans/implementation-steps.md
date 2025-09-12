@@ -229,40 +229,62 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ---
 
-## Phase 5: Testing & Quality Assurance ⏳ [0/12 completed]
+## Phase 5: Testing & Quality Assurance ⏳ [0/17 completed]
 
 **Goal**: Implement comprehensive testing infrastructure with Playwright E2E testing and Storybook component development/testing.
 
+**Technical Decisions:**
+- **Playwright**: Run on host machine with `@playwright/test`, separate test database (`test.db` different path)
+- **Storybook**: Port 6006, realistic mock data matching current resume structure, both display/edit mode stories
+- **Database**: Same sample data as seed script for test fixtures, cleanup between test suites
+- **Test Environment**: Playwright auto-starts dev servers, headless by default for speed
+- **Component Stories**: Main sections + sub-components (Display) + form components (comprehensive coverage)
+- **File Structure**: `web/tests/e2e/` for Playwright, `web/stories/` for Storybook, alongside existing `web/tests/unit/`
+- **Priority**: Functional E2E tests first, visual regression testing deferred
+- **Implementation Order**: Contact → Summary → Skills → Education → Work Experience (planned order)
+- **Integration**: Scripts in `/web/package.json`, CI/CD configuration deferred
+
 ### 5.1 Testing Infrastructure Setup
-- [ ] **5.1.1** Install and configure Playwright for E2E testing with React applications
-- [ ] **5.1.2** Setup Playwright config with test directory structure and Docker support
-- [ ] **5.1.3** Install and configure Storybook with React/Vite support
-- [ ] **5.1.4** Configure Storybook with Tailwind CSS and Shadcn UI integration
-- [ ] **5.1.5** Setup test fixtures for database seeding and cleanup
+- [ ] **5.1.1** Install and configure Playwright (`@playwright/test`) with auto-start dev servers (headless by default)
+- [ ] **5.1.2** Setup Playwright config with `web/tests/e2e/` directory and separate `test.db` path
+- [ ] **5.1.3** Install and configure Storybook with React/Vite support (port 6006)
+- [ ] **5.1.4** Configure Storybook with Tailwind CSS and Shadcn UI, setup `web/stories/` directory
+- [ ] **5.1.5** Create realistic mock data matching current resume structure for Storybook stories
+- [ ] **5.1.6** Setup test database fixtures using same sample data as seed script with cleanup utilities
 
-### 5.2 Component Testing with Storybook
-- [ ] **5.2.1** Create stories for all resume section components (Contact, Summary, Skills, Education, Work Experience)
-- [ ] **5.2.2** Create stories for scoped resume components (Manager, selector)
-- [ ] **5.2.3** Add interaction testing with @storybook/testing-library
-- [ ] **5.2.4** Document component props and usage patterns in stories
+### 5.2 Component Testing with Storybook (Comprehensive Coverage)
+- [ ] **5.2.1** Create stories for main section components (ContactSection, SummarySection) with display/edit modes
+- [ ] **5.2.2** Create stories for sub-components (ContactDisplay, SummaryDisplay, SkillsDisplay, etc.) with realistic mock data
+- [ ] **5.2.3** Create stories for form components (ContactForm, SummaryForm, WorkExperienceEntryForm, etc.)
+- [ ] **5.2.4** Create stories for complex sections (Skills, Education, Work Experience) with mock data
+- [ ] **5.2.5** Create stories for scoped resume components (ScopedResumeManager, selector) with mock states
+- [ ] **5.2.6** Add interaction testing with @storybook/testing-library for user workflows
 
-### 5.3 E2E Testing with Playwright
-- [ ] **5.3.1** Implement page object models for resume sections
-- [ ] **5.3.2** Create E2E tests for core user flows: editing resume sections
-- [ ] **5.3.3** Add E2E tests for scoped resume management (create, duplicate, delete, select)
-- [ ] **5.3.4** Test form validation and error handling flows
+### 5.3 E2E Testing with Playwright (Planned Order: Contact → Summary → Skills → Education → Work Experience)
+- [ ] **5.3.1** Implement page object models and test database setup with fixtures (auto-start servers)
+- [ ] **5.3.2** **Priority 1**: Core resume editing tests - Contact → Summary sections (save/cancel workflows)
+- [ ] **5.3.3** **Priority 2**: Form validation tests - required fields and error states (Contact/Summary first)
+- [ ] **5.3.4** **Priority 1 continued**: Skills → Education → Work Experience section editing tests
+- [ ] **5.3.5** **Priority 3**: Scoped resume management tests (create, duplicate, delete, select)
+- [ ] **5.3.6** **Priority 4**: Skills management tests (hybrid dropdowns, add new categories)
+- [ ] **5.3.7** **Priority 5**: Work experience reordering tests (up/down arrows)
 
-### 5.4 Backend Testing
-- [ ] **5.4.1** Write integration tests for all API endpoints using existing test patterns
-- [ ] **5.4.2** Test database transactions and rollbacks for complex operations
+### 5.4 Backend Testing & Accessibility
+- [ ] **5.4.1** Write integration tests for API endpoints using existing patterns
+- [ ] **5.4.2** Add basic accessibility testing using Playwright's built-in ARIA support
 
 **Phase 5 Completion Criteria:**
-- ✅ Storybook provides comprehensive component documentation and testing
-- ✅ Playwright E2E tests cover all critical user workflows
-- ✅ Component isolation testing ensures UI reliability
-- ✅ Integration tests validate API functionality
-- ✅ Test coverage meets quality standards for production readiness
-- ✅ CI/CD pipeline can run all tests automatically
+- ✅ Storybook (port 6006) provides comprehensive component documentation with realistic mock data
+- ✅ Stories created for main sections, sub-components (Display), and form components
+- ✅ Playwright E2E tests follow planned order: Contact → Summary → Skills → Education → Work Experience
+- ✅ Test database (`test.db`) with separate path uses same sample data as seed script
+- ✅ Playwright auto-starts dev servers, runs headless by default for speed
+- ✅ File structure: `web/tests/e2e/`, `web/stories/`, alongside existing `web/tests/unit/`
+- ✅ Component interaction testing validates user workflows in isolation
+- ✅ Priority test coverage: editing → validation → scoped resumes → skills → reordering
+- ✅ Basic accessibility testing ensures WCAG compliance using Playwright ARIA support
+- ✅ API integration tests validate backend functionality
+- ✅ Test scripts integrated into `/web/package.json` for local development workflow
 
 ---
 
@@ -379,7 +401,7 @@ This document outlines a detailed multi-phase implementation plan for the digita
 
 ## Progress Tracking
 
-### Overall Progress: 64/106 tasks completed (60.4%)
+### Overall Progress: 64/114 tasks completed (56.1%)
 
 | Phase | Progress | Status |
 |-------|----------|--------|
@@ -387,14 +409,14 @@ This document outlines a detailed multi-phase implementation plan for the digita
 | Phase 2: Core Data Layer | 16/16 (100%) | ✅ Completed |
 | Phase 3: Frontend State Management | 13/13 (100%) | ✅ Completed |
 | Phase 4: Basic UI Components | 19/19 (100%) | ✅ Completed |
-| Phase 5: Testing & Quality Assurance | 0/12 (0%) | ⏳ **PRIORITY** |
+| Phase 5: Testing & Quality Assurance | 0/17 (0%) | ⏳ **PRIORITY** |
 | Phase 6: Advanced Features | 0/14 (0%) | ⏳ Pending |
 | Phase 7: Export System | 0/12 (0%) | ⏳ Pending |
 | Phase 8: Polish & Documentation | 0/6 (0%) | ⏳ Pending |
 
 ### Current Focus
 **Active Phase**: Phase 5 - Testing & Quality Assurance (**HIGH PRIORITY**)  
-**Next Task**: 5.1.1 - Install and configure Playwright for E2E testing with React applications
+**Next Task**: 5.1.1 - Install and configure Playwright (`@playwright/test`) with auto-start dev servers (headless by default)
 **Implementation Order**: ✅ Foundation → ✅ Backend → ✅ Frontend → ✅ UI → **Testing Infrastructure** → Advanced Features → Export → Polish
 **Testing Priority**: Playwright E2E testing and Storybook component development/testing
 **Layout References**: See `plans/layout.txt` for main resume design and `plans/scoped-layout.txt` for scoped resume page design
