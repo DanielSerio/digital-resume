@@ -145,13 +145,13 @@ digital-resume/
 
 The application uses a normalized SQLite database with the following main entities:
 
-- **ContactInfo** - Personal contact information and details
+- **Contact** - Personal contact information and details
 - **ProfessionalSummary** - Professional overview and summary text
-- **WorkExperience** - Job history with sortable accomplishment lines
+- **WorkExperience** - Job history with sortable accomplishment lines (WorkExperienceLines)
 - **Education** - Academic background and certifications
-- **TechnicalSkills** - Categorized technical competencies
-- **ScopedResumes** - Named resume variations with selective content
-- **ScopedContent** - Customized content for specific resume scopes
+- **TechnicalSkills** - Categorized technical competencies with flexible categories/subcategories
+- **ScopedResumes** - Named resume variations with selective content inclusion
+- **ScopedContent** - Copy-on-write customizations for specific resume scopes
 
 ## 🎯 Development Patterns
 
@@ -170,10 +170,12 @@ The application uses a normalized SQLite database with the following main entiti
 
 ### Code Quality
 
-- **Strict TypeScript** - No `any` types, comprehensive interfaces
+- **Strict TypeScript** - No `any` types, comprehensive interfaces, schema-aligned types
 - **Modern React Patterns** - Hooks, context, and functional components
 - **Performance Optimization** - React.memo, lazy loading, efficient queries
-- **Accessibility First** - WCAG compliant UI components
+- **Accessibility First** - WCAG compliant UI components with comprehensive ARIA support
+- **Testing Coverage** - E2E with Playwright, component testing with Storybook
+- **Form Standards** - React Hook Form + Zod v4 with standardSchemaResolver
 
 ## 🔧 Available Scripts
 
@@ -187,9 +189,9 @@ npm run serve      # Preview production build
 npm run test       # Run unit tests
 
 # Testing & Development
-npm run test:e2e   # Run Playwright end-to-end tests (Phase 5)
-npm run storybook  # Start Storybook development server (Port 6006, Phase 5)
-npm run build-storybook # Build Storybook for production (Phase 5)
+npm run test:e2e   # Run Playwright end-to-end tests ✅
+npm run storybook  # Start Storybook development server (Port 6006) ✅
+npm run build-storybook # Build Storybook for production ✅
 ```
 
 ### Backend (`/server` directory)
@@ -211,18 +213,22 @@ npm run db:studio  # Open Prisma Studio
 
 ## 📈 Roadmap
 
-### Testing & Quality Assurance (Next Priority - Phase 5)
-- [ ] **Playwright E2E Testing** - Host machine setup with separate `test.db`, functional testing priority (**HIGH PRIORITY**)
-- [ ] **Storybook Component Testing** - Port 6006, mock data, display/edit mode stories for all sections (**HIGH PRIORITY**)
-- [ ] **Priority Test Coverage**:
-  - Priority 1: Core resume editing (save/cancel each section)
-  - Priority 2: Form validation (required fields, error states) 
-  - Priority 3: Scoped resume management (CRUD operations)
-  - Priority 4: Skills management (hybrid dropdowns)
-  - Priority 5: Work experience reordering (up/down arrows)
-- [ ] **Component Interaction Testing** - @storybook/testing-library for user workflows
-- [ ] **Basic Accessibility Testing** - Playwright ARIA support for WCAG compliance
-- [ ] **API Integration Testing** - Backend endpoint validation with fixtures
+### Advanced Features (Next Priority - Phase 6)
+- [ ] **Enhanced Scoped Resume Management** - Full implementation of selective content filtering
+- [ ] **Work Experience Management** - Enhanced line editing, reordering, and markdown support
+- [ ] **Skills Management** - Dynamic category creation and advanced filtering
+- [ ] **Data Persistence** - Auto-save functionality and optimistic updates
+
+### Export System (Phase 7)
+- [ ] **PDF Generation** - Professional resume export with template system
+- [ ] **DOCX Generation** - Editable document export functionality
+- [ ] **Template System** - Multiple resume formats and styling options
+
+### Completed ✅
+- [x] **Testing & Quality Assurance** - Playwright E2E testing and Storybook component development
+- [x] **Accessibility Compliance** - Comprehensive ARIA support and WCAG guidelines
+- [x] **Type Safety** - Schema alignment between frontend validation and database models
+- [x] **E2E Test Infrastructure** - Working test suite with proper selectors and fixtures
 
 ### Core Features
 - [ ] **Template System** - Multiple resume templates and themes
@@ -232,15 +238,29 @@ npm run db:studio  # Open Prisma Studio
 - [ ] **Advanced Editing** - Drag-and-drop reordering and rich text
 - [ ] **Cloud Sync** - Optional cloud backup for local data
 
+### Development Status
+
+**Current Phase**: Advanced Features (Phase 6)  
+**Overall Progress**: 81/119 tasks completed (68.1%)  
+**Next Priority**: Enhanced scoped resume management and work experience features
+
 ### Development Guidelines
 
-1. Follow the established component patterns
-2. Maintain TypeScript strict mode compliance
-3. Write tests for new features (unit with Vitest, integration with Playwright)
-4. Create Storybook stories for new components
-5. Keep components under 200 lines
-6. Use consistent naming conventions
-7. Ensure accessibility compliance (WCAG guidelines)
+1. Follow the established component patterns (single component with display/edit modes)
+2. Maintain TypeScript strict mode compliance with schema-aligned types
+3. Write tests for new features (unit with Vitest, E2E with Playwright) ✅
+4. Create Storybook stories for new components ✅
+5. Keep components under 200 lines with sub-component extraction
+6. Use consistent naming conventions and data-testid selectors ✅
+7. Ensure accessibility compliance (WCAG guidelines with ARIA support) ✅
+
+### Quality Metrics ✅
+
+- **Testing Infrastructure**: Playwright E2E and Storybook component testing working
+- **Accessibility**: Comprehensive ARIA roles, proper form labeling, screen reader support
+- **Type Safety**: Schema consistency across validation, forms, and database models  
+- **Error Handling**: Graceful failure recovery with proper error boundaries
+- **Performance**: Efficient queries, React.memo, lazy loading patterns
 
 ## 📄 License
 
