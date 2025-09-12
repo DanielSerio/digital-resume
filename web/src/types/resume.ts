@@ -49,14 +49,12 @@ export interface TechnicalSkill {
 export interface Education {
   id: number;
   schoolName: string;
-  location?: string | null;
-  degree?: string | null;
-  fieldOfStudy?: string | null;
-  startDate?: Date | null;
-  endDate?: Date | null;
-  gpa?: string | null;
-  honors?: string | null;
-  relevantCoursework?: string | null;
+  schoolCity: string;
+  schoolState: string;
+  degreeType: string;
+  degreeTitle: string;
+  dateStarted: Date;
+  dateFinished: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -68,23 +66,18 @@ export interface WorkExperience {
   companyCity: string;
   companyState: string;
   jobTitle: string;
-  location?: string | null;
-  startDate?: Date | null;
-  endDate?: Date | null;
-  dateStarted?: Date | null;
-  dateEnded?: Date | null;
-  description?: string | null;
+  dateStarted: Date;
+  dateEnded: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  lines?: WorkExperienceLine[];
-  workExperienceLines?: WorkExperienceLine[];
+  lines: WorkExperienceLine[];
 }
 
 export interface WorkExperienceLine {
   id: number;
   workExperienceId: number;
   lineText: string;
-  sortOrder: number;
+  lineId: number;
   createdAt: Date;
   updatedAt: Date;
 }
