@@ -27,7 +27,14 @@ export function SummaryContent({
   return (
     <div className="text-center text-muted-foreground py-8">
       <p>No professional summary available</p>
-      <Button variant="outline" size="sm" onClick={onEdit} className="mt-2">
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={onEdit} 
+        className="mt-2"
+        aria-label="Add professional summary"
+        role="button"
+      >
         Add Professional Summary
       </Button>
     </div>

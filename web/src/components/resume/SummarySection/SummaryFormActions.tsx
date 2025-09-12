@@ -16,18 +16,22 @@ export function SummaryFormActions({
   if (!isEditing) return null;
 
   return (
-    <div className="flex justify-end gap-2 pt-4 border-t">
+    <div className="flex justify-end gap-2 pt-4 border-t" role="group" aria-label="Form actions">
       <Button
         type="button"
         variant="outline"
         onClick={onCancel}
         disabled={isSubmitting}
+        aria-label="Cancel editing professional summary"
+        role="button"
       >
         Cancel
       </Button>
       <Button
         type="submit"
         disabled={!isDirty || isSubmitting}
+        aria-label={isSubmitting ? 'Saving professional summary' : 'Save professional summary'}
+        role="button"
       >
         {isSubmitting ? 'Saving...' : 'Save'}
       </Button>

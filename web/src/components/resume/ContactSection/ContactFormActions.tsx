@@ -16,16 +16,23 @@ export function ContactFormActions({
   if (!isEditing) return null;
 
   return (
-    <div className="flex justify-end gap-2 pt-4 border-t">
+    <div className="flex justify-end gap-2 pt-4 border-t" role="group" aria-label="Form actions">
       <Button
         type="button"
         variant="outline"
         onClick={onCancel}
         disabled={isSubmitting}
+        aria-label="Cancel editing contact information"
+        role="button"
       >
         Cancel
       </Button>
-      <Button type="submit" disabled={!isDirty || isSubmitting}>
+      <Button 
+        type="submit" 
+        disabled={!isDirty || isSubmitting}
+        aria-label={isSubmitting ? "Saving contact information" : "Save contact information"}
+        role="button"
+      >
         {isSubmitting ? "Saving..." : "Save"}
       </Button>
     </div>

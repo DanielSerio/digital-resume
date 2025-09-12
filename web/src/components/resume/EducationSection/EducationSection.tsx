@@ -121,9 +121,12 @@ export const EducationSection: React.FC = () => {
   return (
     <ErrorBoundary>
       <Card
+        data-testid="EducationCard"
         className={cn(
           "p-6 transition-colors",
-          isEditing && (isAdding || editingEducation) && "border-orange-500 border-2",
+          isEditing &&
+            (isAdding || editingEducation) &&
+            "border-orange-500 border-2",
           "max-w-4xl mx-auto"
         )}
       >

@@ -13,14 +13,15 @@ export class TestDatabase {
   static async setup(): Promise<void> {
     try {
       // Change to backend directory and setup test database
-      const backendDir = path.join(process.cwd(), '..');
+      const backendDir = path.join(process.cwd(), '..', 'server');
       
       // Set test database URL
       process.env.DATABASE_URL = `file:${this.testDbPath}`;
       
       // Run database migration and seed with sample data
-      await execAsync('npx prisma db push --force-reset --schema=prisma/schema.prisma', { cwd: backendDir });
-      await execAsync('npx prisma db seed', { cwd: backendDir });
+      const testEnv = { ...process.env, DATABASE_URL: `file:${this.testDbPath}` };
+      await execAsync(`npx prisma db push --force-reset`, { cwd: backendDir, env: testEnv });
+      await execAsync(`npx prisma db seed`, { cwd: backendDir, env: testEnv });
       
       console.log('Test database setup completed');
     } catch (error) {

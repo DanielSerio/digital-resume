@@ -42,17 +42,17 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
     defaultValues: {
       companyName: workExperience?.companyName || "",
       jobTitle: workExperience?.jobTitle || "",
-      location: workExperience?.location || "",
-      startDate: workExperience?.startDate
-        ? new Date(workExperience.startDate)
-        : null,
-      endDate: workExperience?.endDate
-        ? new Date(workExperience.endDate)
-        : null,
-      description: workExperience?.description || "",
-      lines: workExperience?.workExperienceLines?.map((line) => ({
+      companyCity: workExperience?.companyCity || "",
+      companyState: workExperience?.companyState || "",
+      startDate: workExperience?.dateStarted
+        ? new Date(workExperience.dateStarted)
+        : new Date(),
+      endDate: workExperience?.dateEnded
+        ? new Date(workExperience.dateEnded)
+        : undefined,
+      lines: workExperience?.lines?.map((line, index) => ({
         lineText: line.lineText,
-        sortOrder: line.sortOrder || 0,
+        sortOrder: index,
       })) || [{ lineText: "", sortOrder: 0 }],
     },
   });
@@ -70,53 +70,85 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
     append({ lineText: "", sortOrder: fields.length });
   };
 
+  const handleSubmit = (data: CompleteWorkExperienceFormData) => {
+    onSave(data);
+  };
+
   return (
     <form
-      onSubmit={form.handleSubmit(onSave)}
+      onSubmit={form.handleSubmit(handleSubmit)}
       className="space-y-4 p-4 border rounded-lg"
+      role="form"
+      aria-label="Work experience entry form"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="group" aria-label="Company information">
         <div>
-          <Label htmlFor="companyName">Company *</Label>
+          <Label htmlFor="companyName" id="companyName-label">Company *</Label>
           <Input
             id="companyName"
             {...form.register("companyName")}
             className={cn(errors.companyName && "border-red-500")}
+            role="textbox"
+            aria-required="true"
+            aria-invalid={!!errors.companyName}
+            aria-describedby={errors.companyName ? "companyName-error" : undefined}
+            aria-labelledby="companyName-label"
           />
           {errors.companyName && (
-            <p className="text-xs text-red-600 mt-1">
+            <p className="text-xs text-red-600 mt-1" id="companyName-error" role="alert">
               {errors.companyName.message}
             </p>
           )}
         </div>
 
         <div>
-          <Label htmlFor="jobTitle">Position *</Label>
+          <Label htmlFor="jobTitle" id="jobTitle-label">Position *</Label>
           <Input
             id="jobTitle"
             {...form.register("jobTitle")}
             className={cn(errors.jobTitle && "border-red-500")}
+            role="textbox"
+            aria-required="true"
+            aria-invalid={!!errors.jobTitle}
+            aria-describedby={errors.jobTitle ? "jobTitle-error" : undefined}
+            aria-labelledby="jobTitle-label"
           />
           {errors.jobTitle && (
-            <p className="text-xs text-red-600 mt-1">
+            <p className="text-xs text-red-600 mt-1" id="jobTitle-error" role="alert">
               {errors.jobTitle.message}
             </p>
           )}
         </div>
 
-        <div>
-          <Label htmlFor="location">Location</Label>
-          <Input
-            id="location"
-            {...form.register("location")}
-            placeholder="City, State"
-            className={cn(errors.location && "border-red-500")}
-          />
-          {errors.location && (
-            <p className="text-xs text-red-600 mt-1">
-              {errors.location.message}
-            </p>
-          )}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="companyCity">City</Label>
+            <Input
+              id="companyCity"
+              {...form.register("companyCity")}
+              placeholder="Company city"
+              className={cn(errors.companyCity && "border-red-500")}
+            />
+            {errors.companyCity && (
+              <p className="text-xs text-red-600 mt-1">
+                {errors.companyCity.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="companyState">State</Label>
+            <Input
+              id="companyState"
+              {...form.register("companyState")}
+              placeholder="Company state"
+              className={cn(errors.companyState && "border-red-500")}
+            />
+            {errors.companyState && (
+              <p className="text-xs text-red-600 mt-1">
+                {errors.companyState.message}
+              </p>
+            )}
+          </div>
         </div>
 
 
@@ -141,7 +173,7 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
               <Calendar
                 mode="single"
                 selected={form.watch("startDate") || undefined}
-                onSelect={(date) => form.setValue("startDate", date || null)}
+                onSelect={(date) => form.setValue("startDate", date!)}
 autoFocus
               />
             </PopoverContent>
@@ -170,7 +202,7 @@ autoFocus
                 <Calendar
                   mode="single"
                   selected={form.watch("endDate") || undefined}
-                  onSelect={(date) => form.setValue("endDate", date || null)}
+                  onSelect={(date) => form.setValue("endDate", date || undefined)}
   autoFocus
                 />
               </PopoverContent>

@@ -34,9 +34,9 @@ export const mockContactInfo: Contact = {
   title: "Senior Software Engineer",
   email: "john.doe@email.com",
   phone: "(555) 123-4567",
-  githubUrl: "https://github.com/johndoe",
-  websiteUrl: "https://johndoe.dev",
-  linkedinUrl: "https://linkedin.com/in/johndoe",
+  github: "https://github.com/johndoe",
+  website: "https://johndoe.dev",
+  linkedin: "https://linkedin.com/in/johndoe",
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
 };

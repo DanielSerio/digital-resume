@@ -30,38 +30,25 @@ export const WorkExperienceDisplay: React.FC<WorkExperienceDisplayProps> = ({
             <div className="space-y-2">
               <h4 className="font-semibold">{experience.jobTitle}</h4>
               <p className="text-muted-foreground">{experience.companyName}</p>
-              {(experience.location || experience.companyCity) && (
-                <p className="text-sm text-muted-foreground">
-                  {experience.location ||
-                    `${experience.companyCity}${experience.companyState ? `, ${experience.companyState}` : ""}`}
-                </p>
-              )}
+              <p className="text-sm text-muted-foreground">
+                {`${experience.companyCity}${experience.companyState ? `, ${experience.companyState}` : ""}`}
+              </p>
               <div className="text-sm text-muted-foreground">
-                {(experience.startDate || experience.dateStarted) && (
+                {experience.dateStarted && (
                   <p>
-                    {format(
-                      new Date(experience.startDate || experience.dateStarted!),
-                      "MMM yyyy"
-                    )}{" "}
+                    {format(new Date(experience.dateStarted), "MMM yyyy")}{" "}
                     -{" "}
-                    {!experience.endDate && !experience.dateEnded
+                    {!experience.dateEnded
                       ? "Present"
-                      : experience.endDate || experience.dateEnded
-                        ? format(
-                            new Date(
-                              experience.endDate || experience.dateEnded!
-                            ),
-                            "MMM yyyy"
-                          )
-                        : "Present"}
+                      : format(new Date(experience.dateEnded), "MMM yyyy")}
                   </p>
                 )}
               </div>
-              {experience.workExperienceLines &&
-                experience.workExperienceLines.length > 0 && (
+              {experience.lines &&
+                experience.lines.length > 0 && (
                   <div className="mt-3">
                     <ul className="text-sm space-y-1">
-                      {experience.workExperienceLines.map((line) => (
+                      {experience.lines.map((line) => (
                         <li key={line.id} className="flex items-start gap-2">
                           <span className="text-muted-foreground mt-1.5">
                             •

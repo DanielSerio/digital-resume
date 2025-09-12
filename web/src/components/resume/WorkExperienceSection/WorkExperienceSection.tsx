@@ -16,7 +16,7 @@ import {
 } from "@/hooks";
 import { type CompleteWorkExperienceFormData } from "@/lib/validation";
 import { cn } from "@/lib/utils";
-import type { WorkExperience } from "@/types";
+import type { WorkExperience, WorkExperienceLineInput } from "@/types";
 
 export const WorkExperienceSection: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
@@ -46,11 +46,17 @@ export const WorkExperienceSection: React.FC = () => {
       const { lines, ...workExperience } = data;
       await createExperienceMutation.mutateAsync({
         workExperience: {
-          ...workExperience,
-          companyCity: "",
-          companyState: "",
+          companyName: workExperience.companyName,
+          companyCity: workExperience.companyCity || "",
+          companyState: workExperience.companyState || "",
+          jobTitle: workExperience.jobTitle,
+          dateStarted: workExperience.startDate,
+          dateEnded: workExperience.endDate ?? null,
         },
-        lines,
+        lines: lines.map((line, index): WorkExperienceLineInput => ({
+          lineText: line.lineText,
+          lineId: index + 1,
+        })),
       });
       toast.success("Work experience added successfully");
       setIsAdding(false);
@@ -68,11 +74,17 @@ export const WorkExperienceSection: React.FC = () => {
         id: editingExperience.id,
         data: {
           workExperience: {
-            ...workExperience,
-            companyCity: editingExperience.companyCity || "",
-            companyState: editingExperience.companyState || "",
+            companyName: workExperience.companyName,
+            companyCity: workExperience.companyCity || editingExperience.companyCity || "",
+            companyState: workExperience.companyState || editingExperience.companyState || "",
+            jobTitle: workExperience.jobTitle,
+            dateStarted: workExperience.startDate,
+            dateEnded: workExperience.endDate ?? null,
           },
-          lines,
+          lines: lines.map((line, index): WorkExperienceLineInput => ({
+            lineText: line.lineText,
+            lineId: index + 1,
+          })),
         },
       });
       toast.success("Work experience updated successfully");
@@ -133,6 +145,7 @@ export const WorkExperienceSection: React.FC = () => {
   return (
     <ErrorBoundary>
       <Card
+        data-testid="WorkExpCard"
         className={cn(
           "p-6 transition-colors",
           (isAdding || editingExperience) && "border-orange-500 border-2",

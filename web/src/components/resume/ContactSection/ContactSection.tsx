@@ -116,6 +116,7 @@ export const ContactSection: React.FC = () => {
   return (
     <ErrorBoundary>
       <Card
+        data-testid="ContactCard"
         className={cn(
           "p-6 transition-colors",
           isEditing && isDirty && "border-orange-500 border-2",
@@ -125,13 +126,24 @@ export const ContactSection: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold">Contact Information</h2>
           {!isEditing && (
-            <Button variant="outline" size="sm" onClick={handleEdit}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleEdit}
+              aria-label="Edit contact information"
+              role="button"
+            >
               Edit
             </Button>
           )}
         </div>
 
-        <form onSubmit={form.handleSubmit(handleSave)} className="space-y-4">
+        <form 
+          onSubmit={form.handleSubmit(handleSave)} 
+          className="space-y-4" 
+          role="form"
+          aria-label="Contact information form"
+        >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex flex-col gap-y-2">
               <ContactHeader
@@ -160,6 +172,8 @@ export const ContactSection: React.FC = () => {
               size="sm"
               onClick={handleEdit}
               className="mt-2"
+              aria-label="Add contact information"
+              role="button"
             >
               Add Contact Information
             </Button>

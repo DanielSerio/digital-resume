@@ -81,6 +81,7 @@ export const SkillsSection: React.FC = () => {
   return (
     <ErrorBoundary>
       <Card
+        data-testid="SkillsCard"
         className={cn(
           "p-6 transition-colors",
           isEditing && isAddingSkill && "border-orange-500 border-2",

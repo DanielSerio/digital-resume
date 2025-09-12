@@ -6,7 +6,7 @@ import { type Page, type Locator } from '@playwright/test';
  */
 export class MainPage {
   readonly page: Page;
-  
+
   // Header elements
   readonly headerTitle: Locator;
   readonly exportPdfButton: Locator;
@@ -25,10 +25,26 @@ export class MainPage {
   readonly contactWebsite: Locator;
   readonly contactLinkedin: Locator;
 
+  // Contact Section - Edit Mode
+  readonly contactNameInput: Locator;
+  readonly contactTitleInput: Locator;
+  readonly contactEmailInput: Locator;
+  readonly contactPhoneInput: Locator;
+  readonly contactGithubInput: Locator;
+  readonly contactWebsiteInput: Locator;
+  readonly contactLinkedinInput: Locator;
+  readonly contactSaveButton: Locator;
+  readonly contactCancelButton: Locator;
+
   // Summary Section
   readonly summarySection: Locator;
   readonly summaryEditButton: Locator;
   readonly summaryContent: Locator;
+
+  // Summary Section - Edit Mode
+  readonly summaryTextarea: Locator;
+  readonly summarySaveButton: Locator;
+  readonly summaryCancelButton: Locator;
 
   // Skills Section
   readonly skillsSection: Locator;
@@ -47,7 +63,7 @@ export class MainPage {
 
   constructor(page: Page) {
     this.page = page;
-    
+
     // Header elements
     this.headerTitle = page.getByText('Digital Resume Manager');
     this.exportPdfButton = page.getByRole('button', { name: 'Export PDF' });
@@ -56,7 +72,7 @@ export class MainPage {
     this.scopedResumesTab = page.getByRole('link', { name: 'Scoped Resumes' });
 
     // Contact Section
-    this.contactSection = page.getByRole('region', { name: /contact information/i });
+    this.contactSection = page.getByTestId('ContactCard');
     this.contactEditButton = this.contactSection.getByRole('button', { name: 'Edit' });
     this.contactName = this.contactSection.getByTestId('contact-name');
     this.contactTitle = this.contactSection.getByTestId('contact-title');
@@ -66,23 +82,39 @@ export class MainPage {
     this.contactWebsite = this.contactSection.getByTestId('contact-website');
     this.contactLinkedin = this.contactSection.getByTestId('contact-linkedin');
 
+    // Contact Section - Edit Mode
+    this.contactNameInput = this.contactSection.getByRole('textbox', { name: /name/i });
+    this.contactTitleInput = this.contactSection.getByRole('textbox', { name: /title/i });
+    this.contactEmailInput = this.contactSection.getByRole('textbox', { name: /email/i });
+    this.contactPhoneInput = this.contactSection.getByRole('textbox', { name: /phone/i });
+    this.contactGithubInput = this.contactSection.getByRole('textbox', { name: /github/i });
+    this.contactWebsiteInput = this.contactSection.getByRole('textbox', { name: /website/i });
+    this.contactLinkedinInput = this.contactSection.getByRole('textbox', { name: /linkedin/i });
+    this.contactSaveButton = this.contactSection.getByRole('button', { name: 'Save' });
+    this.contactCancelButton = this.contactSection.getByRole('button', { name: 'Cancel' });
+
     // Summary Section
-    this.summarySection = page.getByRole('region', { name: /professional summary/i });
+    this.summarySection = page.getByTestId('SummaryCard');;
     this.summaryEditButton = this.summarySection.getByRole('button', { name: 'Edit' });
     this.summaryContent = this.summarySection.getByTestId('summary-content');
 
+    // Summary Section - Edit Mode
+    this.summaryTextarea = this.summarySection.getByRole('textbox', { name: /summary/i });
+    this.summarySaveButton = this.summarySection.getByRole('button', { name: 'Save' });
+    this.summaryCancelButton = this.summarySection.getByRole('button', { name: 'Cancel' });
+
     // Skills Section
-    this.skillsSection = page.getByRole('region', { name: /technical skills/i });
+    this.skillsSection = page.getByTestId('SkillsCard');
     this.skillsEditButton = this.skillsSection.getByRole('button', { name: 'Edit' });
     this.skillsList = this.skillsSection.getByTestId('skills-list');
 
     // Education Section
-    this.educationSection = page.getByRole('region', { name: /education/i });
+    this.educationSection = page.getByTestId('EducationCard');
     this.educationEditButton = this.educationSection.getByRole('button', { name: 'Edit' });
     this.educationList = this.educationSection.getByTestId('education-list');
 
     // Work Experience Section
-    this.workExperienceSection = page.getByRole('region', { name: /work experience/i });
+    this.workExperienceSection = page.getByTestId('WorkExpCard');
     this.workExperienceList = this.workExperienceSection.getByTestId('work-experience-list');
     this.addWorkExperienceButton = this.workExperienceSection.getByRole('button', { name: 'Add Work Experience' });
   }
@@ -158,5 +190,109 @@ export class MainPage {
     await this.exportDocxButton.isVisible();
     await this.exportPdfButton.isEnabled();
     await this.exportDocxButton.isEnabled();
+  }
+
+  /**
+   * Enter edit mode for contact section
+   */
+  async enterContactEditMode() {
+    await this.contactEditButton.click();
+    await this.contactNameInput.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Fill contact form with provided data
+   */
+  async fillContactForm(contactData: {
+    name?: string;
+    title?: string;
+    email?: string;
+    phone?: string;
+    github?: string;
+    website?: string;
+    linkedin?: string;
+  }) {
+    if (contactData.name !== undefined) {
+      await this.contactNameInput.fill(contactData.name);
+    }
+    if (contactData.title !== undefined) {
+      await this.contactTitleInput.fill(contactData.title);
+    }
+    if (contactData.email !== undefined) {
+      await this.contactEmailInput.fill(contactData.email);
+    }
+    if (contactData.phone !== undefined) {
+      await this.contactPhoneInput.fill(contactData.phone);
+    }
+    if (contactData.github !== undefined) {
+      await this.contactGithubInput.fill(contactData.github);
+    }
+    if (contactData.website !== undefined) {
+      await this.contactWebsiteInput.fill(contactData.website);
+    }
+    if (contactData.linkedin !== undefined) {
+      await this.contactLinkedinInput.fill(contactData.linkedin);
+    }
+  }
+
+  /**
+   * Save contact changes
+   */
+  async saveContactChanges() {
+    await this.contactSaveButton.click();
+    await this.contactEditButton.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Cancel contact changes
+   */
+  async cancelContactChanges() {
+    await this.contactCancelButton.click();
+    await this.contactEditButton.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Check if contact form is in edit mode
+   */
+  async isContactInEditMode(): Promise<boolean> {
+    return await this.contactNameInput.isVisible();
+  }
+
+  /**
+   * Enter edit mode for summary section
+   */
+  async enterSummaryEditMode() {
+    await this.summaryEditButton.click();
+    await this.summaryTextarea.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Fill summary textarea with provided text
+   */
+  async fillSummaryText(summaryText: string) {
+    await this.summaryTextarea.fill(summaryText);
+  }
+
+  /**
+   * Save summary changes
+   */
+  async saveSummaryChanges() {
+    await this.summarySaveButton.click();
+    await this.summaryEditButton.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Cancel summary changes
+   */
+  async cancelSummaryChanges() {
+    await this.summaryCancelButton.click();
+    await this.summaryEditButton.waitFor({ state: 'visible' });
+  }
+
+  /**
+   * Check if summary form is in edit mode
+   */
+  async isSummaryInEditMode(): Promise<boolean> {
+    return await this.summaryTextarea.isVisible();
   }
 }

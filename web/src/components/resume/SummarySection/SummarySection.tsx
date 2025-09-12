@@ -104,6 +104,7 @@ export const SummarySection: React.FC = () => {
   return (
     <ErrorBoundary>
       <Card
+        data-testid="SummaryCard"
         className={cn(
           "p-6 transition-colors",
           isEditing && isDirty && "border-orange-500 border-2",

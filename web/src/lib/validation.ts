@@ -71,10 +71,10 @@ export type EducationFormData = z.infer<typeof educationSchema>;
 export const workExperienceSchema = z.object({
   companyName: z.string().min(1, 'Company name is required').max(255, 'Company name is too long'),
   jobTitle: z.string().min(1, 'Job title is required').max(255, 'Job title is too long'),
-  location: z.string().max(255, 'Location is too long').optional().or(z.literal('')),
-  startDate: z.date().optional().or(z.literal(null)),
+  companyCity: z.string().max(255, 'Company city is too long').optional().or(z.literal('')),
+  companyState: z.string().max(255, 'Company state is too long').optional().or(z.literal('')),
+  startDate: z.date({ message: 'Start date is required' }),
   endDate: z.date().optional().or(z.literal(null)),
-  description: z.string().max(1000, 'Description is too long').optional().or(z.literal('')),
 });
 
 export type WorkExperienceFormData = z.infer<typeof workExperienceSchema>;
