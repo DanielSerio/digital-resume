@@ -23,20 +23,33 @@ src/
 
 ### State Management Pattern
 
-**Zustand for Client State (Section-based Editing):**
+**Zustand for Client State (Centralized Edit Context):**
 
 ```typescript
-// stores/resumeStore.ts
-interface ResumeState {
-  editingSection: string | null; // Only one section editable at a time
-  setEditingSection: (section: string | null) => void;
-  isEditingSection: (section: string) => boolean;
+// stores/editModeStore.ts
+export type EditContext =
+  | { type: 'contact' }
+  | { type: 'summary' }
+  | { type: 'skills' }
+  | { type: 'addSkill' }
+  | { type: 'education'; itemId: number }
+  | { type: 'workExperience'; itemId: number }
+  | { type: 'addEducation' }
+  | { type: 'addWorkExperience' }
+  | null;
+
+interface EditModeState {
+  currentEdit: EditContext;
+  setCurrentEdit: (context: EditContext) => void;
+  clearCurrentEdit: () => void;
+  isEditingAnything: () => boolean;
 }
 
-export const useResumeStore = create<ResumeState>((set, get) => ({
-  editingSection: null,
-  setEditingSection: (section) => set({ editingSection: section }),
-  isEditingSection: (section) => get().editingSection === section,
+export const useEditModeStore = create<EditModeState>((set, get) => ({
+  currentEdit: null,
+  setCurrentEdit: (context) => set({ currentEdit: context }),
+  clearCurrentEdit: () => set({ currentEdit: null }),
+  isEditingAnything: () => get().currentEdit !== null,
 }));
 ```
 
@@ -313,13 +326,17 @@ interface ResumeSectionProps {
 }
 
 const ResumeSection = ({ sectionId, title, children }: ResumeSectionProps) => {
-  const { editingSection, setEditingSection, isEditingSection } =
-    useResumeStore();
+  const { currentEdit, setCurrentEdit, clearCurrentEdit, isEditingAnything } =
+    useEditModeStore();
 
-  const isEditing = isEditingSection(sectionId);
+  const isEditing = currentEdit?.type === sectionId;
 
   const handleEdit = () => {
-    setEditingSection(isEditing ? null : sectionId);
+    if (isEditing) {
+      clearCurrentEdit();
+    } else if (!isEditingAnything()) {
+      setCurrentEdit({ type: sectionId as any });
+    }
   };
 
   return (
