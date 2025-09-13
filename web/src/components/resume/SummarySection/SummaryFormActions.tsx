@@ -24,6 +24,7 @@ export function SummaryFormActions({
         disabled={isSubmitting}
         aria-label="Cancel editing professional summary"
         role="button"
+        data-testid="cancel-button"
       >
         Cancel
       </Button>
@@ -32,6 +33,7 @@ export function SummaryFormActions({
         disabled={!isDirty || isSubmitting}
         aria-label={isSubmitting ? 'Saving professional summary' : 'Save professional summary'}
         role="button"
+        data-testid="save-button"
       >
         {isSubmitting ? 'Saving...' : 'Save'}
       </Button>

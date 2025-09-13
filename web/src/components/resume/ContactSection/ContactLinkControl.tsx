@@ -5,6 +5,7 @@ interface ContactLinkControlProps extends EditableSectionControlProps {
   label: string;
   type?: "phone" | "email";
   value: string;
+  testId?: string;
 }
 
 export function ContactLinkControl({
@@ -14,6 +15,7 @@ export function ContactLinkControl({
   type,
   children,
   fieldId,
+  testId,
 }: ContactLinkControlProps) {
   if (isEditing) {
     return (
@@ -37,6 +39,7 @@ export function ContactLinkControl({
       <a
         href={href}
         className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+        data-testid={testId}
       >
         {value}
       </a>

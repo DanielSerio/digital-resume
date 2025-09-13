@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 import type { Education } from "@/types";
 
 export const EducationSection: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingEducation, setEditingEducation] = useState<Education | null>(
     null
@@ -31,16 +30,6 @@ export const EducationSection: React.FC = () => {
   const updateEducationMutation = useUpdateEducation();
   const deleteEducationMutation = useDeleteEducation();
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setIsAdding(false);
-    setEditingEducation(null);
-  };
-
   const handleAddEducation = () => {
     setIsAdding(true);
   };
@@ -51,7 +40,10 @@ export const EducationSection: React.FC = () => {
 
   const handleSaveNew = async (data: EducationFormData) => {
     try {
-      await createEducationMutation.mutateAsync(data);
+      await createEducationMutation.mutateAsync({
+        ...data,
+        dateFinished: data.dateFinished ?? null,
+      });
       toast.success("Education entry added successfully");
       setIsAdding(false);
     } catch (error) {
@@ -124,70 +116,51 @@ export const EducationSection: React.FC = () => {
         data-testid="EducationCard"
         className={cn(
           "p-6 transition-colors",
-          isEditing &&
-            (isAdding || editingEducation) &&
-            "border-orange-500 border-2",
+          (isAdding || editingEducation) && "border-orange-500 border-2",
           "max-w-4xl mx-auto"
         )}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold">Education</h2>
-          {!isEditing && (
-            <Button variant="outline" size="sm" onClick={handleEdit}>
-              Edit
+        </div>
+
+        <div className="space-y-6">
+          <EducationDisplay
+            educations={educations}
+            isEditing={true}
+            onEditEducation={handleEditEducation}
+          />
+
+          {editingEducation && (
+            <EducationEntryForm
+              education={editingEducation}
+              onSave={handleSaveEdit}
+              onCancel={() => setEditingEducation(null)}
+              onDelete={() => handleDelete(editingEducation.id)}
+              isSubmitting={isSubmitting}
+            />
+          )}
+
+          {isAdding && (
+            <EducationEntryForm
+              onSave={handleSaveNew}
+              onCancel={() => setIsAdding(false)}
+              isSubmitting={isSubmitting}
+            />
+          )}
+
+          {!isAdding && !editingEducation && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddEducation}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Education
             </Button>
           )}
         </div>
-
-        {isEditing ? (
-          <div className="space-y-6">
-            <EducationDisplay
-              educations={educations}
-              isEditing={isEditing}
-              onEditEducation={handleEditEducation}
-            />
-
-            {editingEducation && (
-              <EducationEntryForm
-                education={editingEducation}
-                onSave={handleSaveEdit}
-                onCancel={() => setEditingEducation(null)}
-                onDelete={() => handleDelete(editingEducation.id)}
-                isSubmitting={isSubmitting}
-              />
-            )}
-
-            {isAdding && (
-              <EducationEntryForm
-                onSave={handleSaveNew}
-                onCancel={() => setIsAdding(false)}
-                isSubmitting={isSubmitting}
-              />
-            )}
-
-            {!isAdding && !editingEducation && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleAddEducation}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add Education
-              </Button>
-            )}
-
-            <div className="flex justify-end pt-4 border-t">
-              <Button onClick={handleCancel}>Done</Button>
-            </div>
-          </div>
-        ) : (
-          <EducationDisplay
-            educations={educations}
-            isEditing={isEditing}
-            onEditEducation={handleEditEducation}
-          />
-        )}
       </Card>
     </ErrorBoundary>
   );

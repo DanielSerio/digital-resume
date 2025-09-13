@@ -38,7 +38,7 @@ export const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="skills-list">
       {Object.entries(skillsByCategory).map(
         ([categoryName, categorySkills]) => (
           <div key={categoryName}>

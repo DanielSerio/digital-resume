@@ -5,7 +5,7 @@ import path from 'path';
 const execAsync = promisify(exec);
 
 export class TestDatabase {
-  private static testDbPath = path.join(process.cwd(), '..', 'test.db');
+  private static testDbPath = path.join(process.cwd(), '..', 'server', 'test.db');
 
   /**
    * Setup test database with fresh sample data
@@ -15,11 +15,8 @@ export class TestDatabase {
       // Change to backend directory and setup test database
       const backendDir = path.join(process.cwd(), '..', 'server');
       
-      // Set test database URL
-      process.env.DATABASE_URL = `file:${this.testDbPath}`;
-      
       // Run database migration and seed with sample data
-      const testEnv = { ...process.env, DATABASE_URL: `file:${this.testDbPath}` };
+      const testEnv = { ...process.env, DATABASE_URL: 'file:./test.db' };
       await execAsync(`npx prisma db push --force-reset`, { cwd: backendDir, env: testEnv });
       await execAsync(`npx prisma db seed`, { cwd: backendDir, env: testEnv });
       

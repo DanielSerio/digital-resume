@@ -61,8 +61,8 @@ export function ContactHeader({
 
   return (
     <>
-      <h1 className="text-2xl">{contact?.name}</h1>
-      <h2 className="text-sm">{contact?.title}</h2>
+      <h1 className="text-2xl" data-testid="contact-name">{contact?.name}</h1>
+      <h2 className="text-sm" data-testid="contact-title">{contact?.title}</h2>
     </>
   );
 }

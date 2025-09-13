@@ -53,7 +53,6 @@ export class MainPage {
 
   // Education Section
   readonly educationSection: Locator;
-  readonly educationEditButton: Locator;
   readonly educationList: Locator;
 
   // Work Experience Section
@@ -73,7 +72,7 @@ export class MainPage {
 
     // Contact Section
     this.contactSection = page.getByTestId('ContactCard');
-    this.contactEditButton = this.contactSection.getByRole('button', { name: 'Edit' });
+    this.contactEditButton = this.contactSection.getByTestId('edit-button');
     this.contactName = this.contactSection.getByTestId('contact-name');
     this.contactTitle = this.contactSection.getByTestId('contact-title');
     this.contactEmail = this.contactSection.getByTestId('contact-email');
@@ -90,27 +89,26 @@ export class MainPage {
     this.contactGithubInput = this.contactSection.getByRole('textbox', { name: /github/i });
     this.contactWebsiteInput = this.contactSection.getByRole('textbox', { name: /website/i });
     this.contactLinkedinInput = this.contactSection.getByRole('textbox', { name: /linkedin/i });
-    this.contactSaveButton = this.contactSection.getByRole('button', { name: 'Save' });
-    this.contactCancelButton = this.contactSection.getByRole('button', { name: 'Cancel' });
+    this.contactSaveButton = this.contactSection.getByTestId('save-button');
+    this.contactCancelButton = this.contactSection.getByTestId('cancel-button');
 
     // Summary Section
-    this.summarySection = page.getByTestId('SummaryCard');;
-    this.summaryEditButton = this.summarySection.getByRole('button', { name: 'Edit' });
+    this.summarySection = page.getByTestId('SummaryCard');
+    this.summaryEditButton = this.summarySection.getByTestId('edit-button');
     this.summaryContent = this.summarySection.getByTestId('summary-content');
 
     // Summary Section - Edit Mode
     this.summaryTextarea = this.summarySection.getByRole('textbox', { name: /summary/i });
-    this.summarySaveButton = this.summarySection.getByRole('button', { name: 'Save' });
-    this.summaryCancelButton = this.summarySection.getByRole('button', { name: 'Cancel' });
+    this.summarySaveButton = this.summarySection.getByTestId('save-button');
+    this.summaryCancelButton = this.summarySection.getByTestId('cancel-button');
 
     // Skills Section
     this.skillsSection = page.getByTestId('SkillsCard');
-    this.skillsEditButton = this.skillsSection.getByRole('button', { name: 'Edit' });
+    this.skillsEditButton = this.skillsSection.getByTestId('edit-button');
     this.skillsList = this.skillsSection.getByTestId('skills-list');
 
     // Education Section
     this.educationSection = page.getByTestId('EducationCard');
-    this.educationEditButton = this.educationSection.getByRole('button', { name: 'Edit' });
     this.educationList = this.educationSection.getByTestId('education-list');
 
     // Work Experience Section

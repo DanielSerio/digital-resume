@@ -114,7 +114,12 @@ export const SummarySection: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold">Professional Summary</h2>
           {!isEditing && (
-            <Button variant="outline" size="sm" onClick={handleEdit}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleEdit}
+              data-testid="edit-button"
+            >
               Edit
             </Button>
           )}

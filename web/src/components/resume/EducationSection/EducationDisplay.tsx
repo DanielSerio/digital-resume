@@ -23,7 +23,7 @@ export const EducationDisplay: React.FC<EducationDisplayProps> = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="education-list">
       {educations.map((education) => (
         <div key={education.id} className="border rounded-lg p-4">
           <div className="flex justify-between items-start">

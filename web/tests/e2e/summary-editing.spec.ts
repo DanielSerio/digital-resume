@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/database';
 import { MainPage } from './page-objects/MainPage';
 
 test.describe('Summary Section Editing - Priority 1', () => {
@@ -164,7 +164,7 @@ Passionate about clean architecture and testing.`;
       // Check that other section edit buttons are disabled
       await expect(mainPage.contactEditButton).toBeDisabled();
       await expect(mainPage.skillsEditButton).toBeDisabled();
-      await expect(mainPage.educationEditButton).toBeDisabled();
+      // Note: Education section no longer has edit button - it's always editable like Work Experience
     });
 
     test('should show current content in textarea when entering edit mode', async () => {

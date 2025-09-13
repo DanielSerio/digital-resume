@@ -23,7 +23,7 @@ export const WorkExperienceDisplay: React.FC<WorkExperienceDisplayProps> = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="work-experience-list">
       {workExperiences.map((experience) => (
         <div key={experience.id} className="border rounded-lg p-4">
           <div className="flex justify-between items-start">

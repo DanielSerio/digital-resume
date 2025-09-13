@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/database';
 
 test.describe('Debug Page Elements', () => {
   test('should show actual page content', async ({ page }) => {

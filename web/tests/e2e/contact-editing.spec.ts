@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/database';
 import { MainPage } from './page-objects/MainPage';
 
 test.describe('Contact Section Editing - Priority 1', () => {
@@ -169,7 +169,7 @@ test.describe('Contact Section Editing - Priority 1', () => {
       // This ensures only one section can be edited at a time
       await expect(mainPage.summaryEditButton).toBeDisabled();
       await expect(mainPage.skillsEditButton).toBeDisabled();
-      await expect(mainPage.educationEditButton).toBeDisabled();
+      // Note: Education section no longer has edit button - it's always editable like Work Experience
     });
 
     test('should maintain form data during validation errors', async () => {

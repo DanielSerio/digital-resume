@@ -17,7 +17,10 @@ export function SummaryContent({
   if (summary?.summaryText) {
     return (
       <div className="prose prose-sm max-w-none">
-        <p className="text-foreground leading-relaxed whitespace-pre-wrap max-w-[70ch] mx-auto mb-16">
+        <p
+          className="text-foreground leading-relaxed whitespace-pre-wrap max-w-[70ch] mx-auto mb-16"
+          data-testid="summary-content"
+        >
           {summary.summaryText}
         </p>
       </div>

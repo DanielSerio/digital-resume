@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/database';
 import { MainPage } from './page-objects/MainPage';
 
 test.describe('Main Resume Page', () => {
@@ -57,7 +57,7 @@ test.describe('Main Resume Page', () => {
 
       // Check that contact section is visible and contains expected data
       await expect(mainPage.contactSection).toBeVisible();
-      
+
       // Should display contact info from our test database
       const contactInfo = await mainPage.getContactInfo();
       expect(contactInfo.name).toBeTruthy();
@@ -84,7 +84,7 @@ test.describe('Main Resume Page', () => {
       // Should display summary content from test database
       const summaryContent = await mainPage.getSummaryContent();
       expect(summaryContent).toBeTruthy();
-      expect(summaryContent.length).toBeGreaterThan(0);
+      expect(summaryContent?.length ?? 0).toBeGreaterThan(0);
     });
 
     test('should have edit button for summary section', async () => {
@@ -102,7 +102,7 @@ test.describe('Main Resume Page', () => {
 
       // Navigate to scoped resumes
       await mainPage.navigateToScopedResumes();
-      
+
       // Should be on scoped resumes page
       await expect(mainPage.page).toHaveURL('/scoped');
     });

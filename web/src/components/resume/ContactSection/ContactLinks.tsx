@@ -20,6 +20,7 @@ export function ContactLinks({ isEditing, contact, form }: ContactLinksProps) {
         type="email"
         value={contact?.email || ""}
         fieldId="email"
+        testId="contact-email"
       >
         <Input
           id="email"
@@ -43,6 +44,7 @@ export function ContactLinks({ isEditing, contact, form }: ContactLinksProps) {
         type="phone"
         value={contact?.phone || ""}
         fieldId="phone"
+        testId="contact-phone"
       >
         <Input
           id="phone"
@@ -64,6 +66,7 @@ export function ContactLinks({ isEditing, contact, form }: ContactLinksProps) {
         label="GitHub"
         value={contact?.github || ""}
         fieldId="github"
+        testId="contact-github"
       >
         <Input
           id="github"
@@ -86,6 +89,7 @@ export function ContactLinks({ isEditing, contact, form }: ContactLinksProps) {
         label="Website"
         value={contact?.website || ""}
         fieldId="website"
+        testId="contact-website"
       >
         <Input
           id="website"
@@ -108,6 +112,7 @@ export function ContactLinks({ isEditing, contact, form }: ContactLinksProps) {
         label="LinkedIn"
         value={contact?.linkedin || ""}
         fieldId="linkedin"
+        testId="contact-linkedin"
       >
         <Input
           id="linkedin"

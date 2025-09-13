@@ -24,14 +24,16 @@ export function ContactFormActions({
         disabled={isSubmitting}
         aria-label="Cancel editing contact information"
         role="button"
+        data-testid="cancel-button"
       >
         Cancel
       </Button>
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         disabled={!isDirty || isSubmitting}
         aria-label={isSubmitting ? "Saving contact information" : "Save contact information"}
         role="button"
+        data-testid="save-button"
       >
         {isSubmitting ? "Saving..." : "Save"}
       </Button>

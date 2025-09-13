@@ -126,21 +126,22 @@ export const ContactSection: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold">Contact Information</h2>
           {!isEditing && (
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleEdit}
               aria-label="Edit contact information"
               role="button"
+              data-testid="edit-button"
             >
               Edit
             </Button>
           )}
         </div>
 
-        <form 
-          onSubmit={form.handleSubmit(handleSave)} 
-          className="space-y-4" 
+        <form
+          onSubmit={form.handleSubmit(handleSave)}
+          className="space-y-4"
           role="form"
           aria-label="Contact information form"
         >
