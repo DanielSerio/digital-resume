@@ -34,6 +34,13 @@ A modern, single-user local application for creating, managing, and exporting pr
 - **Database Transactions** ensuring data consistency for complex operations
 - **Docker Containerization** for seamless development and deployment
 
+### 🧪 Quality Assurance
+
+- **End-to-End Testing** - Comprehensive Playwright test suite with database isolation
+- **Component Development** - Storybook for visual component testing and documentation
+- **Accessibility Compliance** - WCAG guidelines with comprehensive ARIA support
+- **Type Safety** - Zero TypeScript errors with strict schema validation
+
 ## 🚀 Quick Start
 
 ### Prerequisites
