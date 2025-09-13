@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 
@@ -17,25 +17,36 @@ import {
 import { type EducationFormData } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import type { Education } from "@/types";
+import { useItemEdit } from "@/hooks/edit/useItemEdit";
 
 export const EducationSection: React.FC = () => {
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingEducation, setEditingEducation] = useState<Education | null>(
-    null
-  );
-
   // Data fetching
   const { data: educations = [], isLoading, error } = useEducationData();
+
+  // Use the collection edit hook
+  const {
+    isAdding,
+    editingItemId: editingEducationId,
+    editingItem: editingEducation,
+    canEdit,
+    isEditingAnything,
+    startAdd,
+    startEditItem,
+    cancelEdit,
+    completeAdd,
+    completeEditItem,
+    deleteItem
+  } = useItemEdit('education', educations);
   const createEducationMutation = useCreateEducation();
   const updateEducationMutation = useUpdateEducation();
   const deleteEducationMutation = useDeleteEducation();
 
   const handleAddEducation = () => {
-    setIsAdding(true);
+    startAdd();
   };
 
   const handleEditEducation = (education: Education) => {
-    setEditingEducation(education);
+    startEditItem(education);
   };
 
   const handleSaveNew = async (data: EducationFormData) => {
@@ -45,7 +56,7 @@ export const EducationSection: React.FC = () => {
         dateFinished: data.dateFinished ?? null,
       });
       toast.success("Education entry added successfully");
-      setIsAdding(false);
+      completeAdd();
     } catch (error) {
       toast.error("Failed to add education entry");
       console.error("Add education error:", error);
@@ -60,7 +71,7 @@ export const EducationSection: React.FC = () => {
         data,
       });
       toast.success("Education entry updated successfully");
-      setEditingEducation(null);
+      completeEditItem();
     } catch (error) {
       toast.error("Failed to update education entry");
       console.error("Update education error:", error);
@@ -71,7 +82,7 @@ export const EducationSection: React.FC = () => {
     try {
       await deleteEducationMutation.mutateAsync(educationId);
       toast.success("Education entry deleted successfully");
-      setEditingEducation(null);
+      deleteItem();
     } catch (error) {
       toast.error("Failed to delete education entry");
       console.error("Delete education error:", error);
@@ -129,13 +140,15 @@ export const EducationSection: React.FC = () => {
             educations={educations}
             isEditing={true}
             onEditEducation={handleEditEducation}
+            isAnyEditActive={isEditingAnything}
+            currentEditId={editingEducationId}
           />
 
           {editingEducation && (
             <EducationEntryForm
               education={editingEducation}
               onSave={handleSaveEdit}
-              onCancel={() => setEditingEducation(null)}
+              onCancel={cancelEdit}
               onDelete={() => handleDelete(editingEducation.id)}
               isSubmitting={isSubmitting}
             />
@@ -144,7 +157,7 @@ export const EducationSection: React.FC = () => {
           {isAdding && (
             <EducationEntryForm
               onSave={handleSaveNew}
-              onCancel={() => setIsAdding(false)}
+              onCancel={cancelEdit}
               isSubmitting={isSubmitting}
             />
           )}
@@ -155,6 +168,7 @@ export const EducationSection: React.FC = () => {
               size="sm"
               onClick={handleAddEducation}
               className="flex items-center gap-2"
+              disabled={!canEdit}
             >
               <Plus className="h-4 w-4" />
               Add Education

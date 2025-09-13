@@ -7,12 +7,16 @@ interface EducationDisplayProps {
   educations: Education[];
   isEditing: boolean;
   onEditEducation: (education: Education) => void;
+  isAnyEditActive?: boolean;
+  currentEditId?: number | null;
 }
 
 export const EducationDisplay: React.FC<EducationDisplayProps> = ({
   educations,
   isEditing,
   onEditEducation,
+  isAnyEditActive = false,
+  currentEditId = null,
 }) => {
   if (educations.length === 0) {
     return (
@@ -56,6 +60,7 @@ export const EducationDisplay: React.FC<EducationDisplayProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => onEditEducation(education)}
+                disabled={isAnyEditActive && currentEditId !== education.id}
               >
                 Edit
               </Button>

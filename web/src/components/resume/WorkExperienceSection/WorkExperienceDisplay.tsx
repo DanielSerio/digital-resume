@@ -7,12 +7,16 @@ interface WorkExperienceDisplayProps {
   workExperiences: WorkExperience[];
   isEditing?: boolean;
   onEditWorkExperience: (workExperience: WorkExperience) => void;
+  isAnyEditActive?: boolean;
+  currentEditId?: number | null;
 }
 
 export const WorkExperienceDisplay: React.FC<WorkExperienceDisplayProps> = ({
   workExperiences,
   isEditing,
   onEditWorkExperience,
+  isAnyEditActive = false,
+  currentEditId = null,
 }) => {
   if (workExperiences.length === 0) {
     return (
@@ -65,6 +69,7 @@ export const WorkExperienceDisplay: React.FC<WorkExperienceDisplayProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => onEditWorkExperience(experience)}
+                disabled={isAnyEditActive && currentEditId !== experience.id}
               >
                 Edit
               </Button>

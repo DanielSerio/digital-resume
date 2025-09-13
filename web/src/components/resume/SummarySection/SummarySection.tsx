@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { toast } from "sonner";
@@ -19,9 +19,17 @@ import {
   type ProfessionalSummaryFormData,
 } from "@/lib/validation";
 import { cn } from "@/lib/utils";
+import { useEditState } from "@/hooks/edit/useEditState";
 
 export const SummarySection: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false);
+  // Use the simple edit state hook
+  const {
+    isEditing,
+    canEdit,
+    startEdit,
+    cancelEdit,
+    completeEdit
+  } = useEditState('summary');
 
   // Data fetching
   const { data: summary, isLoading, error } = useProfessionalSummaryData();
@@ -49,24 +57,23 @@ export const SummarySection: React.FC = () => {
   }, [summary, isEditing, form]);
 
   const handleEdit = () => {
-    if (summary) {
+    if (startEdit() && summary) {
       form.reset({
         summaryText: summary.summaryText,
       });
     }
-    setIsEditing(true);
   };
 
   const handleCancel = () => {
     form.reset();
-    setIsEditing(false);
+    cancelEdit();
   };
 
   const handleSave = async (data: ProfessionalSummaryFormData) => {
     try {
       await updateSummaryMutation.mutateAsync(data);
       toast.success("Professional summary updated successfully");
-      setIsEditing(false);
+      completeEdit();
     } catch (error) {
       toast.error("Failed to update professional summary");
       console.error("Summary update error:", error);
@@ -119,6 +126,7 @@ export const SummarySection: React.FC = () => {
               size="sm"
               onClick={handleEdit}
               data-testid="edit-button"
+              disabled={!canEdit}
             >
               Edit
             </Button>

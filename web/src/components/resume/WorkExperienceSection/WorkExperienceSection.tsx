@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 
@@ -17,28 +17,40 @@ import {
 import { type CompleteWorkExperienceFormData } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import type { WorkExperience, WorkExperienceLineInput } from "@/types";
+import { useItemEdit } from "@/hooks/edit/useItemEdit";
 
 export const WorkExperienceSection: React.FC = () => {
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingExperience, setEditingExperience] =
-    useState<WorkExperience | null>(null);
-
   // Data fetching
   const {
     data: workExperiences = [],
     isLoading,
     error,
   } = useWorkExperiencesData();
+
+  // Use the collection edit hook
+  const {
+    isAdding,
+    editingItemId: editingExperienceId,
+    editingItem: editingExperience,
+    canEdit,
+    isEditingAnything,
+    startAdd,
+    startEditItem,
+    cancelEdit,
+    completeAdd,
+    completeEditItem,
+    deleteItem
+  } = useItemEdit('workExperience', workExperiences);
   const createExperienceMutation = useCreateWorkExperience();
   const updateExperienceMutation = useUpdateWorkExperience();
   const deleteExperienceMutation = useDeleteWorkExperience();
 
   const handleAddExperience = () => {
-    setIsAdding(true);
+    startAdd();
   };
 
   const handleEditExperience = (experience: WorkExperience) => {
-    setEditingExperience(experience);
+    startEditItem(experience);
   };
 
   const handleSaveNew = async (data: CompleteWorkExperienceFormData) => {
@@ -59,7 +71,7 @@ export const WorkExperienceSection: React.FC = () => {
         })),
       });
       toast.success("Work experience added successfully");
-      setIsAdding(false);
+      completeAdd();
     } catch (error) {
       toast.error("Failed to add work experience");
       console.error("Add work experience error:", error);
@@ -88,7 +100,7 @@ export const WorkExperienceSection: React.FC = () => {
         },
       });
       toast.success("Work experience updated successfully");
-      setEditingExperience(null);
+      completeEditItem();
     } catch (error) {
       toast.error("Failed to update work experience");
       console.error("Update work experience error:", error);
@@ -99,7 +111,7 @@ export const WorkExperienceSection: React.FC = () => {
     try {
       await deleteExperienceMutation.mutateAsync(experienceId);
       toast.success("Work experience deleted successfully");
-      setEditingExperience(null);
+      deleteItem();
     } catch (error) {
       toast.error("Failed to delete work experience");
       console.error("Delete work experience error:", error);
@@ -161,13 +173,15 @@ export const WorkExperienceSection: React.FC = () => {
             workExperiences={workExperiences}
             isEditing={true}
             onEditWorkExperience={handleEditExperience}
+            isAnyEditActive={isEditingAnything}
+            currentEditId={editingExperienceId}
           />
 
           {editingExperience && (
             <WorkExperienceEntryForm
               workExperience={editingExperience}
               onSave={handleSaveEdit}
-              onCancel={() => setEditingExperience(null)}
+              onCancel={cancelEdit}
               onDelete={() => handleDelete(editingExperience.id)}
               isSubmitting={isSubmitting}
             />
@@ -176,7 +190,7 @@ export const WorkExperienceSection: React.FC = () => {
           {isAdding && (
             <WorkExperienceEntryForm
               onSave={handleSaveNew}
-              onCancel={() => setIsAdding(false)}
+              onCancel={cancelEdit}
               isSubmitting={isSubmitting}
             />
           )}
@@ -187,6 +201,7 @@ export const WorkExperienceSection: React.FC = () => {
               size="sm"
               onClick={handleAddExperience}
               className="flex items-center gap-2"
+              disabled={!canEdit}
             >
               <Plus className="h-4 w-4" />
               Add Work Experience

@@ -1,6 +1,4 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanstackDevtools } from "@tanstack/react-devtools";
 
 import { Layout, ErrorBoundary } from "@/components/common";
 import { Toaster } from "@/components/ui/sonner";

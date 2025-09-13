@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { WorkExperienceDisplay } from '@/components/resume/WorkExperienceSection/WorkExperienceDisplay';
-import { mockWorkExperience, mockWorkExperienceLines } from '@/lib/mock-data';
+import { mockWorkExperience } from '@/lib/mock-data';
 import type { WorkExperience, WorkExperienceLine } from '@/types';
 
 const meta = {

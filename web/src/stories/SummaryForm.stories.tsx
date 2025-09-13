@@ -5,9 +5,18 @@ import { useForm } from 'react-hook-form';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { professionalSummarySchema, type ProfessionalSummaryFormData } from '@/lib/validation';
 
+// Form wrapper component to provide form context
+const SummaryFormWrapper = (args: { isEditing: boolean; initialText?: string }) => {
+  const form = useForm<ProfessionalSummaryFormData>({
+    resolver: standardSchemaResolver(professionalSummarySchema),
+    defaultValues: { summaryText: args.initialText || '' },
+  });
+  return <SummaryForm isEditing={args.isEditing} form={form} />;
+};
+
 const meta = {
   title: 'Resume/Form-Components/SummaryForm',
-  component: SummaryForm,
+  component: SummaryFormWrapper,
   parameters: {
     layout: 'padded',
     docs: {
@@ -23,19 +32,18 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof SummaryForm>;
+  argTypes: {
+    isEditing: {
+      control: { type: 'boolean' },
+    },
+    initialText: {
+      control: { type: 'text' },
+    },
+  },
+} satisfies Meta<typeof SummaryFormWrapper>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-// Form wrapper component to provide form context
-const SummaryFormWrapper = (args: any) => {
-  const form = useForm<ProfessionalSummaryFormData>({
-    resolver: standardSchemaResolver(professionalSummarySchema),
-    defaultValues: { summaryText: args.initialText || '' },
-  });
-  return <SummaryForm {...args} form={form} />;
-};
 
 export const Default: Story = {
   name: 'Default Form',

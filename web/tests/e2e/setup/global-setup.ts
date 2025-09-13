@@ -1,7 +1,7 @@
-import { FullConfig } from '@playwright/test';
+import type { FullConfig } from '@playwright/test';
 import { TestDatabase } from './test-db';
 
-async function globalSetup(config: FullConfig) {
+async function globalSetup(_config: FullConfig) {
   console.log('Setting up test environment...');
   
   try {

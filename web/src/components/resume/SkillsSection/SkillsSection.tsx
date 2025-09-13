@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 
@@ -14,10 +14,19 @@ import {
   useSkillTaxonomy,
 } from "@/hooks";
 import { cn } from "@/lib/utils";
+import { useSkillsEdit } from "@/hooks/edit/useSkillsEdit";
 
 export const SkillsSection: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [isAddingSkill, setIsAddingSkill] = useState(false);
+  // Use the specialized Skills edit hook
+  const {
+    isEditing,
+    isAddingSkill,
+    canEdit,
+    startEdit,
+    startAddSkill,
+    cancelEdit,
+    completeAddSkill
+  } = useSkillsEdit();
 
   // Data fetching
   const { data: skills = [], isLoading, error } = useTechnicalSkillsData();
@@ -25,16 +34,15 @@ export const SkillsSection: React.FC = () => {
   const deleteSkillMutation = useDeleteTechnicalSkill();
 
   const handleEdit = () => {
-    setIsEditing(true);
+    startEdit();
   };
 
   const handleCancel = () => {
-    setIsEditing(false);
-    setIsAddingSkill(false);
+    cancelEdit();
   };
 
   const handleAddSkillSuccess = () => {
-    setIsAddingSkill(false);
+    completeAddSkill();
   };
 
   const handleDeleteSkill = async (skillId: number) => {
@@ -96,6 +104,7 @@ export const SkillsSection: React.FC = () => {
               size="sm"
               onClick={handleEdit}
               data-testid="edit-button"
+              disabled={!canEdit}
             >
               Edit
             </Button>
@@ -114,13 +123,13 @@ export const SkillsSection: React.FC = () => {
             {isAddingSkill ? (
               <AddSkillForm
                 onSuccess={handleAddSkillSuccess}
-                onCancel={() => setIsAddingSkill(false)}
+                onCancel={cancelEdit}
               />
             ) : (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIsAddingSkill(true)}
+                onClick={startAddSkill}
                 className="flex items-center gap-2"
               >
                 <Plus className="h-4 w-4" />

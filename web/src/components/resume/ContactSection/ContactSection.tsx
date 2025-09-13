@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { toast } from "sonner";
@@ -13,9 +13,17 @@ import { ContactFormActions } from "./ContactFormActions";
 import { useContactData, useUpdateContact } from "@/hooks";
 import { contactSchema, type ContactFormData } from "@/lib/validation";
 import { cn } from "@/lib/utils";
+import { useEditState } from "@/hooks/edit/useEditState";
 
 export const ContactSection: React.FC = () => {
-  const [isEditing, setIsEditing] = useState(false);
+  // Use the simple edit state hook
+  const {
+    isEditing,
+    canEdit,
+    startEdit,
+    cancelEdit,
+    completeEdit
+  } = useEditState('contact');
 
   // Data fetching
   const { data: contact, isLoading, error } = useContactData();
@@ -55,7 +63,7 @@ export const ContactSection: React.FC = () => {
   }, [contact, isEditing, form]);
 
   const handleEdit = () => {
-    if (contact) {
+    if (startEdit() && contact) {
       form.reset({
         name: contact.name,
         title: contact.title || "",
@@ -66,19 +74,18 @@ export const ContactSection: React.FC = () => {
         linkedin: contact.linkedin || "",
       });
     }
-    setIsEditing(true);
   };
 
   const handleCancel = () => {
     form.reset();
-    setIsEditing(false);
+    cancelEdit();
   };
 
   const handleSave = async (data: ContactFormData) => {
     try {
       await updateContactMutation.mutateAsync(data);
       toast.success("Contact information updated successfully");
-      setIsEditing(false);
+      completeEdit();
     } catch (error) {
       toast.error("Failed to update contact information");
       console.error("Contact update error:", error);
@@ -133,6 +140,7 @@ export const ContactSection: React.FC = () => {
               aria-label="Edit contact information"
               role="button"
               data-testid="edit-button"
+              disabled={!canEdit}
             >
               Edit
             </Button>

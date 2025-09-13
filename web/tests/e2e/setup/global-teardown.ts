@@ -1,7 +1,7 @@
-import { FullConfig } from '@playwright/test';
+import type { FullConfig } from '@playwright/test';
 import { TestDatabase } from './test-db';
 
-async function globalTeardown(config: FullConfig) {
+async function globalTeardown(_config: FullConfig) {
   console.log('Tearing down test environment...');
   
   try {

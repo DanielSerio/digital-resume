@@ -7,7 +7,6 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -142,7 +141,7 @@ export const EducationEntryForm: React.FC<EducationEntryFormProps> = ({
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {form.watch("dateStarted")
-                  ? format(form.watch("dateStarted")!, "PPP")
+                  ? format(form.watch("dateStarted"), "PPP")
                   : "Pick start date"}
               </Button>
             </PopoverTrigger>
@@ -150,7 +149,7 @@ export const EducationEntryForm: React.FC<EducationEntryFormProps> = ({
               <Calendar
                 mode="single"
                 selected={form.watch("dateStarted") || undefined}
-                onSelect={(date) => form.setValue("dateStarted", date)}
+                onSelect={(date) => form.setValue("dateStarted", date || new Date())}
                 autoFocus
               />
             </PopoverContent>
