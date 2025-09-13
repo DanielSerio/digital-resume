@@ -1,299 +1,189 @@
-Welcome to your new TanStack app! 
+# 📄 Digital Resume Manager - Frontend
 
-# Getting Started
+Modern React 19 frontend for the Digital Resume Management application with advanced state management and comprehensive testing.
 
-To run this application:
+## 🚀 Getting Started
 
+### Quick Start (From Root)
 ```bash
+# Start with Docker (recommended)
+docker compose up
+
+# Frontend available at: http://localhost:3000
+```
+
+### Manual Development Setup
+```bash
+# From /web directory
 npm install
-npm run start
+npm run dev
 ```
 
-# Building For Production
-
-To build this application for production:
+## 🔧 Available Scripts
 
 ```bash
-npm run build
+npm run dev        # Start development server (Vite)
+npm run start      # Alias for dev
+npm run build      # Build for production with TypeScript compilation
+npm run serve      # Preview production build
+npm run test       # Run unit tests (Vitest)
+npm run test:e2e   # Run Playwright E2E tests ✅
+npm run storybook  # Start Storybook (Port 6006) ✅
 ```
 
-## Testing
+## 🏗️ Architecture
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+### State Management
+- **Server State**: TanStack Query for API data and caching
+- **Client State**: Zustand for UI state (centralized edit mode management)
+- **Form State**: React Hook Form + Zod v4 validation
 
-```bash
-npm run test
-```
+### Component Patterns
+- **Single Component Design**: Display/edit modes within same component
+- **Under 200 Lines**: Components stay focused with sub-component extraction
+- **Centralized Edit State**: Global `EditContext` prevents editing conflicts
 
-## Styling
+### Technology Stack
+- **React 19** - Latest features with concurrent rendering
+- **TypeScript** - Strict type safety throughout
+- **TanStack Router** - Type-safe, file-based routing
+- **Vite** - Lightning-fast development and builds
+- **Tailwind CSS v4** - Utility-first styling
+- **Shadcn UI** - Accessible component library
+- **Zod v4** - Schema validation with standardSchemaResolver
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+## 🧭 Routing
 
+This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes/`.
 
-
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
-
-```bash
-pnpx shadcn@latest add button
-```
-
-
-
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
+### Current Pages
+- **Main Resume** (`/main`) - Single-page editing interface for the primary resume
+- **Scoped Resumes** (`/scoped`) - Management and editing of targeted resume variations
+- **Root Layout** (`__root.tsx`) - Shared layout with navigation tabs
 
 ### Adding A Route
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
+To add a new route, create a new file in the `./src/routes` directory:
 
-TanStack will automatically generate the content of the route file for you.
+TanStack Router will automatically generate route trees and provide type-safe navigation.
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+### Navigation
 
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+Our application uses tab-based navigation in the root layout:
 
 ```tsx
 import { Link } from "@tanstack/react-router";
+
+// Main Resume tab
+<Link to="/main" activeProps={{ className: "border-primary" }}>
+  Main Resume
+</Link>
+
+// Scoped Resumes tab
+<Link to="/scoped" activeProps={{ className: "border-primary" }}>
+  Scoped Resumes
+</Link>
 ```
 
-Then anywhere in your JSX you can use it like so:
+### Layout Structure
+
+The root layout (`src/routes/__root.tsx`) provides:
+- Application header with title
+- Tab navigation between main/scoped resume pages
+- Export buttons (PDF/DOCX)
+- Toast notifications container
+- Error boundaries
+
+Route content appears where the `<Outlet />` component is placed.
+
+
+## 📊 Data Management
+
+### API Integration
+This frontend connects to a Node.js/Express backend API with comprehensive resume data management:
 
 ```tsx
-<Link to="/about">About</Link>
+// Example: Fetching resume data
+import { useResumeData } from "@/hooks";
+
+function ResumePage() {
+  const { data: resume, isLoading, error } = useResumeData();
+
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage />;
+
+  return <ResumeDisplay resume={resume} />;
+}
 ```
 
-This will create a link that will navigate to the `/about` route.
+### Data Fetching Patterns
+- **TanStack Query**: Server state management with caching and optimistic updates
+- **Custom Hooks**: Abstracted API calls (`useResumeData`, `useContactData`, etc.)
+- **Route Loaders**: Pre-fetch data for scoped resume routes
+- **Mutations**: Type-safe create/update/delete operations
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+### State Synchronization
+- **Real-time Updates**: Automatic cache invalidation on mutations
+- **Optimistic Updates**: Instant UI feedback with rollback on errors
+- **Form Integration**: React Hook Form synced with server state
 
-### Using A Layout
+## 🧪 Testing
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
+### Unit Testing (Vitest)
 ```bash
-npm install @tanstack/react-query @tanstack/react-query-devtools
+npm run test      # Run unit tests
+npm run test:watch # Watch mode
 ```
 
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
+### E2E Testing (Playwright) ✅
 ```bash
-npm install @tanstack/store
+npm run test:e2e  # Full E2E test suite
+```
+- Database isolation with test fixtures
+- Page object model pattern
+- Contact → Summary → Skills → Education → Work Experience coverage
+
+### Component Development (Storybook) ✅
+```bash
+npm run storybook # Start on port 6006
+```
+- All resume section components with display/edit modes
+- Form components with validation states
+- Mock data matching production structure
+
+## 📁 Project Structure
+
+```
+web/
+├── src/
+│   ├── components/
+│   │   ├── ui/           # Shadcn UI components
+│   │   ├── common/       # Shared components
+│   │   └── resume/       # Resume section components
+│   ├── routes/           # TanStack Router pages
+│   │   ├── main.tsx      # Main resume editing page
+│   │   ├── scoped.tsx    # Scoped resume management
+│   │   └── __root.tsx    # Root layout with navigation
+│   ├── hooks/
+│   │   └── edit/         # Edit state management hooks
+│   ├── stores/           # Zustand state stores
+│   ├── lib/              # Utilities and validation
+│   └── types/            # TypeScript definitions
+├── tests/
+│   ├── unit/             # Vitest unit tests
+│   └── e2e/              # Playwright E2E tests
+├── stories/              # Storybook component stories
+└── package.json
 ```
 
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
+## 🔧 Development Guidelines
 
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
+1. **Components under 200 lines** - Extract sub-components when needed
+2. **Single edit mode** - Use centralized `EditContext` system
+3. **Type safety** - Strict TypeScript with schema validation
+4. **Accessibility** - Comprehensive ARIA support and WCAG compliance
+5. **Testing** - Write unit tests and Storybook stories for new components
 
-const countStore = new Store(0);
+---
 
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+**Part of the Digital Resume Manager application. See root README for complete documentation.**
