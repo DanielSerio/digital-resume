@@ -32,7 +32,6 @@ export const Default: Story = {
     skills: mockTechnicalSkills,
     getCategoryName: (id: number) => mockSkillCategories.find(cat => cat.id === id)?.name || 'Unknown',
     isEditing: false,
-    onDeleteSkill: async () => console.log('Delete skill'),
   },
 };
 
@@ -42,7 +41,6 @@ export const MinimalSkills: Story = {
     skills: mockTechnicalSkills.slice(0, 3),
     getCategoryName: (id: number) => mockSkillCategories.find(cat => cat.id === id)?.name || 'Unknown',
     isEditing: false,
-    onDeleteSkill: async () => console.log('Delete skill'),
   },
 };
 
@@ -104,7 +102,6 @@ export const ManySkills: Story = {
     ] as TechnicalSkill[],
     getCategoryName: (id: number) => mockSkillCategories.find(cat => cat.id === id)?.name || 'Unknown',
     isEditing: false,
-    onDeleteSkill: async () => console.log('Delete skill'),
   },
 };
 
@@ -114,7 +111,6 @@ export const SingleCategory: Story = {
     skills: mockTechnicalSkills.filter(skill => skill.categoryId === 1),
     getCategoryName: (id: number) => mockSkillCategories.find(cat => cat.id === id)?.name || 'Unknown',
     isEditing: false,
-    onDeleteSkill: async () => console.log('Delete skill'),
   },
 };
 
@@ -124,6 +120,37 @@ export const EmptySkills: Story = {
     skills: [],
     getCategoryName: (id: number) => mockSkillCategories.find(cat => cat.id === id)?.name || 'Unknown',
     isEditing: false,
-    onDeleteSkill: async () => console.log('Delete skill'),
+  },
+};
+
+export const EditingMode: Story = {
+  name: 'With Edit Buttons',
+  args: {
+    skills: mockTechnicalSkills,
+    getCategoryName: (id: number) => mockSkillCategories.find(cat => cat.id === id)?.name || 'Unknown',
+    isEditing: true,
+    onEditCategory: (categoryName: string) => console.log('Edit category:', categoryName),
+    onSaveCategory: async (categoryName: string, deletedSkillIds: number[]) => {
+      console.log('Save category:', categoryName, 'Deleted skills:', deletedSkillIds);
+    },
+    onCancelCategoryEdit: () => console.log('Cancel category edit'),
+    isAnyEditActive: false,
+    currentEditCategory: null,
+  },
+};
+
+export const CategoryBeingEdited: Story = {
+  name: 'Category Being Edited',
+  args: {
+    skills: mockTechnicalSkills,
+    getCategoryName: (id: number) => mockSkillCategories.find(cat => cat.id === id)?.name || 'Unknown',
+    isEditing: true,
+    onEditCategory: (categoryName: string) => console.log('Edit category:', categoryName),
+    onSaveCategory: async (categoryName: string, deletedSkillIds: number[]) => {
+      console.log('Save category:', categoryName, 'Deleted skills:', deletedSkillIds);
+    },
+    onCancelCategoryEdit: () => console.log('Cancel category edit'),
+    isAnyEditActive: true,
+    currentEditCategory: 'Frontend Development',
   },
 };

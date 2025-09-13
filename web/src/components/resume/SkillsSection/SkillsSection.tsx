@@ -19,11 +19,12 @@ import { useSkillsEdit } from "@/hooks/edit/useSkillsEdit";
 export const SkillsSection: React.FC = () => {
   // Use the specialized Skills edit hook
   const {
-    isEditing,
     isAddingSkill,
+    isEditingCategory,
+    currentEditCategory,
     canEdit,
-    startEdit,
     startAddSkill,
+    startEditCategory,
     cancelEdit,
     completeAddSkill
   } = useSkillsEdit();
@@ -33,26 +34,32 @@ export const SkillsSection: React.FC = () => {
   const { getCategoryName } = useSkillTaxonomy();
   const deleteSkillMutation = useDeleteTechnicalSkill();
 
-  const handleEdit = () => {
-    startEdit();
-  };
-
-  const handleCancel = () => {
-    cancelEdit();
-  };
-
   const handleAddSkillSuccess = () => {
     completeAddSkill();
   };
 
-  const handleDeleteSkill = async (skillId: number) => {
+
+  const handleSaveCategory = async (categoryName: string, deletedSkillIds: number[]) => {
     try {
-      await deleteSkillMutation.mutateAsync(skillId);
-      toast.success("Skill removed successfully");
+      // Delete all marked skills
+      await Promise.all(
+        deletedSkillIds.map(skillId => deleteSkillMutation.mutateAsync(skillId))
+      );
+
+      if (deletedSkillIds.length > 0) {
+        toast.success(`${deletedSkillIds.length} skill${deletedSkillIds.length > 1 ? 's' : ''} removed from ${categoryName}`);
+      }
+
+      // Exit edit mode
+      cancelEdit();
     } catch (error) {
-      toast.error("Failed to remove skill");
-      console.error("Delete skill error:", error);
+      toast.error("Failed to save changes");
+      console.error("Save category error:", error);
     }
+  };
+
+  const handleCancelCategoryEdit = () => {
+    cancelEdit();
   };
 
   if (isLoading) {
@@ -92,58 +99,44 @@ export const SkillsSection: React.FC = () => {
         data-testid="SkillsCard"
         className={cn(
           "p-6 transition-colors",
-          isEditing && isAddingSkill && "border-orange-500 border-2",
+          isAddingSkill && "border-orange-500 border-2",
           "max-w-4xl mx-auto"
         )}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold">Technical Skills</h2>
-          {!isEditing && (
+        </div>
+
+        <div className="space-y-6">
+          <SkillsDisplay
+            skills={skills}
+            getCategoryName={getCategoryName}
+            isEditing={true}
+            onEditCategory={startEditCategory}
+            onSaveCategory={handleSaveCategory}
+            onCancelCategoryEdit={handleCancelCategoryEdit}
+            isAnyEditActive={isEditingCategory || isAddingSkill}
+            currentEditCategory={currentEditCategory}
+          />
+
+          {isAddingSkill ? (
+            <AddSkillForm
+              onSuccess={handleAddSkillSuccess}
+              onCancel={cancelEdit}
+            />
+          ) : (
             <Button
               variant="outline"
               size="sm"
-              onClick={handleEdit}
-              data-testid="edit-button"
+              onClick={startAddSkill}
+              className="flex items-center gap-2"
               disabled={!canEdit}
             >
-              Edit
+              <Plus className="h-4 w-4" />
+              Add Skill
             </Button>
           )}
         </div>
-
-        <SkillsDisplay
-          skills={skills}
-          getCategoryName={getCategoryName}
-          isEditing={isEditing}
-          onDeleteSkill={handleDeleteSkill}
-        />
-
-        {isEditing && (
-          <div className="mt-6 space-y-4">
-            {isAddingSkill ? (
-              <AddSkillForm
-                onSuccess={handleAddSkillSuccess}
-                onCancel={cancelEdit}
-              />
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={startAddSkill}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add Skill
-              </Button>
-            )}
-
-            <div className="flex justify-end gap-2 pt-4 border-t">
-              <Button type="button" variant="outline" onClick={handleCancel}>
-                Done
-              </Button>
-            </div>
-          </div>
-        )}
       </Card>
     </ErrorBoundary>
   );

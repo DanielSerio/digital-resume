@@ -10,7 +10,9 @@ export function useSkillsEdit() {
   // Derived state
   const isEditing = currentEdit?.type === 'skills';
   const isAddingSkill = currentEdit?.type === 'addSkill';
-  const canEdit = !isEditingAnything() || isEditing || isAddingSkill;
+  const isEditingCategory = currentEdit?.type === 'skillCategory';
+  const currentEditCategory = isEditingCategory ? (currentEdit as { type: 'skillCategory'; categoryName: string }).categoryName : null;
+  const canEdit = !isEditingAnything() || isEditing || isAddingSkill || isEditingCategory;
 
   // Actions
   const startEdit = () => {
@@ -20,8 +22,14 @@ export function useSkillsEdit() {
   };
 
   const startAddSkill = () => {
-    if (isEditingAnything() && !isEditing && !isAddingSkill) return false;
+    if (isEditingAnything() && !isEditing && !isAddingSkill && !isEditingCategory) return false;
     setCurrentEdit({ type: 'addSkill' });
+    return true;
+  };
+
+  const startEditCategory = (categoryName: string) => {
+    if (isEditingAnything() && currentEditCategory !== categoryName) return false;
+    setCurrentEdit({ type: 'skillCategory', categoryName });
     return true;
   };
 
@@ -41,12 +49,15 @@ export function useSkillsEdit() {
     // State
     isEditing,
     isAddingSkill,
+    isEditingCategory,
+    currentEditCategory,
     canEdit,
     isEditingAnything: isEditingAnything(),
 
     // Actions
     startEdit,
     startAddSkill,
+    startEditCategory,
     cancelEdit,
     completeEdit,
     completeAddSkill,

@@ -224,7 +224,7 @@ npm run db:studio  # Open Prisma Studio
 - [ ] **Enhanced Scoped Resume Management** - Full implementation of selective content filtering
 - [ ] **Work Experience Management** - Enhanced line editing, reordering, and markdown support
 - [ ] **Skills Management** - Dynamic category creation and advanced filtering
-- [ ] **Data Persistence** - Auto-save functionality and optimistic updates
+- [ ] **Data Management** - Enhanced data validation and optimistic updates
 
 ### Export System (Phase 7)
 - [ ] **PDF Generation** - Professional resume export with template system

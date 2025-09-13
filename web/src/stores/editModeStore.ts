@@ -5,6 +5,7 @@ export type EditContext =
   | { type: 'summary' }
   | { type: 'skills' }
   | { type: 'addSkill' }
+  | { type: 'skillCategory'; categoryName: string }
   | { type: 'education'; itemId: number }
   | { type: 'workExperience'; itemId: number }
   | { type: 'addEducation' }

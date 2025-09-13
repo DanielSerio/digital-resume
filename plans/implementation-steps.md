@@ -214,7 +214,7 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - ✅ Main resume sections use single component pattern with internal display/edit toggle (max 200 lines each)
 - ✅ Local React Hook Form state management per section component
 - ✅ Colored border indicators show unsaved changes on sections
-- ✅ Save/cancel actions work explicitly per section (no auto-save)
+- ✅ Save/cancel actions work explicitly per section
 - ✅ Toast notifications using Sonner directly in components for submission feedback
 - ✅ Shadcn Calendar components work correctly for education and work experience dates
 - ✅ Skill category/subcategory hybrid dropdowns support adding new items using existing Select component
@@ -321,18 +321,18 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - [ ] **6.3.3** Create skill search/autocomplete functionality
 - [ ] **6.3.4** Implement bulk skill operations
 
-### 6.4 Data Persistence
-- [ ] **6.4.1** Add auto-save functionality (debounced)
+### 6.4 Data Management & Validation
 - [ ] **6.4.2** Implement optimistic UI updates where appropriate
 - [ ] **6.4.3** Add data validation feedback
 - [ ] **6.4.4** Create data backup/restore functionality
+- [ ] **6.4.5** Performance optimizations for larger datasets
 
 **Phase 6 Completion Criteria:**
 - ✅ Scoped resume system works seamlessly (create, rename, duplicate, filter)
 - ✅ Copy-on-write editing preserves original data while allowing customization
 - ✅ Complex data operations work smoothly
 - ✅ User can manage all resume sections efficiently
-- ✅ Auto-save prevents data loss
+- ✅ Explicit save/cancel provides clear user control
 - ✅ Advanced UI features enhance usability
 
 ---
