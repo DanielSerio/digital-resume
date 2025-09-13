@@ -11,4 +11,5 @@ count.txt
 *storybook.log
 storybook-static
 playwright-report
+playwright-report/index.html
 test-results

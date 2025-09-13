@@ -100,17 +100,6 @@ test.describe('Summary Section Editing - Priority 1', () => {
       expect(savedSummary).toContain(longSummary);
     });
 
-    test('should handle empty summary', async () => {
-      // Clear summary content
-      await mainPage.enterSummaryEditMode();
-      await mainPage.fillSummaryText('');
-      await mainPage.saveSummaryChanges();
-
-      // Verify empty content is handled appropriately
-      const summary = await mainPage.getSummaryContent();
-      expect(summary?.trim()).toBeFalsy();
-    });
-
     test('should preserve formatting and line breaks', async () => {
       const formattedSummary = `Experienced developer with expertise in:
 

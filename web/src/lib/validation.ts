@@ -3,6 +3,29 @@ import { z } from 'zod';
 // Frontend Zod schemas compatible with backend validation
 // These schemas match the backend structure but are optimized for form validation
 
+// URL validation helper - accepts both domain-only and full URLs, normalizes to full URLs
+const createUrlValidator = (fieldName: string) =>
+  z
+    .string()
+    .optional()
+    .or(z.literal(''))
+    .refine(
+      (val) => {
+        if (!val || val === '') return true;
+        // Allow domain-only URLs and full URLs
+        const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/i;
+        return urlPattern.test(val);
+      },
+      { message: `Invalid ${fieldName} URL format` }
+    )
+    .transform((val) => {
+      if (!val || val === '') return val;
+      // Add https:// if missing protocol
+      return val.startsWith('http://') || val.startsWith('https://')
+        ? val
+        : `https://${val}`;
+    });
+
 // Contact validation schema
 export const contactSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255, 'Name is too long'),
@@ -14,9 +37,9 @@ export const contactSchema = z.object({
     .optional()
     .or(z.literal('')),
   phone: z.string().max(50, 'Phone number is too long').optional().or(z.literal('')),
-  github: z.string().url('Invalid URL format').optional().or(z.literal('')),
-  website: z.string().url('Invalid URL format').optional().or(z.literal('')),
-  linkedin: z.string().url('Invalid URL format').optional().or(z.literal('')),
+  github: createUrlValidator('GitHub'),
+  website: createUrlValidator('website'),
+  linkedin: createUrlValidator('LinkedIn'),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
