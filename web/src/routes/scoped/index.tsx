@@ -1,5 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ScopedResumeManager } from "@/components/resume";
+import {
+  ScopedResumeManager,
+  ScopedSummarySection,
+  ScopedSkillsSection,
+  ScopedWorkExperienceSection,
+  ContactSection,
+  EducationSection
+} from "@/components/resume";
 import { Page } from "@/components/common";
 import { apiClient } from "@/lib/api";
 import {
@@ -111,7 +118,19 @@ function ScopedResumeComponent() {
         </div>
       )}
 
-      <ScopedResumeManager onResumeSelect={handleResumeSelect} />
+      {/* Show editing interface when a resume is selected, otherwise show management */}
+      {selectedResume ? (
+        <div className="space-y-6">
+          {/* Mirror main resume layout exactly */}
+          <ContactSection />
+          <ScopedSummarySection scopedResumeId={selectedResume.id} />
+          <ScopedSkillsSection scopedResumeId={selectedResume.id} />
+          <ScopedWorkExperienceSection scopedResumeId={selectedResume.id} />
+          <EducationSection />
+        </div>
+      ) : (
+        <ScopedResumeManager onResumeSelect={handleResumeSelect} />
+      )}
     </Page>
   );
 }

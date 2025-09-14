@@ -4,3 +4,6 @@ export { SkillsSection } from './SkillsSection/SkillsSection';
 export { EducationSection } from './EducationSection/EducationSection';
 export { WorkExperienceSection } from './WorkExperienceSection/WorkExperienceSection';
 export { ScopedResumeManager } from './ScopedResume/ScopedResumeManager';
+export { ScopedSummarySection } from './ScopedSummarySection/ScopedSummarySection';
+export { ScopedSkillsSection } from './ScopedSkillsSection/ScopedSkillsSection';
+export { ScopedWorkExperienceSection } from './ScopedWorkExperienceSection/ScopedWorkExperienceSection';

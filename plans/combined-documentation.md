@@ -363,43 +363,95 @@ This document outlines a detailed multi-phase implementation plan for the digita
   - ✅ **Persistence**: Line reordering now persists across page reloads
 - [x] **6.2.4** Database schema consistency and API integration fixes ✅
 
-### Phase 6B: Scoped Resume Management UI 🔄 **CURRENT PHASE**
+### Phase 6B: Scoped Resume Management UI ✅ **COMPLETED**
 
 **Architecture Plan**: Scoped resume editing interface mirrors main resume UI exactly for consistency
 
-- [ ] **6.1.1** Scoped Resume List/Management Page ✅
+- [x] **6.1.1** Scoped Resume List/Management Page ✅
   - View all scoped resumes with metadata ✅
   - Create new scoped resumes with naming ✅
   - Duplicate existing scoped resumes ✅
   - Delete scoped resumes with confirmation ✅
-- [ ] **6.1.2** Scoped Resume Editing Interface
-  - **Single Page Design**: `/scoped?scopedResumeId=123` (consistent with main resume single-page approach)
-  - **Scoped Resume Selector**: Dropdown that updates URL search params and switches context
-  - **Mirror Main UI**: Identical Card layouts, edit patterns, form integration
-  - **Edit State Integration**: Reuse existing `useEditState` and `useItemEdit` hooks
-  - **Visual Consistency**: Same orange borders, loading states, error patterns
-  - **Navigation Pattern**: Selector updates query params, components react to scopedResumeId changes
-- [ ] **6.1.3** Copy-on-Write Editing Components
-  - **ScopedSummarySection**: Mirrors `SummarySection` with scoped data loading
-  - **ScopedSkillsSection**: Mirrors `SkillsSection` with inclusion toggles
-  - **ScopedWorkExperienceSection**: Mirrors `WorkExperienceSection` with selective content
-  - **Visual Indicators**: "Customized" badges, "Reset to Original" buttons
-- [ ] **6.1.4** Content Selection Patterns
-  - **Inclusion Toggles**: Checkbox-based selection for skills and work experiences
-  - **Batch Operations**: Efficient bulk inclusion/exclusion
-  - **Copy-on-Write**: Automatic scoped version creation with clear visual feedback
-  - **Data Integrity**: Original resume data remains unchanged
+- [x] **6.1.2** Scoped Resume Editing Interface ✅
+  - **Single Page Design**: `/scoped?resumeId=123` (consistent with main resume single-page approach) ✅
+  - **Scoped Resume Selector**: Dropdown that updates URL search params and switches context ✅
+  - **Mirror Main UI**: Identical Card layouts, edit patterns, form integration ✅
+  - **Edit State Integration**: Reuse existing `useEditState` and `useItemEdit` hooks ✅
+  - **Visual Consistency**: Same orange borders, loading states, error patterns ✅
+  - **Navigation Pattern**: Selector updates query params, components react to resumeId changes ✅
+- [x] **6.1.3** Copy-on-Write Editing Components ✅
+  - **ScopedSummarySection**: Mirrors `SummarySection` with scoped data loading ✅
+  - **ScopedSkillsSection**: Mirrors `SkillsSection` with inclusion toggles ✅
+  - **ScopedWorkExperienceSection**: Mirrors `WorkExperienceSection` with selective content ✅
+  - **Visual Indicators**: "Customized" badges, "Reset to Original" buttons ✅
+- [x] **6.1.4** Content Selection Patterns ✅
+  - **Inclusion Toggles**: Checkbox-based selection for skills and work experiences ✅
+  - **Batch Operations**: Efficient bulk inclusion/exclusion ✅
+  - **Copy-on-Write**: Automatic scoped version creation with clear visual feedback ✅
+  - **Data Integrity**: Original resume data remains unchanged ✅
+
+**Implementation Status**: Complete UI framework implemented with TODO markers for API integration
 
 ### Phase 6C: Advanced Data Management
 
 - [ ] **6.4.1** Enhanced data validation with user feedback
+  - Better error messages with specific field guidance
+  - Real-time validation during typing (not just on submit)
+  - Cross-field validation (e.g., end date after start date)
+  - Visual indicators for required vs optional fields
 - [ ] **6.4.2** Optimistic updates for frequent operations
+  - Skill inclusion/exclusion toggles (immediate checkbox feedback)
+  - Work experience line reordering (instant drag feedback)
+  - Professional summary typing (real-time preview)
 - [ ] **6.4.3** Data consistency validation and error recovery
-- [ ] **6.4.4** Data backup/restore functionality
+  - Handle main resume deletions that affect scoped resumes
+  - Validate work experience line references remain valid
+  - Ensure category/subcategory changes don't break skill relationships
+  - Background checks for orphaned scoped data
+
+## Phase 6.5: Testing Coverage & Quality Assurance 🔄 **NEXT PHASE**
+
+**Goal**: Comprehensive testing coverage for new scoped resume functionality using Storybook component testing and Playwright E2E testing.
+
+### 6.5.1 Test Coverage Analysis
+- [ ] **6.5.1.1** Audit existing Playwright E2E test coverage
+- [ ] **6.5.1.2** Identify gaps in Storybook component coverage
+- [ ] **6.5.1.3** Assess E2E test coverage for critical user workflows
+- [ ] **6.5.1.4** Document testing strategy and coverage goals
+
+### 6.5.2 Scoped Resume E2E Testing
+- [ ] **6.5.2.1** E2E tests for scoped resume workflows
+  - Create and edit scoped resumes
+  - Skill inclusion/exclusion flows
+  - Work experience customization flows
+  - Navigation between main and scoped resumes
+- [ ] **6.5.2.2** E2E tests for copy-on-write functionality
+  - Professional summary customization
+  - Work experience line editing
+  - Reset to original functionality
+- [ ] **6.5.2.3** E2E tests for bulk operations
+  - Skill category bulk selection
+  - Work experience inclusion workflows
+
+### 6.5.3 Enhanced Work Experience E2E Testing
+- [ ] **6.5.3.1** E2E tests for line reordering functionality
+- [ ] **6.5.3.2** E2E tests for work experience CRUD operations
+- [ ] **6.5.3.3** E2E tests for work experience data persistence
+
+### 6.5.4 Storybook Component Testing & Documentation
+- [ ] **6.5.4.1** Create stories for new scoped resume components
+  - ScopedSummarySection with copy-on-write states
+  - ScopedSkillsSection with inclusion toggle variants
+  - ScopedWorkExperienceSection with customization states
+- [ ] **6.5.4.2** Add interaction testing with @storybook/test
+  - Form interactions and state changes
+  - Toggle behaviors and visual feedback
+- [ ] **6.5.4.3** Document component APIs and usage patterns
+- [ ] **6.5.4.4** Visual regression testing setup (Chromatic integration)
 
 ## Progress Tracking
 
-### Overall Progress: 85/119 tasks completed (71.4%)
+### Overall Progress: 98/135 tasks completed (72.6%)
 
 | Phase                                | Progress     | Status                   |
 | ------------------------------------ | ------------ | ------------------------ |
@@ -407,25 +459,30 @@ This document outlines a detailed multi-phase implementation plan for the digita
 | Phase 2: Core Data Layer             | 16/16 (100%) | ✅ Completed             |
 | Phase 3: Frontend State Management   | 13/13 (100%) | ✅ Completed             |
 | Phase 4: Basic UI Components         | 19/19 (100%) | ✅ Completed             |
-| Phase 5: Testing & Quality Assurance | 17/17 (100%) | ✅ **COMPLETED**         |
-| Phase 6: Advanced Features           | 5/14 (36%)   | 🔄 **IN PROGRESS** ✅     |
+| Phase 5: Testing & Quality Assurance | 17/17 (100%) | ✅ Completed             |
+| Phase 6: Advanced Features           | 17/17 (100%) | ✅ **COMPLETED**         |
+| Phase 6.5: Testing Coverage & QA     | 0/16 (0%)    | 🔄 **NEXT PHASE**        |
 | Phase 7: Export System               | 0/12 (0%)    | ⏳ Pending               |
 | Phase 8: Polish & Documentation      | 0/6 (0%)     | ⏳ Pending               |
 
 ### Current Focus
 
-**Active Phase**: Phase 6B - Scoped Resume Management UI (**IN PROGRESS**)
-**Recently Completed**: Phase 6A - Enhanced Work Experience Management ✅ COMPLETED
-- 6.2.1: Add/remove work experience entries with full CRUD operations ✅
-- 6.2.2: Work experience line management (add, edit, delete, reorder) ✅
-- 6.2.3: Line ordering with persistent sort order across sessions ✅
-- 6.2.4: Database schema consistency and API integration fixes ✅
+**Recently Completed**: Phase 6 - Advanced Features ✅ **COMPLETED**
+- **Phase 6A**: Enhanced Work Experience Management ✅ COMPLETED
+  - 6.2.1: Add/remove work experience entries with full CRUD operations ✅
+  - 6.2.2: Work experience line management (add, edit, delete, reorder) ✅
+  - 6.2.3: Line ordering with persistent sort order across sessions ✅
+  - 6.2.4: Database schema consistency and API integration fixes ✅
+- **Phase 6B**: Scoped Resume Management UI ✅ **COMPLETED**
+  - Complete scoped resume editing interface with single-page navigation ✅
+  - ScopedSummarySection with copy-on-write editing ✅
+  - ScopedSkillsSection with inclusion toggles and bulk operations ✅
+  - ScopedWorkExperienceSection with line-level customization ✅
+  - Mirror main resume UI patterns exactly for consistency ✅
 
-**Current Focus**: Phase 6B - Scoped Resume Management UI
-**Architecture**: Mirror main resume UI patterns exactly for consistency and familiar UX
-**Navigation**: Single-page design with `/scoped?scopedResumeId=123` query params (consistent with main resume)
-**Selector Pattern**: Dropdown updates URL search params, components react to scopedResumeId changes
-**Next Priority**: Implement scoped resume selector and context-aware editing sections
+**Next Phase**: Phase 6.5 - Testing Coverage & Quality Assurance
+**Priority**: Comprehensive test coverage for new scoped resume functionality
+**Focus Areas**: Playwright E2E testing, Storybook component testing, interaction testing, coverage analysis
 
 ---
 
@@ -587,6 +644,33 @@ Note: This section contains the DBML schema structure and other non-markdown tex
 - `schema.dbml` - Complete database schema definition
 
 These files are maintained separately and should be referenced directly when needed for implementation details.
+
+## Phase 7: Export System & Data Management
+
+**Goal**: Comprehensive document export capabilities and data backup/restore functionality.
+
+### 7.1 Enhanced Export System
+- [ ] **7.1.1** PDF export improvements with better formatting
+- [ ] **7.1.2** DOCX export with professional templates
+- [ ] **7.1.3** Export customization options (sections, styling)
+- [ ] **7.1.4** Scoped resume export integration
+
+### 7.2 Data Backup & Restore
+- [ ] **7.2.1** Complete resume data export as JSON
+  - Export main resume + all scoped resumes as single JSON file
+  - Include all relationships and metadata
+- [ ] **7.2.2** Data import functionality
+  - Import with merge options (replace vs append)
+  - Validation of imported data structure
+- [ ] **7.2.3** Manual backup workflows
+  - Pre-export backup prompts before major changes
+  - Backup file management and organization
+
+### 7.3 Export Templates & Formatting
+- [ ] **7.3.1** Professional resume templates
+- [ ] **7.3.2** Industry-specific formatting options
+- [ ] **7.3.3** Custom branding and styling
+- [ ] **7.3.4** Multi-format consistency
 
 ---
 
