@@ -60,6 +60,31 @@ export class MainPage {
   readonly workExperienceList: Locator;
   readonly addWorkExperienceButton: Locator;
 
+  // Work Experience Form Selectors
+  getWorkExperienceForm() { return this.workExperienceSection.locator('[role="form"]'); }
+  getCompanyNameInput() { return this.page.getByTestId('work-exp-company-name'); }
+  getJobTitleInput() { return this.page.getByTestId('work-exp-job-title'); }
+  getCompanyCityInput() { return this.page.getByTestId('work-exp-company-city'); }
+  getCompanyStateInput() { return this.page.getByTestId('work-exp-company-state'); }
+  getStartDateButton() { return this.getWorkExperienceForm().getByRole('button', { name: /start date/i }); }
+  getEndDateButton() { return this.getWorkExperienceForm().getByRole('button', { name: /end date/i }); }
+  getAddLineButton() { return this.page.getByTestId('work-exp-add-line'); }
+  getSaveButton() { return this.page.getByTestId('work-exp-save'); }
+  getCancelButton() { return this.page.getByTestId('work-exp-cancel'); }
+  getDeleteButton() { return this.page.getByTestId('work-exp-delete'); }
+
+  // Work Experience Line Selectors
+  getLineTextarea(index: number) { return this.page.getByTestId(`line-textarea-${index}`); }
+  getLineContainer(index: number) { return this.page.getByTestId(`work-exp-line-${index}`); }
+  getLineRemoveButton(index: number) { return this.page.getByTestId(`line-remove-${index}`); }
+  getLineMoveUpButton(index: number) { return this.page.getByTestId(`line-move-up-${index}`); }
+  getLineMoveDownButton(index: number) { return this.page.getByTestId(`line-move-down-${index}`); }
+  getAllLines() { return this.page.locator('[data-testid^="line-textarea-"]'); }
+
+  // Work Experience Display Selectors
+  getWorkExperienceEntry(index: number) { return this.workExperienceList.locator('.border').nth(index); }
+  getWorkExperienceEditButton(index: number) { return this.getWorkExperienceEntry(index).getByRole('button', { name: 'Edit' }); }
+
   constructor(page: Page) {
     this.page = page;
 

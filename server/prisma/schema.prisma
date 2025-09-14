@@ -36,36 +36,36 @@ model ProfessionalSummary {
 }
 
 model SkillCategory {
-  id               Int              @id @default(autoincrement())
-  name             String           @unique
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @updatedAt @map("updated_at")
-  technicalSkills  TechnicalSkill[]
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  technicalSkills TechnicalSkill[]
 
   @@map("skill_categories")
 }
 
 model SkillSubcategory {
-  id               Int              @id @default(autoincrement())
-  name             String           @unique
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @updatedAt @map("updated_at")
-  technicalSkills  TechnicalSkill[]
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  technicalSkills TechnicalSkill[]
 
   @@map("skill_subcategories")
 }
 
 model TechnicalSkill {
-  id            Int              @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   name          String
-  categoryId    Int              @map("category_id")
-  subcategoryId Int              @map("subcategory_id")
-  createdAt     DateTime         @default(now()) @map("created_at")
-  updatedAt     DateTime         @updatedAt @map("updated_at")
-  
-  category      SkillCategory    @relation(fields: [categoryId], references: [id])
-  subcategory   SkillSubcategory @relation(fields: [subcategoryId], references: [id])
-  scopedSkills  ScopedSkill[]
+  categoryId    Int      @map("category_id")
+  subcategoryId Int      @map("subcategory_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  category     SkillCategory    @relation(fields: [categoryId], references: [id])
+  subcategory  SkillSubcategory @relation(fields: [subcategoryId], references: [id])
+  scopedSkills ScopedSkill[]
 
   @@map("technical_skills")
 }
@@ -86,99 +86,99 @@ model Education {
 }
 
 model WorkExperience {
-  id                        Int                        @id @default(autoincrement())
-  companyName               String                     @map("company_name")
-  companyTagline            String?                    @map("company_tagline")
-  companyCity               String                     @map("company_city")
-  companyState              String                     @map("company_state")
-  jobTitle                  String                     @map("job_title")
-  dateStarted               DateTime                   @map("date_started")
-  dateEnded                 DateTime?                  @map("date_ended")
-  createdAt                 DateTime                   @default(now()) @map("created_at")
-  updatedAt                 DateTime                   @updatedAt @map("updated_at")
-  
-  workExperienceLines       WorkExperienceLine[]
-  scopedWorkExperiences     ScopedWorkExperience[]
+  id             Int       @id @default(autoincrement())
+  companyName    String    @map("company_name")
+  companyTagline String?   @map("company_tagline")
+  companyCity    String    @map("company_city")
+  companyState   String    @map("company_state")
+  jobTitle       String    @map("job_title")
+  dateStarted    DateTime  @map("date_started")
+  dateEnded      DateTime? @map("date_ended")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  workExperienceLines   WorkExperienceLine[]
+  scopedWorkExperiences ScopedWorkExperience[]
 
   @@map("work_experiences")
 }
 
 model WorkExperienceLine {
-  id                           Int                           @id @default(autoincrement())
-  workExperienceId             Int                           @map("work_experience_id")
-  lineText                     String                        @map("line_text")
-  lineId                       Int                           @map("line_id")
-  createdAt                    DateTime                      @default(now()) @map("created_at")
-  updatedAt                    DateTime                      @updatedAt @map("updated_at")
-  
-  workExperience               WorkExperience                @relation(fields: [workExperienceId], references: [id])
-  scopedWorkExperienceLines    ScopedWorkExperienceLine[]
+  id               Int      @id @default(autoincrement())
+  workExperienceId Int      @map("work_experience_id")
+  lineText         String   @map("line_text")
+  sortOrder        Int      @map("sort_order")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  workExperience            WorkExperience             @relation(fields: [workExperienceId], references: [id])
+  scopedWorkExperienceLines ScopedWorkExperienceLine[]
 
   @@map("work_experience_lines")
 }
 
 model ScopedResume {
-  id                            Int                            @id @default(autoincrement())
-  name                          String
-  createdAt                     DateTime                       @default(now()) @map("created_at")
-  updatedAt                     DateTime                       @updatedAt @map("updated_at")
-  
-  scopedProfessionalSummaries   ScopedProfessionalSummary[]
-  scopedSkills                  ScopedSkill[]
-  scopedWorkExperiences         ScopedWorkExperience[]
-  scopedWorkExperienceLines     ScopedWorkExperienceLine[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  scopedProfessionalSummaries ScopedProfessionalSummary[]
+  scopedSkills                ScopedSkill[]
+  scopedWorkExperiences       ScopedWorkExperience[]
+  scopedWorkExperienceLines   ScopedWorkExperienceLine[]
 
   @@map("scoped_resumes")
 }
 
 model ScopedProfessionalSummary {
-  id             Int          @id @default(autoincrement())
-  scopedResumeId Int          @map("scoped_resume_id")
-  summaryText    String       @map("summary_text")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
-  
-  scopedResume   ScopedResume @relation(fields: [scopedResumeId], references: [id])
+  id             Int      @id @default(autoincrement())
+  scopedResumeId Int      @map("scoped_resume_id")
+  summaryText    String   @map("summary_text")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  scopedResume ScopedResume @relation(fields: [scopedResumeId], references: [id])
 
   @@map("scoped_professional_summaries")
 }
 
 model ScopedSkill {
-  id               Int            @id @default(autoincrement())
-  scopedResumeId   Int            @map("scoped_resume_id")
-  technicalSkillId Int            @map("technical_skill_id")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt @map("updated_at")
-  
-  scopedResume     ScopedResume   @relation(fields: [scopedResumeId], references: [id])
-  technicalSkill   TechnicalSkill @relation(fields: [technicalSkillId], references: [id])
+  id               Int      @id @default(autoincrement())
+  scopedResumeId   Int      @map("scoped_resume_id")
+  technicalSkillId Int      @map("technical_skill_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  scopedResume   ScopedResume   @relation(fields: [scopedResumeId], references: [id])
+  technicalSkill TechnicalSkill @relation(fields: [technicalSkillId], references: [id])
 
   @@map("scoped_skills")
 }
 
 model ScopedWorkExperience {
-  id               Int            @id @default(autoincrement())
-  scopedResumeId   Int            @map("scoped_resume_id")
-  workExperienceId Int            @map("work_experience_id")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt @map("updated_at")
-  
-  scopedResume     ScopedResume   @relation(fields: [scopedResumeId], references: [id])
-  workExperience   WorkExperience @relation(fields: [workExperienceId], references: [id])
+  id               Int      @id @default(autoincrement())
+  scopedResumeId   Int      @map("scoped_resume_id")
+  workExperienceId Int      @map("work_experience_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  scopedResume   ScopedResume   @relation(fields: [scopedResumeId], references: [id])
+  workExperience WorkExperience @relation(fields: [workExperienceId], references: [id])
 
   @@map("scoped_work_experiences")
 }
 
 model ScopedWorkExperienceLine {
-  id                     Int                @id @default(autoincrement())
-  scopedResumeId         Int                @map("scoped_resume_id")
-  workExperienceLineId   Int                @map("work_experience_line_id")
-  lineText               String             @map("line_text")
-  createdAt              DateTime           @default(now()) @map("created_at")
-  updatedAt              DateTime           @updatedAt @map("updated_at")
-  
-  scopedResume           ScopedResume       @relation(fields: [scopedResumeId], references: [id])
-  workExperienceLine     WorkExperienceLine @relation(fields: [workExperienceLineId], references: [id])
+  id                   Int                @id @default(autoincrement())
+  scopedResumeId       Int                @map("scoped_resume_id")
+  workExperienceLineId Int                @map("work_experience_line_id")
+  lineText             String             @map("line_text")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  sortOrder            Int                @map("sort_order")
+  scopedResume         ScopedResume       @relation(fields: [scopedResumeId], references: [id])
+  workExperienceLine   WorkExperienceLine @relation(fields: [workExperienceLineId], references: [id])
 
   @@map("scoped_work_experience_lines")
 }

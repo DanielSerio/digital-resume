@@ -39,8 +39,8 @@ export const WorkExperienceSection: React.FC = () => {
     cancelEdit,
     completeAdd,
     completeEditItem,
-    deleteItem
-  } = useItemEdit('workExperience', workExperiences);
+    deleteItem,
+  } = useItemEdit("workExperience", workExperiences);
   const createExperienceMutation = useCreateWorkExperience();
   const updateExperienceMutation = useUpdateWorkExperience();
   const deleteExperienceMutation = useDeleteWorkExperience();
@@ -65,10 +65,13 @@ export const WorkExperienceSection: React.FC = () => {
           dateStarted: workExperience.startDate,
           dateEnded: workExperience.endDate ?? null,
         },
-        lines: lines.map((line, index): WorkExperienceLineInput => ({
-          lineText: line.lineText,
-          lineId: index + 1,
-        })),
+        lines: lines.map(
+          (line): WorkExperienceLineInput => ({
+            ...line,
+            lineText: line.lineText,
+            sortOrder: line.sortOrder,
+          })
+        ),
       });
       toast.success("Work experience added successfully");
       completeAdd();
@@ -82,28 +85,63 @@ export const WorkExperienceSection: React.FC = () => {
     if (!editingExperience) return;
     try {
       const { lines, ...workExperience } = data;
+
+      console.log(
+        "Lines being sent to API:",
+        lines.map((line, index) => ({
+          lineText: line.lineText.substring(0, 30) + "...",
+          sortOrder: line.sortOrder,
+          arrayIndex: index,
+        }))
+      );
+
+      console.log("=== CALLING API MUTATION ===");
+      console.log("Work Experience ID:", editingExperience.id);
+      console.log("Mutation data being sent:", {
+        workExperience: {
+          companyName: workExperience.companyName,
+          jobTitle: workExperience.jobTitle,
+        },
+        lines: lines.map(
+          (line): WorkExperienceLineInput => ({
+            ...line,
+            lineText: line.lineText.substring(0, 30) + "...",
+            sortOrder: line.sortOrder,
+          })
+        ),
+      });
+
       await updateExperienceMutation.mutateAsync({
         id: editingExperience.id,
         data: {
           workExperience: {
             companyName: workExperience.companyName,
-            companyCity: workExperience.companyCity || editingExperience.companyCity || "",
-            companyState: workExperience.companyState || editingExperience.companyState || "",
+            companyCity:
+              workExperience.companyCity || editingExperience.companyCity || "",
+            companyState:
+              workExperience.companyState ||
+              editingExperience.companyState ||
+              "",
             jobTitle: workExperience.jobTitle,
             dateStarted: workExperience.startDate,
             dateEnded: workExperience.endDate ?? null,
           },
-          lines: lines.map((line, index): WorkExperienceLineInput => ({
-            lineText: line.lineText,
-            lineId: index + 1,
-          })),
+          lines: (lines ?? []).map(
+            (line): WorkExperienceLineInput => ({
+              ...line,
+              lineText: line.lineText,
+              sortOrder: line.sortOrder,
+            })
+          ),
         },
       });
+      console.log("=== API MUTATION COMPLETED SUCCESSFULLY ===");
       toast.success("Work experience updated successfully");
       completeEditItem();
     } catch (error) {
-      toast.error("Failed to update work experience");
       console.error("Update work experience error:", error);
+      console.error("Error details:", JSON.stringify(error, null, 2));
+      toast.error("Failed to update work experience");
     }
   };
 
@@ -140,6 +178,8 @@ export const WorkExperienceSection: React.FC = () => {
       </Card>
     );
   }
+
+  console.error(error);
 
   if (error) {
     return (

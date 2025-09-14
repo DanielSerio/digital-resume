@@ -13,7 +13,7 @@ router.get('/categories', async (req, res) => {
     const result = await skillService.getSkillCategories();
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -31,7 +31,7 @@ router.get('/categories/:id', async (req, res) => {
     const result = await skillService.getSkillCategoryById(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -41,7 +41,7 @@ router.post('/categories', async (req, res) => {
     const result = await skillService.createSkillCategory(req.body);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -59,7 +59,7 @@ router.put('/categories/:id', async (req, res) => {
     const result = await skillService.updateSkillCategory(id, req.body);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -77,7 +77,7 @@ router.delete('/categories/:id', async (req, res) => {
     const result = await skillService.deleteSkillCategory(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -89,7 +89,7 @@ router.get('/subcategories', async (req, res) => {
     const result = await skillService.getSkillSubcategories();
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -107,7 +107,7 @@ router.get('/subcategories/:id', async (req, res) => {
     const result = await skillService.getSkillSubcategoryById(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -117,7 +117,7 @@ router.post('/subcategories', async (req, res) => {
     const result = await skillService.createSkillSubcategory(req.body);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -135,7 +135,7 @@ router.put('/subcategories/:id', async (req, res) => {
     const result = await skillService.updateSkillSubcategory(id, req.body);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -153,7 +153,7 @@ router.delete('/subcategories/:id', async (req, res) => {
     const result = await skillService.deleteSkillSubcategory(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -165,7 +165,7 @@ router.get('/', async (req, res) => {
     const result = await skillService.getTechnicalSkills();
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -183,7 +183,7 @@ router.get('/:id', async (req, res) => {
     const result = await skillService.getTechnicalSkillById(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -193,7 +193,7 @@ router.post('/', async (req, res) => {
     const result = await skillService.createTechnicalSkill(req.body);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -211,7 +211,7 @@ router.put('/:id', async (req, res) => {
     const result = await skillService.updateTechnicalSkill(id, req.body);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -229,7 +229,7 @@ router.delete('/:id', async (req, res) => {
     const result = await skillService.deleteTechnicalSkill(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 

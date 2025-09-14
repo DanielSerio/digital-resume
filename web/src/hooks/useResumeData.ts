@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import type { 
-  CompleteResume, 
-  Contact, 
-  ProfessionalSummary, 
+import type {
+  CompleteResume,
+  Contact,
+  ProfessionalSummary,
   TechnicalSkill,
   Education,
   WorkExperience,
@@ -115,7 +115,23 @@ export const useEducationData = () => {
 export const useWorkExperiencesData = () => {
   return useQuery({
     queryKey: resumeQueryKeys.workExperiences(),
-    queryFn: () => apiClient.get<WorkExperience[]>('/work-experiences'),
+    queryFn: async () => {
+      const response = await apiClient.get<WorkExperience[]>('/work-experiences');
+      console.info('response', response);
+      // Transform date strings to Date objects
+      return response.map((workExp) => ({
+        ...workExp,
+        dateStarted: new Date(workExp.dateStarted),
+        dateEnded: workExp.dateEnded ? new Date(workExp.dateEnded) : null,
+        createdAt: new Date(workExp.createdAt),
+        updatedAt: new Date(workExp.updatedAt),
+        lines: workExp.lines.map(line => ({
+          ...line,
+          createdAt: new Date(line.createdAt),
+          updatedAt: new Date(line.updatedAt),
+        }))
+      }));
+    },
     throwOnError: false,
     meta: {
       errorMessage: 'Failed to load work experience',

@@ -199,7 +199,7 @@ async function main() {
       data: {
         workExperienceId: currentJob.id,
         lineText: currentJobLines[i],
-        lineId: i + 1,
+        sortOrder: i + 1,
       },
     });
   }
@@ -217,7 +217,7 @@ async function main() {
       data: {
         workExperienceId: previousJob.id,
         lineText: previousJobLines[i],
-        lineId: i + 1,
+        sortOrder: i + 1,
       },
     });
   }

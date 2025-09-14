@@ -48,7 +48,7 @@ type FullScopedResume = ScopedResume & {
     workExperienceLine: {
       id: number;
       workExperienceId: number;
-      lineId: number;
+      sortOrder: number;
     };
   })[];
 };

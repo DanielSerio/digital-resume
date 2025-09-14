@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Plus, Calendar as CalendarIcon } from "lucide-react";
@@ -57,7 +57,7 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move, update } = useFieldArray({
     control: form.control,
     name: "lines",
   });
@@ -66,11 +66,118 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
     formState: { errors },
   } = form;
 
+  // Reset form when workExperience prop changes (for editing existing entries)
+  useEffect(() => {
+    if (workExperience) {
+      // Handle both 'lines' and 'workExperienceLines' properties for backward compatibility
+      const lines = workExperience.lines || (workExperience as any).workExperienceLines || [];
+
+      const formattedLines = lines.map((line: any, index: number) => ({
+        lineText: line.lineText || "",
+        sortOrder: index,
+      }));
+
+      form.reset({
+        companyName: workExperience.companyName || "",
+        jobTitle: workExperience.jobTitle || "",
+        companyCity: workExperience.companyCity || "",
+        companyState: workExperience.companyState || "",
+        startDate: workExperience.dateStarted
+          ? new Date(workExperience.dateStarted)
+          : new Date(),
+        endDate: workExperience.dateEnded
+          ? new Date(workExperience.dateEnded)
+          : undefined,
+        lines: formattedLines.length > 0 ? formattedLines : [{ lineText: "", sortOrder: 0 }],
+      });
+    }
+  }, [workExperience, form]);
+
   const handleAddLine = () => {
     append({ lineText: "", sortOrder: fields.length });
   };
 
+  const handleMoveUp = (index: number) => {
+    if (index > 0) {
+      const toIndex = index - 1;
+      console.log(`Moving line UP: from index ${index} to ${toIndex}`);
+
+      // First get the lines before the move
+      const linesBefore = form.getValues('lines');
+      console.log('Lines BEFORE move:', linesBefore.map((line, i) => ({
+        index: i,
+        sortOrder: line.sortOrder,
+        text: line.lineText.substring(0, 20) + '...'
+      })));
+
+      // Perform the move operation
+      move(index, toIndex);
+
+      // After move, the array is reordered, so update sortOrder to match new positions
+      // Use setTimeout to ensure the move is completed before updating sortOrder
+      setTimeout(() => {
+        const currentLines = form.getValues('lines');
+        console.log('Lines AFTER move (before sortOrder update):', currentLines.map((line, i) => ({
+          index: i,
+          sortOrder: line.sortOrder,
+          text: line.lineText.substring(0, 20) + '...'
+        })));
+
+        // Update sortOrder to match the new array positions
+        currentLines.forEach((line, i) => {
+          form.setValue(`lines.${i}.sortOrder`, i);
+        });
+
+        const finalLines = form.getValues('lines');
+        console.log('Lines FINAL (after sortOrder update):', finalLines.map((line, i) => ({
+          index: i,
+          sortOrder: line.sortOrder,
+          text: line.lineText.substring(0, 20) + '...'
+        })));
+      }, 0);
+    }
+  };
+
+  const handleMoveDown = (index: number) => {
+    if (index < fields.length - 1) {
+      const toIndex = index + 1;
+      console.log(`Moving line DOWN: from index ${index} to ${toIndex}`);
+
+      // Perform the move operation
+      move(index, toIndex);
+
+      // After move, use setTimeout to ensure the move is completed
+      setTimeout(() => {
+        const currentLines = form.getValues('lines');
+        console.log('Lines after move down (before sortOrder update):', currentLines.map((line, i) => ({
+          index: i,
+          sortOrder: line.sortOrder,
+          text: line.lineText.substring(0, 20) + '...'
+        })));
+
+        // Update sortOrder to match the new array positions
+        currentLines.forEach((line, i) => {
+          form.setValue(`lines.${i}.sortOrder`, i);
+        });
+
+        const finalLines = form.getValues('lines');
+        console.log('Lines FINAL after move down:', finalLines.map((line, i) => ({
+          index: i,
+          sortOrder: line.sortOrder,
+          text: line.lineText.substring(0, 20) + '...'
+        })));
+      }, 0);
+    }
+  };
+
   const handleSubmit = (data: CompleteWorkExperienceFormData) => {
+    console.log('Form submission - final data:', {
+      lines: data.lines.map((line, i) => ({
+        index: i,
+        sortOrder: line.sortOrder,
+        text: line.lineText.substring(0, 30) + '...'
+      }))
+    });
     onSave(data);
   };
 
@@ -86,6 +193,7 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
           <Label htmlFor="companyName" id="companyName-label">Company *</Label>
           <Input
             id="companyName"
+            data-testid="work-exp-company-name"
             {...form.register("companyName")}
             className={cn(errors.companyName && "border-red-500")}
             role="textbox"
@@ -105,6 +213,7 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
           <Label htmlFor="jobTitle" id="jobTitle-label">Position *</Label>
           <Input
             id="jobTitle"
+            data-testid="work-exp-job-title"
             {...form.register("jobTitle")}
             className={cn(errors.jobTitle && "border-red-500")}
             role="textbox"
@@ -125,6 +234,7 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
             <Label htmlFor="companyCity">City</Label>
             <Input
               id="companyCity"
+              data-testid="work-exp-company-city"
               {...form.register("companyCity")}
               placeholder="Company city"
               className={cn(errors.companyCity && "border-red-500")}
@@ -139,6 +249,7 @@ export const WorkExperienceEntryForm: React.FC<WorkExperienceEntryFormProps> = (
             <Label htmlFor="companyState">State</Label>
             <Input
               id="companyState"
+              data-testid="work-exp-company-state"
               {...form.register("companyState")}
               placeholder="Company state"
               className={cn(errors.companyState && "border-red-500")}
@@ -218,6 +329,7 @@ autoFocus
             type="button"
             variant="outline"
             size="sm"
+            data-testid="work-exp-add-line"
             onClick={handleAddLine}
             className="flex items-center gap-2"
           >
@@ -231,6 +343,10 @@ autoFocus
               key={field.id}
               index={index}
               onRemove={() => remove(index)}
+              onMoveUp={() => handleMoveUp(index)}
+              onMoveDown={() => handleMoveDown(index)}
+              canMoveUp={index > 0}
+              canMoveDown={index < fields.length - 1}
               register={form.register}
               errors={errors}
             />
@@ -245,6 +361,7 @@ autoFocus
               type="button"
               variant="destructive"
               size="sm"
+              data-testid="work-exp-delete"
               onClick={onDelete}
               disabled={isSubmitting}
             >
@@ -256,12 +373,17 @@ autoFocus
           <Button
             type="button"
             variant="outline"
+            data-testid="work-exp-cancel"
             onClick={onCancel}
             disabled={isSubmitting}
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            data-testid="work-exp-save"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </div>

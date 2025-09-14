@@ -244,7 +244,7 @@ npm run db:studio  # Open Prisma Studio
 - [ ] **Export Enhancements** - Additional formats and styling options
 - [ ] **Data Import/Export** - JSON/XML backup and restore functionality
 - [ ] **Resume Analytics** - Track different resume versions and usage
-- [ ] **Advanced Editing** - Drag-and-drop reordering and rich text
+- [ ] **Advanced Editing** - Enhanced reordering and rich text editing
 - [ ] **Cloud Sync** - Optional cloud backup for local data
 
 ### Development Status

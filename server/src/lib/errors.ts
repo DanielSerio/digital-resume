@@ -21,28 +21,26 @@ export class AppError extends Error {
   }
 }
 
-export const handleError = (error: unknown, res: Response): void => {
+export const handleError = (error: unknown, res: Response) => {
   console.error('Error:', error);
 
   if (error instanceof AppError) {
-    res.status(error.statusCode).json({
+    return res.status(error.statusCode).json({
       error: error.message,
       message: 'An error occurred while processing your request'
     } as ApiResponse);
-    return;
   }
 
   if (error instanceof ZodError) {
-    res.status(400).json({
+    return res.status(400).json({
       error: 'Validation failed',
       message: 'Invalid request data',
       details: error.errors
     } as ApiResponse);
-    return;
   }
 
   // Default error response
-  res.status(500).json({
+  return res.status(500).json({
     error: 'Internal server error',
     message: 'An unexpected error occurred'
   } as ApiResponse);

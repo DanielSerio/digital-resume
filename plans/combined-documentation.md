@@ -1,0 +1,560 @@
+# Digital Resume Management Application - Complete Documentation
+
+This document combines all planning documentation for easier maintenance and reference.
+
+---
+
+# Project Objective
+
+The objective of this application is to provide a way for a user to manage their resume. The resume has 5 main sections:
+
+- Header/Contact info
+  - Name
+  - Title
+  - Email
+  - Phone
+  - GitHub
+  - Website
+  - Linkedin
+- Professional Summary
+- Technical Skills
+  - name
+  - category (such as Back-end, Front-end, Project Management, Methodology, etc)
+  - subcategory (such as Language, Framework, Library, Tool, Platform, Database, Methodology, Concept, etc) - any category can pair with any subcategory
+- Education
+  - School name
+  - School city
+  - School state/province
+  - Degree Type (BFA, MBA, etc)
+  - Degree Title (Graphic Design, etc)
+  - Date Started
+  - Date finished (nullable in the case that we are still in school)
+- Work Experience
+  - Company Name
+  - Company Tagline
+  - Company city
+  - Company state/province
+  - Job Title
+  - Experience Lines (one to many relationship to a table with "work experience lines". These are the lines that describe what was accomplished at this job.)
+    - markdown text (the lines actual text)
+    - line ID (integer. will be used for sorting the lines)
+
+---
+
+# Development Patterns
+
+This document outlines the development patterns and conventions to follow when building the digital resume management application.
+
+## Frontend Patterns (React/TypeScript)
+
+### Component Structure
+
+```
+src/
+├── components/
+│   ├── ui/              # Shadcn UI components
+│   ├── resume/        # Resume section components
+│   └── common/          # Shared/reusable components
+├── lib/
+│   ├── utils.ts         # Utility functions
+│   ├── api.ts           # API client configuration
+│   └── validations.ts   # Zod schemas
+├── stores/              # Zustand stores
+├── hooks/               # Custom React hooks
+└── types/               # TypeScript type definitions
+```
+
+### State Management Pattern
+
+**Zustand for Client State (Centralized Edit Context):**
+
+```typescript
+// stores/editModeStore.ts
+export type EditContext =
+  | { type: "contact" }
+  | { type: "summary" }
+  | { type: "skills" }
+  | { type: "addSkill" }
+  | { type: "education"; itemId: number }
+  | { type: "workExperience"; itemId: number }
+  | { type: "addEducation" }
+  | { type: "addWorkExperience" }
+  | null;
+
+interface EditModeState {
+  currentEdit: EditContext;
+  setCurrentEdit: (context: EditContext) => void;
+  clearCurrentEdit: () => void;
+  isEditingAnything: () => boolean;
+}
+
+export const useEditModeStore = create<EditModeState>((set, get) => ({
+  currentEdit: null,
+  setCurrentEdit: (context) => set({ currentEdit: context }),
+  clearCurrentEdit: () => set({ currentEdit: null }),
+  isEditingAnything: () => get().currentEdit !== null,
+}));
+```
+
+**React Query for Server State (Standard Pattern):**
+
+```typescript
+// hooks/useResume.ts
+export const useResumeData = () => {
+  return useQuery({
+    queryKey: ["resume"],
+    queryFn: () => api.getResume(),
+  });
+};
+
+export const useUpdateContact = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: ContactData) => api.updateContact(data),
+    onSuccess: () => {
+      // Standard React Query pattern - no optimistic updates
+      queryClient.invalidateQueries({ queryKey: ["resume"] });
+    },
+  });
+};
+```
+
+### Form Handling Pattern
+
+**React Hook Form + Zod (Frontend Schema):**
+
+```typescript
+// lib/validations.ts - Frontend validation schemas
+export const contactSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  title: z.string().optional(),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  github: z.string().url().optional(),
+  website: z.string().url().optional(),
+  linkedin: z.string().url().optional(),
+});
+
+// components/forms/ContactForm.tsx
+const ContactForm = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      title: "",
+      email: "",
+      phone: "",
+      github: "",
+      website: "",
+      linkedin: "",
+    },
+  });
+
+  const updateContact = useUpdateContact();
+
+  const onSubmit = (data: ContactData) => {
+    updateContact.mutate(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+        name="name"
+        control={control}
+        render={({ field }) => <Input {...field} placeholder="Full Name" />}
+      />
+      {errors.name && (
+        <span className="text-red-500">{errors.name.message}</span>
+      )}
+    </form>
+  );
+};
+```
+
+## Backend Patterns (Node.js/Express)
+
+### Project Structure
+
+```
+api/
+├── src/
+│   ├── controllers/     # Route handlers
+│   ├── services/        # Business logic
+│   ├── models/          # Database models/queries
+│   ├── middleware/      # Express middleware
+│   ├── routes/          # Route definitions
+│   ├── types/           # TypeScript interfaces
+│   └── utils/           # Utility functions
+├── database/
+│   ├── migrations/      # Database migrations
+│   └── seeds/           # Seed data
+└── exports/             # PDF/DOCX generation
+```
+
+### API Design Pattern
+
+**RESTful Endpoints:**
+
+```typescript
+// routes/resume.ts
+router.get("/api/resume", getResume); // Get complete resume
+router.put("/api/resume/contact", updateContact);
+router.put("/api/resume/summary", updateSummary);
+router.get("/api/resume/skills", getSkills);
+router.post("/api/resume/skills", createSkill);
+router.put("/api/resume/skills/:id", updateSkill);
+router.delete("/api/resume/skills/:id", deleteSkill);
+// Category/subcategory endpoints for hybrid dropdowns
+router.get("/api/skill-categories", getSkillCategories);
+router.post("/api/skill-categories", createSkillCategory);
+router.get("/api/skill-subcategories", getSkillSubcategories);
+router.post("/api/skill-subcategories", createSkillSubcategory);
+// Scoped resume endpoints
+router.get("/api/scoped-resumes", getScopedResumes);
+router.post("/api/scoped-resumes", createScopedResume);
+router.get("/api/scoped-resumes/:id", getScopedResume);
+router.put("/api/scoped-resumes/:id", updateScopedResume);
+router.delete("/api/scoped-resumes/:id", deleteScopedResume);
+router.post("/api/scoped-resumes/:id/duplicate", duplicateScopedResume);
+router.put("/api/scoped-resumes/:id/skills", updateScopedSkills);
+router.put(
+  "/api/scoped-resumes/:id/work-experiences",
+  updateScopedWorkExperiences
+);
+router.put("/api/scoped-resumes/:id/summary", updateScopedSummary);
+router.post("/api/resume/export/pdf", exportPDF); // supports ?scopedResumeId=X
+router.post("/api/resume/export/docx", exportDOCX); // supports ?scopedResumeId=X
+```
+
+## Code Style Guidelines
+
+1. **TypeScript**: Use strict mode, prefer interfaces over types
+2. **Components**: PascalCase naming, use function declarations
+3. **Hooks**: Prefix with 'use', place in dedicated hooks directory
+4. **API**: RESTful conventions, consistent `{ data, error, message }` response format
+5. **Database**: Use transactions for multi-table operations (work experience + lines)
+6. **Validation**: Separate but compatible Zod schemas between frontend/backend
+7. **Testing**: Test user interactions, not implementation details
+8. **Performance**: Lazy load routes, memoize expensive calculations
+9. **Editing**: Single section edit mode, toggle per section via Zustand store
+10. **Templates**: Separate template files for PDF/DOCX exports
+11. **State Management**: Standard React Query pattern (no optimistic updates)
+
+---
+
+# Implementation Steps
+
+This document outlines a detailed multi-phase implementation plan for the digital resume management application with process tracking.
+
+## Phase 1: Foundation Setup ✅ [16/16 completed]
+
+**Goal**: Establish the basic project structure, tooling, and infrastructure.
+
+### 1.1 Backend Foundation
+
+- [x] **1.1.1** Create Node.js/Express API project structure outside `/web`
+- [x] **1.1.2** Setup TypeScript configuration for backend
+- [x] **1.1.3** Install core dependencies (express, prisma, @prisma/client, zod, cors, ts-node-dev)
+- [x] **1.1.4** Create basic server with health check endpoint
+- [x] **1.1.5** Setup Prisma client and basic error handling
+
+### 1.2 Database Setup
+
+- [x] **1.2.1** Initialize Prisma and create schema.prisma from DBML
+- [x] **1.2.2** Setup Prisma with SQLite provider
+- [x] **1.2.3** Create initial Prisma migration
+- [x] **1.2.4** Setup Prisma seed system with realistic sample resume data (single comprehensive work experience using generic company like "Tech Solutions Inc")
+- [x] **1.2.5** Create comprehensive seed script with general subcategories usable across all categories
+- [x] **1.2.6** Add selective database reset/reseed using Prisma (preserve custom categories, refresh resume data)
+
+### 1.3 Docker Configuration
+
+- [x] **1.3.1** Create development Dockerfile for backend API with hot reloading (ts-node-dev)
+- [x] **1.3.2** Create production Dockerfile for backend API (optimized build)
+- [x] **1.3.3** Create development Dockerfile for frontend (web) with hot reloading (Vite HMR)
+- [x] **1.3.4** Create production Dockerfile for frontend (optimized build)
+- [x] **1.3.5** Setup docker-compose.yml for local development (auto-start frontend and backend)
+- [x] **1.3.6** Setup docker-compose.prod.yml for production environment
+- [x] **1.3.7** Configure volume mounts for source code and SQLite database (resume-db volume)
+- [x] **1.3.8** Setup environment variables and development optimizations
+- [x] **1.3.9** Fix OpenSSL compatibility issues (Alpine vs Debian base images)
+- [x] **1.3.10** Configure Prisma binary targets for Docker containers
+- [x] **1.3.11** Setup proper networking for frontend accessibility from host
+- [x] **1.3.12** Configure Vite HMR for Docker environment with polling and proper host binding
+
+## Phase 2: Core Data Layer ✅ [16/16 completed]
+
+**Goal**: Implement all database models, services, and basic CRUD operations.
+
+### 2.1 Database Models
+
+- [x] **2.1.1** Create Contact model with CRUD operations
+- [x] **2.1.2** Create Professional Summary model
+- [x] **2.1.3** Create Skill Categories/Subcategories models
+- [x] **2.1.4** Create Technical Skills model with relationships
+- [x] **2.1.5** Create Education model
+- [x] **2.1.6** Create Work Experience model
+- [x] **2.1.7** Create Work Experience Lines model with transactions
+- [x] **2.1.8** Create Scoped Resume models (scoped_resumes, scoped_professional_summaries, scoped_skills, scoped_work_experiences, scoped_work_experience_lines)
+
+### 2.2 Service Layer
+
+- [x] **2.2.1** Implement ResumeService class with all CRUD methods using { data, error, message } format
+- [x] **2.2.2** Add atomic transaction support for work experience + lines operations
+- [x] **2.2.3** Implement ScopedResumeService class for scoped resume management
+- [x] **2.2.4** Create Zod validation schemas for backend (return raw Zod error details to client)
+- [x] **2.2.5** Implement error handling with raw Zod error structure in response details
+- [x] **2.2.6** Add development data seeding utilities (prisma db seed, npm run reset-db, npm run refresh-sample)
+
+## Phase 3: Frontend State Management ✅ [13/13 completed]
+
+**Goal**: Setup React application with proper state management and API integration.
+
+### 3.1 Dependencies & Core Infrastructure
+
+- [x] **3.1.1** Install Zustand and TanStack React Query packages
+- [x] **3.1.2** Setup TanStack Query Provider in app root
+- [x] **3.1.3** Generate TypeScript types from Prisma client for frontend use
+- [x] **3.1.4** Setup API client using built-in fetch with TanStack Query error handling
+
+## Phase 4: Basic UI Components ✅ [19/19 completed]
+
+**Goal**: Build the fundamental UI components and layout structure with modern form handling and conditional navigation.
+
+### 4.1 Header and Navigation (Priority Implementation)
+
+- [x] **4.1.1** Setup Sonner toast container below Outlet in `__root.tsx`
+- [x] **4.1.2** Update header with application title and export buttons (PDF/DOCX)
+- [x] **4.1.3** Implement tab navigation using custom styled TanStack Router links (Main Resume • Scoped Resumes)
+- [x] **4.1.4** Add loading states and error boundaries for main layout structure
+- [x] **4.1.5** Fix navigation active state for main resume page routing
+
+## Phase 5: Testing & Quality Assurance ✅ [17/17 completed]
+
+**Goal**: Implement comprehensive testing infrastructure with Playwright E2E testing and Storybook component development/testing.
+
+### 5.1 Testing Infrastructure Setup ✅ [6/6 completed]
+
+- [x] **5.1.1** Install and configure Playwright (`@playwright/test`) with auto-start dev servers (headless by default)
+- [x] **5.1.2** Setup Playwright config with `web/tests/e2e/` directory and separate `test.db` path
+- [x] **5.1.3** Install and configure Storybook with React/Vite support (port 6006)
+- [x] **5.1.4** Configure Storybook with Tailwind CSS and Shadcn UI, setup `web/stories/` directory
+- [x] **5.1.5** Create realistic mock data matching current resume structure for Storybook stories
+- [x] **5.1.6** Setup test database fixtures using same sample data as seed script with cleanup utilities
+
+## Phase 6: Advanced Features ⏳ [3/14 completed] - **PARTIALLY BLOCKED**
+
+**Goal**: Add sophisticated functionality and user experience improvements.
+
+### 6.1 Scoped Resume Management
+
+- [ ] **6.1.1** Implement scoped resume creation and naming
+- [ ] **6.1.2** Add scoped resume duplication functionality
+- [ ] **6.1.3** Create skill filtering interface for scoped resumes
+- [ ] **6.1.4** Create work experience filtering interface for scoped resumes
+- [ ] **6.1.5** Implement scoped professional summary editing (copy-on-write)
+- [ ] **6.1.6** Implement scoped work experience line editing (copy-on-write)
+
+### 6.2 Work Experience Management
+
+- [x] **6.2.1** Implement adding/removing work experience entries ✅
+- [x] **6.2.2** Add work experience line management (add, edit, delete) ✅
+- [🔄] **6.2.3** Implement basic line ordering (up/down buttons) **PARTIALLY COMPLETED - BLOCKED**
+  - ✅ **UI Implementation**: Up/down arrow buttons implemented and working
+  - ✅ **Form Submission**: Fixed form validation issue (missing sortOrder values)
+  - ❌ **Persistence Issue**: Line reordering not persisting to database after save
+  - **Current Problem**: `sortOrder` values appear correct in form but database returns lines in original order
+  - **Next Steps**: Debug sortOrder values being sent to API vs. what's saved to database
+- [ ] **6.2.4** Add markdown preview for work experience lines
+
+## Progress Tracking
+
+### Overall Progress: 83/119 tasks completed (69.7%)
+
+| Phase                                | Progress     | Status                   |
+| ------------------------------------ | ------------ | ------------------------ |
+| Phase 1: Foundation Setup            | 16/16 (100%) | ✅ Completed             |
+| Phase 2: Core Data Layer             | 16/16 (100%) | ✅ Completed             |
+| Phase 3: Frontend State Management   | 13/13 (100%) | ✅ Completed             |
+| Phase 4: Basic UI Components         | 19/19 (100%) | ✅ Completed             |
+| Phase 5: Testing & Quality Assurance | 17/17 (100%) | ✅ **COMPLETED**         |
+| Phase 6: Advanced Features           | 3/14 (21%)   | 🔄 **PARTIALLY BLOCKED** |
+| Phase 7: Export System               | 0/12 (0%)    | ⏳ Pending               |
+| Phase 8: Polish & Documentation      | 0/6 (0%)     | ⏳ Pending               |
+
+### Current Focus
+
+**Active Phase**: Phase 6 - Advanced Features (**PARTIALLY BLOCKED**)
+**Current Task**: 6.2.3 - Fix line reordering persistence issue (80% complete)
+**Blocker**: Work experience line reordering works in UI but doesn't persist to database
+**Next Task**: Debug API data flow - sortOrder values in request vs. database storage
+
+---
+
+# Phase 6 Implementation Q&A
+
+This document addresses key questions about Phase 6: Advanced Features implementation to guide development decisions.
+
+## 🎯 Scoped Resume Management (6.1)
+
+### Q1: What's the current state of scoped resume functionality?
+
+**Current State Analysis:**
+
+- ✅ **Backend Complete**: All database models (scoped_resumes, scoped_professional_summaries, scoped_skills, scoped_work_experiences, scoped_work_experience_lines)
+- ✅ **API Endpoints**: Full CRUD operations and nested content endpoints
+- ✅ **Basic Frontend**: `/scoped` route with selector and basic management (create, duplicate, delete)
+- ❌ **Missing**: Content filtering interfaces and copy-on-write editing UI
+
+**Suggested Answer:** We have solid foundation infrastructure. Phase 6 should focus on building the user-facing filtering interfaces and copy-on-write editing experiences on top of the existing backend.
+
+### Q2: For skill/work experience filtering (6.1.3-6.1.4), should this be checkbox-based or more sophisticated?
+
+**Suggested Answer:** **Checkbox-based selection with search/filter capabilities**
+
+- **Skills**: Group by category with expand/collapse, search bar for quick filtering
+- **Work Experience**: List view with checkboxes per experience, with ability to select individual accomplishment lines
+- **Benefits**: Simple UX, clear visual feedback, works well with existing data structure
+
+**Implementation Priority:** Start with basic checkbox interface, enhance with search later.
+
+### Q3: Copy-on-write editing - automatic or explicit action?
+
+**Suggested Answer:** **Automatic with clear visual indicators**
+
+- When user edits content in scoped resume, automatically create scoped version
+- Show visual indicator (e.g., colored border, "customized" badge) to indicate content differs from original
+- Provide "reset to original" button to remove customizations
+- **Benefits**: Seamless UX, preserves original data integrity, clear feedback
+
+## 🏢 Work Experience Management (6.2)
+
+### Q4: Line ordering - different from Phase 4 implementation?
+
+**Current State Check:** Need to verify what's already implemented in WorkExperienceSection.
+
+**Suggested Answer:** **Build upon existing implementation**
+
+- If basic up/down exists, enhance with more advanced reordering (future)
+- If not implemented, start with up/down arrow buttons
+- Focus on persistence and smooth animations
+- **Priority**: Ensure ordering persists across sessions and scoped resume filtering
+
+### Q5: Markdown preview - inline or toggle mode?
+
+**Suggested Answer:** **Toggle mode with live preview**
+
+- Split view: Edit on left, preview on right (on larger screens)
+- Toggle button for smaller screens
+- Support basic markdown: **bold**, _italic_, `code`, - lists
+- **Benefits**: Familiar pattern, doesn't clutter interface, supports responsive design
+
+## 🛠️ Skills Management (6.3)
+
+### Q6: Hybrid dropdowns - same as Phase 4 or enhanced?
+
+**Suggested Answer:** **Abandon Hybrid dropdowns. We are not using these any more as it does not makes sense with our UI**
+
+### Q7: Bulk skill operations - which operations?
+
+**Suggested Answer:** **Priority operations based on user workflow**
+
+1. **Bulk Delete**: Select multiple skills for removal
+2. **Bulk Recategorize**: Move multiple skills to different category/subcategory
+3. **Bulk Import**: Import skills from CSV/JSON or predefined tech stacks
+4. **Bulk Export**: Export selected skills for backup/sharing
+
+**Implementation Order**: Delete → Recategorize → Import → Export
+
+## 💾 Data Persistence (6.4)
+
+### Q8: Auto-save scope and interaction with current save/cancel pattern?
+
+**Suggested Answer:** **Do not implement Auto-save. The entire application should use explicit save**
+
+- **important** Please remove all references to auto-saving from our documentation (including CLAUDE.md and our root README.md). This is not a feature we want
+
+### Q9: Optimistic updates - which operations benefit most?
+
+**Suggested Answer:** **Focus on frequent, low-risk operations**
+
+1. **Skill additions/deletions**: Immediate UI update, rollback on error
+2. **Line reordering**: Instant visual feedback, persist in background
+3. **Text editing**: ~~Real-time updates with auto-save~~ **REMOVED - use explicit save**
+4. **Category/subcategory creation**: Immediate availability in dropdowns
+
+**Avoid optimistic updates for**: Work experience CRUD, contact info changes, scoped resume creation
+
+## 🚀 Implementation Strategy
+
+### Q10: Where should we start - implementation priority?
+
+**Suggested Answer:** **Phased approach building on existing strengths**
+
+**Phase 6A: Enhanced Work Experience (2-3 tasks)**
+
+- 6.2.1: Add/remove work experience entries (extend existing components)
+- 6.2.2: Work experience line management (build on existing)
+- 6.2.3: Line ordering (complete existing implementation)
+
+**Phase 6B: Skills Enhancement (2-3 tasks)**
+
+- ~~6.3.1: Enhanced hybrid dropdowns~~ **REMOVED - see updated strategy below**
+- 6.3.2: Skill grouping/filtering UI
+- 6.3.4: Basic bulk operations (delete/recategorize)
+
+**Phase 6C: Scoped Resume Features (4-5 tasks)**
+
+- 6.1.3: Skill filtering interface
+- 6.1.4: Work experience filtering interface
+- 6.1.5: Scoped summary editing (copy-on-write)
+- 6.1.6: Scoped work experience line editing
+
+**Phase 6D: Data Management & Validation (3-4 tasks)** _(updated scope)_
+
+- ~~6.4.1: Smart auto-save implementation~~ **REMOVED**
+- 6.4.2: Optimistic updates for frequent operations
+- 6.4.3: Enhanced data validation feedback
+- 6.4.4: Data backup/restore functionality
+
+**Rationale**: Build confidence with familiar components first, then tackle complex scoped resume features.
+
+## 📋 Success Metrics for Phase 6
+
+### User Experience Goals
+
+- [ ] User can create targeted resume in under 2 minutes
+- [ ] Content filtering is intuitive and fast
+- [ ] No data loss during editing sessions
+- [ ] Copy-on-write is transparent but clearly indicated
+- [ ] Work experience management feels seamless
+
+### Technical Goals
+
+- [ ] All operations feel instantaneous (optimistic updates)
+- [ ] ~~Auto-save prevents data loss without user annoyance~~ **REMOVED**
+- [ ] **Explicit save/cancel provides clear user control**
+- [ ] Complex state changes maintain data integrity
+- [ ] Performance remains fast with larger datasets
+- [ ] **Manual backup/restore prevents accidental data loss**
+
+---
+
+## Database Schema (Reference)
+
+Note: This section contains the DBML schema structure and other non-markdown text files that were found in the plans directory but are omitted here for brevity. The complete files include:
+
+- `layout.txt` - ASCII layout diagram of main page
+- `scoped-layout.txt` - ASCII layout diagram of scoped resume page
+- `schema.dbml` - Complete database schema definition
+
+These files are maintained separately and should be referenced directly when needed for implementation details.
+
+---
+
+_This combined documentation represents the complete planning state as of the last update and should be maintained as the single source of truth for project planning and implementation guidance._

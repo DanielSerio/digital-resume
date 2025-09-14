@@ -87,7 +87,7 @@ export const UpdateWorkExperienceSchema = WorkExperienceSchema.partial();
 export const WorkExperienceLineSchema = z.object({
   workExperienceId: z.number().int().positive('Work experience ID must be a positive integer'),
   lineText: z.string().min(1, 'Line text is required'),
-  lineId: z.number().int().positive('Line ID must be a positive integer'),
+  sortOrder: z.number().int().nonnegative('Sort order must be non-negative'),
 });
 
 export const UpdateWorkExperienceLineSchema = WorkExperienceLineSchema.partial();
@@ -97,7 +97,7 @@ export const WorkExperienceWithLinesSchema = z.object({
   workExperience: WorkExperienceSchema,
   lines: z.array(z.object({
     lineText: z.string().min(1, 'Line text is required'),
-    lineId: z.number().int().positive('Line ID must be a positive integer'),
+    sortOrder: z.number().int().nonnegative('Sort order must be non-negative'),
   })).optional().default([]),
 });
 

@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const result = await scopedResumeService.getScopedResumes();
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
     const result = await scopedResumeService.getScopedResumeById(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
     const result = await scopedResumeService.createScopedResume(req.body);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -51,7 +51,7 @@ router.post('/with-setup', async (req, res) => {
     const result = await scopedResumeService.createScopedResumeWithSetup(req.body);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -69,7 +69,7 @@ router.put('/:id', async (req, res) => {
     const result = await scopedResumeService.updateScopedResume(id, req.body);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -95,7 +95,7 @@ router.post('/:id/duplicate', async (req, res) => {
     const result = await scopedResumeService.duplicateScopedResume(id, name);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -113,7 +113,7 @@ router.delete('/:id', async (req, res) => {
     const result = await scopedResumeService.deleteScopedResume(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -146,7 +146,7 @@ router.route('/:id/summary')
         });
       }
     } catch (error) {
-      handleError(error, res);
+      return handleError(error, res);
     }
   })
   .put(async (req, res) => {
@@ -162,7 +162,7 @@ router.route('/:id/summary')
       const result = await scopedResumeService.updateScopedProfessionalSummary(id, req.body);
       res.status(200).json(result);
     } catch (error) {
-      handleError(error, res);
+      return handleError(error, res);
     }
   });
 
@@ -192,7 +192,7 @@ router.route('/:id/skills')
         });
       }
     } catch (error) {
-      handleError(error, res);
+      return handleError(error, res);
     }
   })
   .post(async (req, res) => {
@@ -211,7 +211,7 @@ router.route('/:id/skills')
       });
       res.status(201).json(result);
     } catch (error) {
-      handleError(error, res);
+      return handleError(error, res);
     }
   });
 
@@ -238,7 +238,7 @@ router.delete('/:id/skills/:skillId', async (req, res) => {
     const result = await scopedResumeService.removeScopedSkill(scopedResumeId, technicalSkillId);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -268,7 +268,7 @@ router.route('/:id/work-experiences')
         });
       }
     } catch (error) {
-      handleError(error, res);
+      return handleError(error, res);
     }
   })
   .post(async (req, res) => {
@@ -287,7 +287,7 @@ router.route('/:id/work-experiences')
       });
       res.status(201).json(result);
     } catch (error) {
-      handleError(error, res);
+      return handleError(error, res);
     }
   });
 
@@ -314,15 +314,15 @@ router.delete('/:id/work-experiences/:workExpId', async (req, res) => {
     const result = await scopedResumeService.removeScopedWorkExperience(scopedResumeId, workExperienceId);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
-// PUT /api/scoped-resumes/:id/work-experience-lines/:lineId - Update scoped work experience line (copy-on-write)
-router.put('/:id/work-experience-lines/:lineId', async (req, res) => {
+// PUT /api/scoped-resumes/:id/work-experience-lines/:sortOrder - Update scoped work experience line (copy-on-write)
+router.put('/:id/work-experience-lines/:sortOrder', async (req, res) => {
   try {
     const scopedResumeId = parseInt(req.params.id);
-    const workExperienceLineId = parseInt(req.params.lineId);
+    const workExperienceLineId = parseInt(req.params.sortOrder);
     
     if (isNaN(scopedResumeId)) {
       return res.status(400).json({
@@ -345,15 +345,15 @@ router.put('/:id/work-experience-lines/:lineId', async (req, res) => {
     });
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
-// DELETE /api/scoped-resumes/:id/work-experience-lines/:lineId - Remove scoped work experience line customization
-router.delete('/:id/work-experience-lines/:lineId', async (req, res) => {
+// DELETE /api/scoped-resumes/:id/work-experience-lines/:sortOrder - Remove scoped work experience line customization
+router.delete('/:id/work-experience-lines/:sortOrder', async (req, res) => {
   try {
     const scopedResumeId = parseInt(req.params.id);
-    const workExperienceLineId = parseInt(req.params.lineId);
+    const workExperienceLineId = parseInt(req.params.sortOrder);
     
     if (isNaN(scopedResumeId)) {
       return res.status(400).json({
@@ -372,7 +372,7 @@ router.delete('/:id/work-experience-lines/:lineId', async (req, res) => {
     const result = await scopedResumeService.removeScopedWorkExperienceLine(scopedResumeId, workExperienceLineId);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 

@@ -77,7 +77,7 @@ export interface WorkExperienceLine {
   id: number;
   workExperienceId: number;
   lineText: string;
-  lineId: number;
+  sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
 }

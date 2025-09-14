@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const result = await educationService.getEducation();
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
     const result = await educationService.getEducationById(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
     const result = await educationService.createEducation(req.body);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -57,7 +57,7 @@ router.put('/:id', async (req, res) => {
     const result = await educationService.updateEducation(id, req.body);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -75,7 +75,7 @@ router.delete('/:id', async (req, res) => {
     const result = await educationService.deleteEducation(id);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 

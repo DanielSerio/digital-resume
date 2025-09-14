@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const result = await summaryService.getProfessionalSummary();
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -21,7 +21,7 @@ router.put('/', async (req, res) => {
     const result = await summaryService.updateProfessionalSummary(req.body);
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     const result = await summaryService.createProfessionalSummary(req.body);
     res.status(201).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 
@@ -41,7 +41,7 @@ router.delete('/', async (req, res) => {
     const result = await summaryService.deleteProfessionalSummary();
     res.status(200).json(result);
   } catch (error) {
-    handleError(error, res);
+    return handleError(error, res);
   }
 });
 

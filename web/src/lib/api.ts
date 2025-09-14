@@ -1,6 +1,11 @@
 import type { ApiResponse, ApiError } from '@/types';
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL + '/api' || 'http://localhost:3001/api';
+
+// Debug API URL
+console.log('=== API Configuration ===');
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('Final API_BASE_URL:', API_BASE_URL);
 
 // Custom error class for API errors
 export class ApiResponseError extends Error {
@@ -28,7 +33,7 @@ export class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -39,7 +44,7 @@ export class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      
+
       // Parse JSON response
       const data: ApiResponse<T> = await response.json();
 

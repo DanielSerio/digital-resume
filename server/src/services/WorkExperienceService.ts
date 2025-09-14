@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma';
 import { AppError, ApiResponse, createSuccessResponse } from '../lib/errors';
-import { 
-  WorkExperienceSchema, 
+import {
+  WorkExperienceSchema,
   UpdateWorkExperienceSchema,
   WorkExperienceLineSchema,
   UpdateWorkExperienceLineSchema,
@@ -15,24 +15,34 @@ import {
 import { WorkExperience, WorkExperienceLine } from '@prisma/client';
 
 type WorkExperienceWithLines = WorkExperience & {
-  workExperienceLines: WorkExperienceLine[];
+  lines: WorkExperienceLine[];
 };
 
 export class WorkExperienceService {
-  
+
   // ============ WORK EXPERIENCE ============
-  
+
   async getWorkExperiences(): Promise<ApiResponse<WorkExperienceWithLines[]>> {
     try {
       const workExperiences = await prisma.workExperience.findMany({
         include: {
           workExperienceLines: {
-            orderBy: { lineId: 'asc' },
           },
         },
         orderBy: { dateStarted: 'desc' },
       });
-      return createSuccessResponse(workExperiences, 'Work experiences retrieved successfully');
+
+
+      // Transform workExperienceLines to lines to match frontend expectations
+      const transformedWorkExperiences = workExperiences.map(workExp => {
+        const { workExperienceLines, ...rest } = workExp;
+        return {
+          ...rest,
+          lines: workExperienceLines
+        };
+      });
+
+      return createSuccessResponse(transformedWorkExperiences, 'Work experiences retrieved successfully');
     } catch (error) {
       console.error('Error fetching work experiences:', error);
       throw new AppError('Failed to fetch work experiences', 500);
@@ -45,53 +55,33 @@ export class WorkExperienceService {
         where: { id },
         include: {
           workExperienceLines: {
-            orderBy: { lineId: 'asc' },
           },
         },
       });
-      return createSuccessResponse(workExperience, workExperience ? 'Work experience retrieved successfully' : 'Work experience not found');
+
+      // Transform workExperienceLines to lines to match frontend expectations
+      const transformedWorkExperience = workExperience ? (() => {
+        const { workExperienceLines, ...rest } = workExperience;
+        return {
+          ...rest,
+          lines: workExperienceLines
+        };
+      })() : null;
+
+      return createSuccessResponse(transformedWorkExperience, transformedWorkExperience ? 'Work experience retrieved successfully' : 'Work experience not found');
     } catch (error) {
       console.error('Error fetching work experience:', error);
       throw new AppError('Failed to fetch work experience', 500);
     }
   }
 
-  async createWorkExperience(data: WorkExperienceInput): Promise<ApiResponse<WorkExperience>> {
-    try {
-      // Validate input
-      const validatedData = WorkExperienceSchema.parse(data);
-      
-      // Convert string dates to Date objects
-      const workExperienceData = {
-        ...validatedData,
-        dateStarted: new Date(validatedData.dateStarted),
-        dateEnded: validatedData.dateEnded ? new Date(validatedData.dateEnded) : null,
-      };
+  // REMOVED: createWorkExperience - use createWorkExperienceWithLines instead
 
-      // Validate that start date is before end date (if end date exists)
-      if (workExperienceData.dateEnded && workExperienceData.dateStarted >= workExperienceData.dateEnded) {
-        throw new AppError('Start date must be before end date', 400);
-      }
-
-      const workExperience = await prisma.workExperience.create({
-        data: workExperienceData,
-      });
-
-      return createSuccessResponse(workExperience, 'Work experience created successfully');
-    } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
-      }
-      console.error('Error creating work experience:', error);
-      throw new AppError('Failed to create work experience', 500);
-    }
-  }
-
-  async createWorkExperienceWithLines(data: WorkExperienceWithLinesInput): Promise<ApiResponse<WorkExperienceWithLines>> {
+  async createWorkExperience(data: WorkExperienceWithLinesInput): Promise<ApiResponse<WorkExperienceWithLines>> {
     try {
       // Validate input
       const validatedData = WorkExperienceWithLinesSchema.parse(data);
-      
+
       // Convert string dates to Date objects
       const workExperienceData = {
         ...validatedData.workExperience,
@@ -104,11 +94,11 @@ export class WorkExperienceService {
         throw new AppError('Start date must be before end date', 400);
       }
 
-      // Validate line IDs are unique
-      const lineIds = validatedData.lines.map(line => line.lineId);
-      const uniqueLineIds = new Set(lineIds);
-      if (lineIds.length !== uniqueLineIds.size) {
-        throw new AppError('Line IDs must be unique within the work experience', 400);
+      // Validate sortOrder values are unique
+      const sortOrders = validatedData.lines.map(line => line.sortOrder);
+      const uniqueSortOrders = new Set(sortOrders);
+      if (sortOrders.length !== uniqueSortOrders.size) {
+        throw new AppError('Sort order values must be unique within the work experience', 400);
       }
 
       // Use transaction to create work experience and lines atomically
@@ -125,7 +115,7 @@ export class WorkExperienceService {
               data: {
                 workExperienceId: workExperience.id,
                 lineText: line.lineText,
-                lineId: line.lineId,
+                sortOrder: line.sortOrder,
               },
             })
           )
@@ -133,7 +123,7 @@ export class WorkExperienceService {
 
         return {
           ...workExperience,
-          workExperienceLines: lines,
+          lines: lines,
         };
       });
 
@@ -147,64 +137,105 @@ export class WorkExperienceService {
     }
   }
 
-  async updateWorkExperience(id: number, data: UpdateWorkExperienceInput): Promise<ApiResponse<WorkExperience>> {
+  async updateWorkExperience(id: number, data: { workExperience: Partial<WorkExperienceInput>; lines: WorkExperienceLineInput[]; }): Promise<ApiResponse<WorkExperienceWithLines>> {
     try {
-      // Validate input
-      const validatedData = UpdateWorkExperienceSchema.parse(data);
-      
-      // Check if work experience exists
-      const existingWorkExperience = await prisma.workExperience.findUnique({
-        where: { id },
+      // Debug service input
+      console.log('=== WorkExperienceService.updateWorkExperience ===');
+      console.log('ID:', id);
+      console.log('Data keys:', Object.keys(data));
+      console.log('Lines:', data.lines ? data.lines.length : 'NO LINES');
+      if (data.lines) {
+        console.log('Line details:', data.lines.map(line => ({
+          lineText: line.lineText.substring(0, 50) + '...',
+          sortOrder: line.sortOrder
+        })));
+      }
+
+      // Use transaction for atomic operation
+      const result = await prisma.$transaction(async (tx) => {
+        // Update work experience
+        const workExperienceData: any = { ...data.workExperience };
+        if (data.workExperience.dateStarted) {
+          workExperienceData.dateStarted = new Date(data.workExperience.dateStarted);
+        }
+        if (data.workExperience.dateEnded) {
+          workExperienceData.dateEnded = new Date(data.workExperience.dateEnded);
+        }
+
+        const updatedWorkExperience = await tx.workExperience.update({
+          where: { id },
+          data: workExperienceData,
+        });
+
+        // Delete existing lines
+        await tx.workExperienceLine.deleteMany({
+          where: { workExperienceId: id },
+        });
+
+        // Create new lines - ensure data.lines exists and is not empty
+        let lines: any[] = [];
+        if (data.lines && Array.isArray(data.lines) && data.lines.length > 0) {
+          lines = await Promise.all(
+            data.lines.map((line, index) => {
+              return tx.workExperienceLine.create({
+                data: {
+                  workExperienceId: id,
+                  lineText: line.lineText,
+                  sortOrder: line.sortOrder,
+                },
+              });
+            })
+          );
+        } else {
+          console.log('WARNING: No lines provided for work experience', id, 'data.lines =', data.lines);
+        }
+
+        // Debug saved lines
+        console.log('Lines created:', lines.length);
+        console.log('Saved lines:', lines.map(line => ({
+          id: line.id,
+          sortOrder: line.sortOrder,
+          text: line.lineText.substring(0, 30) + '...'
+        })));
+
+        // Verify the final result includes the lines in correct order
+        const finalResult = {
+          ...updatedWorkExperience,
+          lines: lines,
+        };
+
+        console.log('Final result being returned:', {
+          id: finalResult.id,
+          lines: finalResult.lines.map(line => ({
+            id: line.id,
+            sortOrder: line.sortOrder,
+            text: line.lineText.substring(0, 30) + '...'
+          }))
+        });
+
+        return finalResult;
       });
-      
-      if (!existingWorkExperience) {
-        throw new AppError('Work experience not found', 404);
-      }
 
-      // Convert string dates to Date objects where provided
-      const updateData: any = { ...validatedData };
-      if (validatedData.dateStarted) {
-        updateData.dateStarted = new Date(validatedData.dateStarted);
-      }
-      if (validatedData.dateEnded) {
-        updateData.dateEnded = new Date(validatedData.dateEnded);
-      }
-
-      // Get the final dates for validation (existing or new)
-      const finalStartDate = updateData.dateStarted || existingWorkExperience.dateStarted;
-      const finalEndDate = updateData.dateEnded !== undefined ? updateData.dateEnded : existingWorkExperience.dateEnded;
-
-      // Validate that start date is before end date (if end date exists)
-      if (finalEndDate && finalStartDate >= finalEndDate) {
-        throw new AppError('Start date must be before end date', 400);
-      }
-
-      const updatedWorkExperience = await prisma.workExperience.update({
-        where: { id },
-        data: updateData,
-      });
-
-      return createSuccessResponse(updatedWorkExperience, 'Work experience updated successfully');
+      return createSuccessResponse(result, 'Work experience updated successfully');
     } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
-      }
-      console.error('Error updating work experience:', error);
-      throw new AppError('Failed to update work experience', 500);
+      console.error('Error updating work experience with lines:', error);
+      throw new AppError('Failed to update work experience with lines', 500);
     }
   }
+
+  // REMOVED: updateWorkExperience - consolidated into updateWorkExperienceWithLines
 
   async deleteWorkExperience(id: number): Promise<ApiResponse<null>> {
     try {
       // Check if work experience exists
       const existingWorkExperience = await prisma.workExperience.findUnique({
         where: { id },
-        include: { 
+        include: {
           workExperienceLines: true,
-          scopedWorkExperiences: true 
+          scopedWorkExperiences: true
         },
       });
-      
+
       if (!existingWorkExperience) {
         throw new AppError('Work experience not found', 404);
       }
@@ -238,7 +269,7 @@ export class WorkExperienceService {
   }
 
   // ============ WORK EXPERIENCE LINES ============
-  
+
   async getWorkExperienceLines(workExperienceId: number): Promise<ApiResponse<WorkExperienceLine[]>> {
     try {
       // Verify work experience exists
@@ -252,7 +283,7 @@ export class WorkExperienceService {
 
       const lines = await prisma.workExperienceLine.findMany({
         where: { workExperienceId },
-        orderBy: { lineId: 'asc' },
+        orderBy: { sortOrder: 'asc' },
       });
 
       return createSuccessResponse(lines, 'Work experience lines retrieved successfully');
@@ -269,7 +300,7 @@ export class WorkExperienceService {
     try {
       // Validate input
       const validatedData = WorkExperienceLineSchema.parse(data);
-      
+
       // Verify work experience exists
       const workExperience = await prisma.workExperience.findUnique({
         where: { id: validatedData.workExperienceId },
@@ -283,7 +314,7 @@ export class WorkExperienceService {
       const existingLine = await prisma.workExperienceLine.findFirst({
         where: {
           workExperienceId: validatedData.workExperienceId,
-          lineId: validatedData.lineId,
+          sortOrder: validatedData.sortOrder,
         },
       });
 
@@ -309,22 +340,22 @@ export class WorkExperienceService {
     try {
       // Validate input
       const validatedData = UpdateWorkExperienceLineSchema.parse(data);
-      
+
       // Check if line exists
       const existingLine = await prisma.workExperienceLine.findUnique({
         where: { id },
       });
-      
+
       if (!existingLine) {
         throw new AppError('Work experience line not found', 404);
       }
 
       // If updating line ID, check for duplicates
-      if (validatedData.lineId && validatedData.lineId !== existingLine.lineId) {
+      if (validatedData.sortOrder && validatedData.sortOrder !== existingLine.sortOrder) {
         const duplicateLine = await prisma.workExperienceLine.findFirst({
           where: {
             workExperienceId: existingLine.workExperienceId,
-            lineId: validatedData.lineId,
+            sortOrder: validatedData.sortOrder,
           },
         });
 
@@ -355,7 +386,7 @@ export class WorkExperienceService {
         where: { id },
         include: { scopedWorkExperienceLines: true },
       });
-      
+
       if (!existingLine) {
         throw new AppError('Work experience line not found', 404);
       }
