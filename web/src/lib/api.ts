@@ -46,7 +46,7 @@ export class ApiClient {
       const response = await fetch(url, config);
 
       // Parse JSON response
-      const data: ApiResponse<T> = await response.json();
+      const data = await response.json();
 
       // Handle non-2xx responses
       if (!response.ok) {
@@ -62,8 +62,10 @@ export class ApiClient {
         throw new ApiResponseError(data.error, response.status, data.details);
       }
 
-      // Return the data field from successful responses
-      return data.data as T;
+      // Handle both wrapped (ApiResponse) and direct responses
+      // If data has a 'data' field, it's wrapped - return data.data
+      // Otherwise, return data directly
+      return (data.data !== undefined ? data.data : data) as T;
     } catch (error) {
       // Re-throw ApiResponseError as-is
       if (error instanceof ApiResponseError) {

@@ -118,6 +118,12 @@ export const useWorkExperiencesData = () => {
     queryFn: async () => {
       const response = await apiClient.get<WorkExperience[]>('/work-experiences');
       console.info('response', response);
+
+      // Handle empty or undefined response
+      if (!response || !Array.isArray(response)) {
+        return [];
+      }
+
       // Transform date strings to Date objects
       return response.map((workExp) => ({
         ...workExp,
@@ -125,11 +131,11 @@ export const useWorkExperiencesData = () => {
         dateEnded: workExp.dateEnded ? new Date(workExp.dateEnded) : null,
         createdAt: new Date(workExp.createdAt),
         updatedAt: new Date(workExp.updatedAt),
-        lines: workExp.lines.map(line => ({
+        lines: workExp.lines?.map(line => ({
           ...line,
           createdAt: new Date(line.createdAt),
           updatedAt: new Date(line.updatedAt),
-        }))
+        })) || []
       }));
     },
     throwOnError: false,

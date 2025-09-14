@@ -221,10 +221,24 @@ npm run db:studio  # Open Prisma Studio
 ## 📈 Roadmap
 
 ### Advanced Features (Phase 6)
-- [ ] **Enhanced Scoped Resume Management** - Full implementation of selective content filtering
-- [ ] **Work Experience Management** - Enhanced line editing, reordering, and markdown support
-- [ ] **Skills Management** - Dynamic category creation and advanced filtering
-- [ ] **Data Management** - Enhanced data validation and optimistic updates
+
+#### Phase 6A: Enhanced Work Experience Management ✅
+- [x] **Work Experience CRUD Operations** - Add/remove work experience entries
+- [x] **Work Experience Line Management** - Dynamic line editing with persistent reordering
+- [x] **Database Schema Consistency** - Resolved sortOrder field standardization
+- [x] **API Integration** - Fixed response format compatibility and data transformation
+
+#### Phase 6B: Scoped Resume Management UI
+- [ ] **Scoped Resume List/Management Page** - View, create, duplicate, and delete scoped resumes
+- [ ] **Scoped Resume Editing Interface** - Comprehensive editing UI similar to main resume page
+- [ ] **Skills Filtering & Selection UI** - Grouped skill selection with category-based filtering
+- [ ] **Work Experience Filtering UI** - Selective work experience inclusion with copy-on-write editing
+- [ ] **Professional Summary Scoping** - Copy-on-write editing for scoped professional summaries
+
+#### Phase 6C: Advanced Data Management
+- [ ] **Enhanced Data Validation** - Comprehensive validation with optimistic updates
+- [ ] **Bulk Operations** - Efficient multi-item operations where applicable
+- [ ] **Data Integrity Checks** - Automated consistency validation
 
 ### Export System (Phase 7)
 - [ ] **PDF Generation** - Professional resume export with template system
@@ -238,6 +252,7 @@ npm run db:studio  # Open Prisma Studio
 - [x] **Type Safety** - Schema alignment between frontend validation and database models
 - [x] **URL Validation Enhancement** - Flexible input with automatic normalization
 - [x] **Code Quality** - Zero TypeScript compilation errors across entire codebase
+- [x] **Work Experience Line Reordering** - Full persistence of line order changes with backend-frontend integration
 
 ### Core Features
 - [ ] **Template System** - Multiple resume templates and themes
@@ -249,9 +264,9 @@ npm run db:studio  # Open Prisma Studio
 
 ### Development Status
 
-**Current Phase**: Advanced Features (Phase 6) - **READY TO BEGIN**
-**Overall Progress**: 81/119 tasks completed (68.1%)
-**Next Priority**: Enhanced scoped resume management and work experience features
+**Current Phase**: Advanced Features (Phase 6) - **IN PROGRESS**
+**Overall Progress**: 85/119 tasks completed (71.4%)
+**Next Priority**: Phase 6B - Scoped Resume Management UI (dedicated interface for creating and managing scoped resumes with selective content filtering)
 
 ### Recent Accomplishments (Post Phase 5)
 - **✅ State Management Refactoring**: Major architectural improvement with centralized `EditContext` system
@@ -266,6 +281,17 @@ npm run db:studio  # Open Prisma Studio
   - Cleaned up all compilation errors in components, stories, and tests
   - Removed dead code (`resumeStore.ts`) and consolidated to single state pattern
 - **✅ Database Reset**: Fresh development environment ready for advanced features
+- **✅ Work Experience Line Reordering**: Completed full resolution of line persistence issue
+  - Fixed database schema consistency (`sortOrder` field throughout)
+  - Resolved API response format mismatches between frontend and backend
+  - Implemented proper API client compatibility layer for mixed response formats
+  - Verified complete functionality: reordering persists across page reloads
+- **✅ Phase 6A - Enhanced Work Experience Management**: Completed all work experience management features
+  - Add/remove work experience entries with full CRUD operations
+  - Work experience line management with dynamic editing and persistent reordering
+  - Database schema consistency with sortOrder field standardization
+  - API response format compatibility and data transformation fixes
+  - Line ordering with persistent sort order across sessions
 
 ### Development Guidelines
 

@@ -21,12 +21,8 @@ import { useItemEdit } from "@/hooks/edit/useItemEdit";
 
 export const WorkExperienceSection: React.FC = () => {
   // Data fetching
-  const {
-    data: workExperiences = [],
-    isLoading,
-    error,
-  } = useWorkExperiencesData();
-
+  const queryData = useWorkExperiencesData();
+  const { data: workExperiences = [], isLoading, error } = queryData;
   // Use the collection edit hook
   const {
     isAdding,
@@ -179,7 +175,7 @@ export const WorkExperienceSection: React.FC = () => {
     );
   }
 
-  console.error(error);
+  console.info("queryData", queryData);
 
   if (error) {
     return (

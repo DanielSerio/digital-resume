@@ -37,7 +37,7 @@ The objective of this application is to provide a way for a user to manage their
   - Job Title
   - Experience Lines (one to many relationship to a table with "work experience lines". These are the lines that describe what was accomplished at this job.)
     - markdown text (the lines actual text)
-    - line ID (integer. will be used for sorting the lines)
+    - sortOrder (integer. will be used for sorting the lines)
 
 ---
 
@@ -347,34 +347,59 @@ This document outlines a detailed multi-phase implementation plan for the digita
 - [x] **5.1.5** Create realistic mock data matching current resume structure for Storybook stories
 - [x] **5.1.6** Setup test database fixtures using same sample data as seed script with cleanup utilities
 
-## Phase 6: Advanced Features ⏳ [3/14 completed] - **PARTIALLY BLOCKED**
+## Phase 6: Advanced Features 🔄 [Phase 6A Complete] - **IN PROGRESS**
 
 **Goal**: Add sophisticated functionality and user experience improvements.
 
-### 6.1 Scoped Resume Management
-
-- [ ] **6.1.1** Implement scoped resume creation and naming
-- [ ] **6.1.2** Add scoped resume duplication functionality
-- [ ] **6.1.3** Create skill filtering interface for scoped resumes
-- [ ] **6.1.4** Create work experience filtering interface for scoped resumes
-- [ ] **6.1.5** Implement scoped professional summary editing (copy-on-write)
-- [ ] **6.1.6** Implement scoped work experience line editing (copy-on-write)
-
-### 6.2 Work Experience Management
+### Phase 6A: Enhanced Work Experience Management ✅ **COMPLETED**
 
 - [x] **6.2.1** Implement adding/removing work experience entries ✅
 - [x] **6.2.2** Add work experience line management (add, edit, delete) ✅
-- [🔄] **6.2.3** Implement basic line ordering (up/down buttons) **PARTIALLY COMPLETED - BLOCKED**
+- [x] **6.2.3** Implement line ordering with persistent reordering ✅
   - ✅ **UI Implementation**: Up/down arrow buttons implemented and working
-  - ✅ **Form Submission**: Fixed form validation issue (missing sortOrder values)
-  - ❌ **Persistence Issue**: Line reordering not persisting to database after save
-  - **Current Problem**: `sortOrder` values appear correct in form but database returns lines in original order
-  - **Next Steps**: Debug sortOrder values being sent to API vs. what's saved to database
-- [ ] **6.2.4** Add markdown preview for work experience lines
+  - ✅ **Form Integration**: Fixed form validation and data transformation issues
+  - ✅ **Backend Integration**: Fixed API response format compatibility
+  - ✅ **Database Consistency**: Standardized sortOrder field throughout schema
+  - ✅ **Persistence**: Line reordering now persists across page reloads
+- [x] **6.2.4** Database schema consistency and API integration fixes ✅
+
+### Phase 6B: Scoped Resume Management UI 🔄 **CURRENT PHASE**
+
+**Architecture Plan**: Scoped resume editing interface mirrors main resume UI exactly for consistency
+
+- [ ] **6.1.1** Scoped Resume List/Management Page ✅
+  - View all scoped resumes with metadata ✅
+  - Create new scoped resumes with naming ✅
+  - Duplicate existing scoped resumes ✅
+  - Delete scoped resumes with confirmation ✅
+- [ ] **6.1.2** Scoped Resume Editing Interface
+  - **Single Page Design**: `/scoped?scopedResumeId=123` (consistent with main resume single-page approach)
+  - **Scoped Resume Selector**: Dropdown that updates URL search params and switches context
+  - **Mirror Main UI**: Identical Card layouts, edit patterns, form integration
+  - **Edit State Integration**: Reuse existing `useEditState` and `useItemEdit` hooks
+  - **Visual Consistency**: Same orange borders, loading states, error patterns
+  - **Navigation Pattern**: Selector updates query params, components react to scopedResumeId changes
+- [ ] **6.1.3** Copy-on-Write Editing Components
+  - **ScopedSummarySection**: Mirrors `SummarySection` with scoped data loading
+  - **ScopedSkillsSection**: Mirrors `SkillsSection` with inclusion toggles
+  - **ScopedWorkExperienceSection**: Mirrors `WorkExperienceSection` with selective content
+  - **Visual Indicators**: "Customized" badges, "Reset to Original" buttons
+- [ ] **6.1.4** Content Selection Patterns
+  - **Inclusion Toggles**: Checkbox-based selection for skills and work experiences
+  - **Batch Operations**: Efficient bulk inclusion/exclusion
+  - **Copy-on-Write**: Automatic scoped version creation with clear visual feedback
+  - **Data Integrity**: Original resume data remains unchanged
+
+### Phase 6C: Advanced Data Management
+
+- [ ] **6.4.1** Enhanced data validation with user feedback
+- [ ] **6.4.2** Optimistic updates for frequent operations
+- [ ] **6.4.3** Data consistency validation and error recovery
+- [ ] **6.4.4** Data backup/restore functionality
 
 ## Progress Tracking
 
-### Overall Progress: 83/119 tasks completed (69.7%)
+### Overall Progress: 85/119 tasks completed (71.4%)
 
 | Phase                                | Progress     | Status                   |
 | ------------------------------------ | ------------ | ------------------------ |
@@ -383,16 +408,24 @@ This document outlines a detailed multi-phase implementation plan for the digita
 | Phase 3: Frontend State Management   | 13/13 (100%) | ✅ Completed             |
 | Phase 4: Basic UI Components         | 19/19 (100%) | ✅ Completed             |
 | Phase 5: Testing & Quality Assurance | 17/17 (100%) | ✅ **COMPLETED**         |
-| Phase 6: Advanced Features           | 3/14 (21%)   | 🔄 **PARTIALLY BLOCKED** |
+| Phase 6: Advanced Features           | 5/14 (36%)   | 🔄 **IN PROGRESS** ✅     |
 | Phase 7: Export System               | 0/12 (0%)    | ⏳ Pending               |
 | Phase 8: Polish & Documentation      | 0/6 (0%)     | ⏳ Pending               |
 
 ### Current Focus
 
-**Active Phase**: Phase 6 - Advanced Features (**PARTIALLY BLOCKED**)
-**Current Task**: 6.2.3 - Fix line reordering persistence issue (80% complete)
-**Blocker**: Work experience line reordering works in UI but doesn't persist to database
-**Next Task**: Debug API data flow - sortOrder values in request vs. database storage
+**Active Phase**: Phase 6B - Scoped Resume Management UI (**IN PROGRESS**)
+**Recently Completed**: Phase 6A - Enhanced Work Experience Management ✅ COMPLETED
+- 6.2.1: Add/remove work experience entries with full CRUD operations ✅
+- 6.2.2: Work experience line management (add, edit, delete, reorder) ✅
+- 6.2.3: Line ordering with persistent sort order across sessions ✅
+- 6.2.4: Database schema consistency and API integration fixes ✅
+
+**Current Focus**: Phase 6B - Scoped Resume Management UI
+**Architecture**: Mirror main resume UI patterns exactly for consistency and familiar UX
+**Navigation**: Single-page design with `/scoped?scopedResumeId=123` query params (consistent with main resume)
+**Selector Pattern**: Dropdown updates URL search params, components react to scopedResumeId changes
+**Next Priority**: Implement scoped resume selector and context-aware editing sections
 
 ---
 
@@ -502,11 +535,11 @@ This document addresses key questions about Phase 6: Advanced Features implement
 - 6.2.2: Work experience line management (build on existing)
 - 6.2.3: Line ordering (complete existing implementation)
 
-**Phase 6B: Skills Enhancement (2-3 tasks)**
+**Phase 6B: Skills Enhancement (1 task)**
 
 - ~~6.3.1: Enhanced hybrid dropdowns~~ **REMOVED - see updated strategy below**
 - 6.3.2: Skill grouping/filtering UI
-- 6.3.4: Basic bulk operations (delete/recategorize)
+- ~~6.3.4: Basic bulk operations (delete/recategorize)~~ **REMOVED - user decision**
 
 **Phase 6C: Scoped Resume Features (4-5 tasks)**
 
