@@ -10,7 +10,8 @@ import { ContactHeader } from "./ContactHeader";
 import { ContactLinks } from "./ContactLinks";
 import { ContactFormActions } from "./ContactFormActions";
 
-import { useContactData, useUpdateContact } from "@/hooks";
+import { useContactData } from "@/hooks";
+import { useOptimisticUpdateContact } from "@/hooks/useOptimisticMutations";
 import { contactSchema, type ContactFormData } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import { useEditState } from "@/hooks/edit/useEditState";
@@ -27,7 +28,7 @@ export const ContactSection: React.FC = () => {
 
   // Data fetching
   const { data: contact, isLoading, error } = useContactData();
-  const updateContactMutation = useUpdateContact();
+  const updateContactMutation = useOptimisticUpdateContact();
 
   // Form setup
   const form = useForm<ContactFormData>({

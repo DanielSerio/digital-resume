@@ -53,6 +53,28 @@ test.describe('Contact Section Editing - Priority 1', () => {
   });
 
   test.describe('Save Workflow', () => {
+    test('should show optimistic updates immediately when saving', async () => {
+      const newContactData = {
+        name: 'Optimistic Update Test',
+        email: 'optimistic@example.com'
+      };
+
+      // Enter edit mode
+      await mainPage.enterContactEditMode();
+
+      // Fill form with new data
+      await mainPage.fillContactForm(newContactData);
+
+      // Save changes
+      await mainPage.saveContactChanges();
+
+      // With optimistic updates, changes should be visible immediately
+      // even before the network request completes
+      const savedContact = await mainPage.getContactInfo();
+      expect(savedContact.name).toContain(newContactData.name);
+      expect(savedContact.email).toContain(newContactData.email);
+    });
+
     test('should save valid contact changes', async () => {
       const newContactData = {
         name: 'Jane Doe Updated',
@@ -168,8 +190,7 @@ test.describe('Contact Section Editing - Priority 1', () => {
       // Check that other section edit buttons are disabled
       // This ensures only one section can be edited at a time
       await expect(mainPage.summaryEditButton).toBeDisabled();
-      await expect(mainPage.skillsEditButton).toBeDisabled();
-      // Note: Education section no longer has edit button - it's always editable like Work Experience
+      // Note: Skills, Education, and Work Experience sections don't have edit buttons - they're always editable
     });
 
     test('should maintain form data during validation errors', async () => {

@@ -73,9 +73,12 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
     },
     {
-      command: 'npm run dev',
+      command: 'VITE_API_URL=http://localhost:3001 npm run dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
+      env: {
+        VITE_API_URL: 'http://localhost:3001',
+      },
     },
   ],
 });

@@ -6,11 +6,14 @@ async function main() {
   console.log('🌱 Starting database seed...');
 
   // Clear existing data in reverse order of dependencies
-  await prisma.scopedWorkExperienceLine.deleteMany();
-  await prisma.scopedWorkExperience.deleteMany();
-  await prisma.scopedSkill.deleteMany();
-  await prisma.scopedProfessionalSummary.deleteMany();
-  await prisma.scopedResume.deleteMany();
+  // Use try-catch for tables that might not exist yet
+  try { await prisma.scopedWorkExperienceLine.deleteMany(); } catch {}
+  try { await prisma.scopedWorkExperience.deleteMany(); } catch {}
+  try { await prisma.scopedSkill.deleteMany(); } catch {}
+  try { await prisma.scopedProfessionalSummary.deleteMany(); } catch {}
+  try { await prisma.scopedResume.deleteMany(); } catch {}
+
+  // Core tables should always exist
   await prisma.workExperienceLine.deleteMany();
   await prisma.workExperience.deleteMany();
   await prisma.education.deleteMany();
