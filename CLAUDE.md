@@ -149,8 +149,9 @@ The project follows strict TypeScript and React conventions defined in Cursor ru
 - API validation errors preserve raw Zod error structure in response details
 - File upload patterns will be added later (not currently implemented)
 - Reference the `plans` directory for information about our application plan, architecture patterns, and design decisions
+- Reference `plans/documentation.md` for comprehensive project documentation and implementation status
 - Reference `plans/layout.txt` for an ascii image of the main page layout and `plans/scoped-layout.txt` for scoped resume page layout
-- Reference `plans/patterns.md` for common UI patterns and component architecture guidelines
+- Reference `plans/schema.dbml` for database schema and relationships
 - Keep files under 200 lines
 - **Current Development Phase**: Advanced Features (Phase 6) - enhanced scoped resume management and user experience improvements
   - **Phase 6A**: Enhanced Work Experience Management ✅ - Completed all work experience CRUD operations and line reordering
