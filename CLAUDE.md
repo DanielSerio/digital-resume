@@ -153,9 +153,9 @@ The project follows strict TypeScript and React conventions defined in Cursor ru
 - Reference `plans/layout.txt` for an ascii image of the main page layout and `plans/scoped-layout.txt` for scoped resume page layout
 - Reference `plans/schema.dbml` for database schema and relationships
 - Keep files under 200 lines
-- **Current Development Phase**: Advanced Features (Phase 6) - enhanced scoped resume management and user experience improvements
-  - **Phase 6A**: Enhanced Work Experience Management ✅ - Completed all work experience CRUD operations and line reordering
-  - **Phase 6B**: Scoped Resume Management UI - Dedicated interface for creating/managing scoped resumes with selective content filtering
-  - **Phase 6C**: Advanced Data Management ✅ - Optimistic updates for improved UX (contact form shows instant feedback)
-- **Previous Phase**: Testing & Quality Assurance ✅ - Playwright E2E testing and Storybook component development completed
-- **Recent Major Accomplishment**: Phase 6C completion with optimistic updates implementation for better user experience
+- **Current Development Phase**: E2E Test Fixes - Improving test reliability and coverage (79% → 95%+ success rate)
+  - **Priority 1**: Fix MainPage object references and API response validations (quick wins)
+  - **Priority 2**: Debug work experience deletion and scoped resume dialog workflows
+  - **Priority 3**: Unicode character handling and debug test cleanup
+- **Previous Phase**: Advanced Features (Phase 6) ✅ - All scoped resume functionality and optimistic updates completed
+- **Recent Major Accomplishment**: Phase 6C completion with optimistic updates; now focusing on test stability before next phase
