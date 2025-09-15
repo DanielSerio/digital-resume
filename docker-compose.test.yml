@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Test Backend API Service
+  api-test:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3101:3001"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=file:./test.db
+      - PORT=3001
+      - NODE_ENV=test
+    networks:
+      - test-network
+    command: >
+      sh -c "
+        rm -f test.db &&
+        npx prisma db push &&
+        npx prisma db seed &&
+        npm run dev:test
+      "
+
+  # Test Frontend Web Service
+  web-test:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3100:3000"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3101
+      - NODE_ENV=test
+      - VITE_HMR_HOST=localhost
+      - VITE_HMR_PORT=3100
+    depends_on:
+      - api-test
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

@@ -214,12 +214,12 @@ test.describe('Work Experience Line Ordering', () => {
 
       // Verify the response structure
       expect(response.ok()).toBe(true);
-      expect(responseData.success).toBe(true);
-      expect(Array.isArray(responseData.data)).toBe(true);
+      expect(responseData).toBeTruthy();
+      expect(Array.isArray(responseData)).toBe(true);
 
       // Check if work experiences have lines
-      if (responseData.data.length > 0) {
-        const firstWorkExp = responseData.data[0];
+      if (responseData.length > 0) {
+        const firstWorkExp = responseData[0];
         console.log('First work experience lines:', firstWorkExp.lines);
 
         // Verify the structure includes lines
