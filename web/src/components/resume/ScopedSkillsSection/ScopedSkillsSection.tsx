@@ -176,7 +176,7 @@ export const ScopedSkillsSection: React.FC<ScopedSkillsSectionProps> = ({
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold">Technical Skills</h2>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs" data-testid="skills-included-badge">
               {includedSkillsCount} of {skills.length} included
             </Badge>
           </div>

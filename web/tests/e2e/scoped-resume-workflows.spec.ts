@@ -281,18 +281,27 @@ test.describe('Scoped Resume Workflows - Priority 1', () => {
       // Try to create resume with empty name
       await scopedPage.createResumeButton.click();
 
-      const dialog = scopedPage.page.getByRole('dialog');
-      const createButton = dialog.getByRole('button', { name: 'Create' });
+      // Wait for dialog to appear
+      const dialog = scopedPage.page.getByTestId('create-resume-dialog');
+      await dialog.waitFor({ state: 'visible' });
+
+      // Ensure input is empty and try to create
+      const nameInput = scopedPage.page.getByTestId('resume-name-input');
+      await nameInput.clear();
+
+      const createButton = scopedPage.page.getByTestId('create-resume-submit-button');
+      await createButton.waitFor({ state: 'visible' });
       await createButton.click();
 
-      // Should show validation error and not create resume
-      // Dialog should remain open
+      // Should show error toast and dialog remains open
+      await scopedPage.page.waitForSelector('text="Please enter a resume name"', { timeout: 3000 });
       await expect(dialog).toBeVisible();
 
       // Cancel the dialog
-      const cancelButton = dialog.getByRole('button', { name: 'Cancel' });
+      const cancelButton = scopedPage.page.getByTestId('create-resume-cancel-button');
+      await cancelButton.waitFor({ state: 'visible' });
       await cancelButton.click();
-      await expect(dialog).not.toBeVisible();
+      await dialog.waitFor({ state: 'hidden' });
     });
 
     test('should handle rapid skill toggle clicks', async () => {

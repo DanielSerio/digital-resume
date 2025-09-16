@@ -25,7 +25,7 @@ export default defineConfig({
       usePolling: true, // Enable polling for file changes in Docker
       interval: 1000, // Poll every second
     },
-    hmr: {
+    hmr: process.env.VITE_HMR === 'false' ? false : {
       port: 3000, // Use same port for HMR
     },
   },

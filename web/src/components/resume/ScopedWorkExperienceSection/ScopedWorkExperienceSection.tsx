@@ -270,7 +270,7 @@ export const ScopedWorkExperienceSection: React.FC<ScopedWorkExperienceSectionPr
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold">Work Experience</h2>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs" data-testid="work-experience-included-badge">
               {includedExperiencesCount} of {workExperiences.length} included
             </Badge>
           </div>

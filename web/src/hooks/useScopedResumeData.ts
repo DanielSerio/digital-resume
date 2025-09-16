@@ -96,7 +96,7 @@ export const useDuplicateScopedResume = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => 
+    mutationFn: (id: number) =>
       apiClient.post<ScopedResume>(`/scoped-resumes/${id}/duplicate`, {}),
     onSuccess: () => {
       // Only invalidate the list query to show the new duplicate
@@ -104,6 +104,54 @@ export const useDuplicateScopedResume = () => {
     },
     meta: {
       errorMessage: 'Failed to duplicate scoped resume',
+    },
+  });
+};
+
+// Hook for updating scoped professional summary
+export const useUpdateScopedSummary = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ scopedResumeId, summaryText }: { scopedResumeId: number; summaryText: string }) =>
+      apiClient.put(`/scoped-resumes/${scopedResumeId}/summary`, { summaryText }),
+    onSuccess: async (_, { scopedResumeId }) => {
+      // Force invalidation and immediate refetch of the scoped resume detail
+      await queryClient.invalidateQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+
+      // Force refetch to ensure component gets updated data
+      await queryClient.refetchQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+    },
+    meta: {
+      errorMessage: 'Failed to update scoped professional summary',
+    },
+  });
+};
+
+// Hook for removing scoped professional summary (reset to original)
+export const useRemoveScopedSummary = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (scopedResumeId: number) =>
+      apiClient.delete(`/scoped-resumes/${scopedResumeId}/summary`),
+    onSuccess: async (_, scopedResumeId) => {
+      // Force invalidation and immediate refetch of the scoped resume detail
+      await queryClient.invalidateQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+
+      // Force refetch to ensure component gets updated data
+      await queryClient.refetchQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+    },
+    meta: {
+      errorMessage: 'Failed to reset scoped professional summary',
     },
   });
 };

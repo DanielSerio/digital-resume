@@ -138,14 +138,14 @@ export interface CompleteResume {
 }
 
 export interface CompleteScopedResume {
-  scopedResume: ScopedResume;
-  contact: Contact | null;
-  professionalSummary: ScopedProfessionalSummary | null;
-  technicalSkills: ScopedSkill[];
-  education: Education[];
-  workExperiences: ScopedWorkExperience[];
-  skillCategories: SkillCategory[];
-  skillSubcategories: SkillSubcategory[];
+  id: number;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  scopedProfessionalSummaries: ScopedProfessionalSummary[];
+  scopedSkills: ScopedSkill[];
+  scopedWorkExperiences: ScopedWorkExperience[];
+  scopedWorkExperienceLines: ScopedWorkExperienceLine[];
 }
 
 // API Response types

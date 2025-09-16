@@ -719,4 +719,28 @@ export class ScopedResumeService {
       throw new AppError('Failed to remove scoped work experience line', 500);
     }
   }
+
+  async removeScopedProfessionalSummary(scopedResumeId: number): Promise<ApiResponse<null>> {
+    try {
+      const existingSummary = await prisma.scopedProfessionalSummary.findFirst({
+        where: { scopedResumeId },
+      });
+
+      if (!existingSummary) {
+        throw new AppError('Scoped professional summary not found', 404);
+      }
+
+      await prisma.scopedProfessionalSummary.delete({
+        where: { id: existingSummary.id },
+      });
+
+      return createSuccessResponse(null, 'Scoped professional summary removed successfully');
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      console.error('Error removing scoped professional summary:', error);
+      throw new AppError('Failed to remove scoped professional summary', 500);
+    }
+  }
 }

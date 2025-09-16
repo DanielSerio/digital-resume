@@ -164,6 +164,22 @@ router.route('/:id/summary')
     } catch (error) {
       return handleError(error, res);
     }
+  })
+  .delete(async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({
+          error: 'Invalid scoped resume ID',
+          message: 'Scoped resume ID must be a number'
+        });
+      }
+
+      const result = await scopedResumeService.removeScopedProfessionalSummary(id);
+      res.status(200).json(result);
+    } catch (error) {
+      return handleError(error, res);
+    }
   });
 
 // GET /api/scoped-resumes/:id/skills - Get scoped skills

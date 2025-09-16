@@ -14,6 +14,8 @@ import { SummaryContent } from "../SummarySection/SummaryContent";
 import {
   useProfessionalSummaryData,
   useScopedResumeData,
+  useUpdateScopedSummary,
+  useRemoveScopedSummary,
 } from "@/hooks";
 import {
   professionalSummarySchema,
@@ -43,15 +45,17 @@ export const ScopedSummarySection: React.FC<ScopedSummarySectionProps> = ({
   const { data: scopedResume, isLoading: scopedLoading } = useScopedResumeData(scopedResumeId);
 
   // Determine display summary and customization status
-  const scopedSummary = scopedResume?.scopedProfessionalSummaries?.[0];
+  const scopedSummary = scopedResume?.scopedProfessionalSummaries?.[0] || null;
   const displaySummary = scopedSummary || mainSummary;
   const hasCustomizations = !!scopedSummary;
+
 
   const isLoading = mainLoading || scopedLoading;
   const error = mainError; // Focus on main summary errors for now
 
-  // TODO: Add scoped summary update mutation
-  // const updateScopedSummaryMutation = useUpdateScopedSummary();
+  // Scoped summary mutations
+  const updateScopedSummaryMutation = useUpdateScopedSummary();
+  const removeScopedSummaryMutation = useRemoveScopedSummary();
 
   // Form setup - identical to main SummarySection
   const form = useForm<ProfessionalSummaryFormData>({
@@ -89,12 +93,11 @@ export const ScopedSummarySection: React.FC<ScopedSummarySectionProps> = ({
 
   const handleSave = async (data: ProfessionalSummaryFormData) => {
     try {
-      // TODO: Implement scoped summary save
-      // await updateScopedSummaryMutation.mutateAsync({
-      //   scopedResumeId,
-      //   ...data
-      // });
-      console.log("Saving scoped summary:", { scopedResumeId, data });
+      await updateScopedSummaryMutation.mutateAsync({
+        scopedResumeId,
+        summaryText: data.summaryText
+      });
+
       toast.success("Professional summary updated for this scoped resume");
       completeEdit();
     } catch (error) {
@@ -105,12 +108,11 @@ export const ScopedSummarySection: React.FC<ScopedSummarySectionProps> = ({
 
   const handleResetToOriginal = async () => {
     try {
-      // TODO: Implement reset to original
-      // await removeScopedSummaryMutation.mutateAsync(scopedResumeId);
-      console.log("Resetting to original summary for:", scopedResumeId);
+      await removeScopedSummaryMutation.mutateAsync(scopedResumeId);
       toast.success("Reset to original professional summary");
     } catch (error) {
       toast.error("Failed to reset to original");
+      console.error("Scoped summary reset error:", error);
     }
   };
 
@@ -159,7 +161,7 @@ export const ScopedSummarySection: React.FC<ScopedSummarySectionProps> = ({
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold">Professional Summary</h2>
             {hasCustomizations && (
-              <Badge variant="secondary" className="text-xs">Customized</Badge>
+              <Badge variant="secondary" className="text-xs" data-testid="summary-customized-badge">Customized</Badge>
             )}
           </div>
           {!isEditing && (
@@ -170,6 +172,7 @@ export const ScopedSummarySection: React.FC<ScopedSummarySectionProps> = ({
                   size="sm"
                   onClick={handleResetToOriginal}
                   className="text-muted-foreground"
+                  data-testid="summary-reset-button"
                 >
                   Reset to Original
                 </Button>

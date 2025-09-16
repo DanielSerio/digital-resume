@@ -2,7 +2,7 @@ import { test } from './fixtures/database';
 
 test.describe('Debug Page Elements', () => {
   test('should show actual page content', async ({ page }) => {
-    await page.goto('http://localhost:3000/main');
+    await page.goto('/main');
     await page.waitForTimeout(5000); // Wait for page to load
     
     // Take a screenshot to see what's actually on the page

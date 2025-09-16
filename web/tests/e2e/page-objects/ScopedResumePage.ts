@@ -62,40 +62,40 @@ export class ScopedResumePage {
     this.scopedResumesTab = page.getByRole('link', { name: 'Scoped Resumes' });
 
     // Scoped Resume Selector
-    this.resumeSelectorLabel = page.getByText('Select Scoped Resume:');
-    this.resumeSelector = page.getByRole('combobox');
-    this.resumeSelectorTrigger = page.getByRole('button', { name: /Select a scoped resume|[A-Za-z\s]+/ });
-    this.currentSelectionInfo = page.locator('.bg-blue-50');
+    this.resumeSelectorLabel = page.getByTestId('resume-selector-label');
+    this.resumeSelector = page.getByTestId('resume-selector-content');
+    this.resumeSelectorTrigger = page.getByTestId('resume-selector-trigger');
+    this.currentSelectionInfo = page.getByTestId('current-selection-info');
 
     // Management Interface
-    this.createResumeButton = page.getByRole('button', { name: 'Create New Resume' });
-    this.managementSection = page.getByText('Manage Scoped Resumes').locator('..');
+    this.createResumeButton = page.getByTestId('create-resume-button');
+    this.managementSection = page.getByTestId('scoped-resume-manager');
 
     // Scoped Resume Cards
-    this.resumeCards = page.locator('[data-testid*="resume-card"], .border.rounded, .transition-shadow');
+    this.resumeCards = page.getByTestId('resume-cards-container').locator('[data-testid*="resume-card"]');
 
     // Contact Section (read-only in scoped view)
     this.contactSection = page.getByTestId('ContactCard');
 
     // Scoped Summary Section
     this.scopedSummarySection = page.getByTestId('ScopedSummaryCard');
-    this.scopedSummaryEditButton = this.scopedSummarySection.getByRole('button', { name: 'Edit' });
-    this.scopedSummaryCustomizedBadge = this.scopedSummarySection.getByText('Customized');
-    this.scopedSummaryResetButton = this.scopedSummarySection.getByRole('button', { name: 'Reset to Original' });
+    this.scopedSummaryEditButton = this.scopedSummarySection.getByTestId('edit-button');
+    this.scopedSummaryCustomizedBadge = this.scopedSummarySection.getByTestId('summary-customized-badge');
+    this.scopedSummaryResetButton = this.scopedSummarySection.getByTestId('summary-reset-button');
     this.scopedSummaryTextarea = this.scopedSummarySection.getByRole('textbox');
-    this.scopedSummarySaveButton = this.scopedSummarySection.getByRole('button', { name: 'Save' });
-    this.scopedSummaryCancelButton = this.scopedSummarySection.getByRole('button', { name: 'Cancel' });
+    this.scopedSummarySaveButton = this.scopedSummarySection.getByTestId('save-button');
+    this.scopedSummaryCancelButton = this.scopedSummarySection.getByTestId('cancel-button');
 
     // Scoped Skills Section
     this.scopedSkillsSection = page.getByTestId('ScopedSkillsCard');
-    this.skillsIncludedBadge = this.scopedSkillsSection.locator('text=/\\d+ of \\d+ included/');
+    this.skillsIncludedBadge = this.scopedSkillsSection.getByTestId('skills-included-badge');
     this.skillCategoryControls = this.scopedSkillsSection.locator('.bg-muted.rounded-lg');
     this.skillCheckboxes = this.scopedSkillsSection.getByRole('checkbox');
     this.bulkSkillButtons = this.scopedSkillsSection.getByRole('button', { name: /All|None/ });
 
     // Scoped Work Experience Section
     this.scopedWorkExperienceSection = page.getByTestId('ScopedWorkExperienceCard');
-    this.workExperienceIncludedBadge = this.scopedWorkExperienceSection.locator('text=/\\d+ of \\d+ included/');
+    this.workExperienceIncludedBadge = this.scopedWorkExperienceSection.getByTestId('work-experience-included-badge');
     this.workExperienceCheckboxes = this.scopedWorkExperienceSection.getByRole('checkbox');
     this.workExperienceLineEditors = this.scopedWorkExperienceSection.getByRole('textbox', { name: /line|content/i });
 
@@ -120,43 +120,57 @@ export class ScopedResumePage {
   }
 
   /**
-   * Create a new scoped resume
+   * Create a new scoped resume (simplified for testing)
    */
   async createNewScopedResume(name: string) {
+    // Click create button and wait for dialog
     await this.createResumeButton.click();
 
-    // Wait for dialog to appear
-    const dialog = this.page.getByRole('dialog');
-    await dialog.waitFor();
+    // Wait for form elements to be ready
+    const nameInput = this.page.getByTestId('resume-name-input');
+    const submitButton = this.page.getByTestId('create-resume-submit-button');
 
-    // Fill in the name
-    const nameInput = dialog.getByRole('textbox', { name: /resume name/i });
+    await nameInput.waitFor({ state: 'visible' });
+    await submitButton.waitFor({ state: 'visible' });
+
+    // Fill and submit form
     await nameInput.fill(name);
+    await submitButton.click();
 
-    // Submit
-    const createButton = dialog.getByRole('button', { name: 'Create' });
-    await createButton.click();
+    // Wait for any success indicators
+    try {
+      await Promise.race([
+        this.page.waitForURL(/\/scoped\?resumeId=/, { timeout: 10000 }),
+        this.currentSelectionInfo.waitFor({ state: 'visible', timeout: 10000 })
+      ]);
+    } catch (error) {
+      // If navigation fails, still try final check
+    }
 
-    // Wait for dialog to close
-    await dialog.waitFor({ state: 'hidden' });
+    // Final check: ensure we're in editing mode
+    await this.currentSelectionInfo.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
    * Select a scoped resume from the dropdown
    */
   async selectScopedResume(resumeName: string) {
+    // First ensure we're in management mode
+    await this.resumeSelectorTrigger.waitFor({ state: 'visible' });
     await this.resumeSelectorTrigger.click();
 
     // Wait for dropdown to appear
-    const dropdown = this.page.getByRole('listbox');
-    await dropdown.waitFor();
+    const dropdown = this.page.getByTestId('resume-selector-content');
+    await dropdown.waitFor({ state: 'visible' });
 
-    // Select the resume
-    const option = dropdown.getByRole('option', { name: resumeName });
+    // Select the resume by text content
+    const option = dropdown.getByText(resumeName);
+    await option.waitFor({ state: 'visible' });
     await option.click();
 
-    // Wait for selection to complete
-    await this.currentSelectionInfo.waitFor();
+    // Wait for selection to complete and editing interface to load
+    await this.currentSelectionInfo.waitFor({ state: 'visible' });
+    await this.page.waitForTimeout(500); // Allow UI to settle
   }
 
   /**
@@ -207,12 +221,25 @@ export class ScopedResumePage {
    * Edit the scoped summary
    */
   async editScopedSummary(newText: string) {
+    // First ensure the summary section exists
+    await this.scopedSummarySection.waitFor({ state: 'visible' });
+
     await this.scopedSummaryEditButton.click();
-    await this.scopedSummaryTextarea.waitFor();
+
+    // Wait for edit mode to activate
+    await this.scopedSummaryTextarea.waitFor({ state: 'visible' });
+    await this.scopedSummarySaveButton.waitFor({ state: 'visible' });
+
+    // Clear and fill the textarea
     await this.scopedSummaryTextarea.clear();
     await this.scopedSummaryTextarea.fill(newText);
+
+    // Save and wait for edit mode to end
     await this.scopedSummarySaveButton.click();
     await this.scopedSummaryTextarea.waitFor({ state: 'hidden' });
+
+    // Give the UI time to update after save
+    await this.page.waitForTimeout(1000);
   }
 
   /**
@@ -220,8 +247,12 @@ export class ScopedResumePage {
    */
   async resetScopedSummary() {
     await this.scopedSummaryResetButton.click();
-    // Wait for reset confirmation or UI update
-    await this.page.waitForTimeout(500);
+
+    // Wait for customized badge to disappear
+    await this.scopedSummaryCustomizedBadge.waitFor({ state: 'hidden' });
+
+    // Wait for reset button to disappear (since it only shows when customized)
+    await this.scopedSummaryResetButton.waitFor({ state: 'hidden' });
   }
 
   /**
@@ -240,7 +271,7 @@ export class ScopedResumePage {
   /**
    * Get the count of included skills
    */
-  async getIncludedSkillsCount(): Promise<{ included: number; total: number }> {
+  async getIncludedSkillsCount(): Promise<{ included: number; total: number; }> {
     const badgeText = await this.skillsIncludedBadge.textContent();
     const match = badgeText?.match(/(\d+) of (\d+) included/);
     return {
@@ -252,7 +283,7 @@ export class ScopedResumePage {
   /**
    * Get the count of included work experiences
    */
-  async getIncludedWorkExperiencesCount(): Promise<{ included: number; total: number }> {
+  async getIncludedWorkExperiencesCount(): Promise<{ included: number; total: number; }> {
     const badgeText = await this.workExperienceIncludedBadge.textContent();
     const match = badgeText?.match(/(\d+) of (\d+) included/);
     return {
@@ -266,7 +297,11 @@ export class ScopedResumePage {
    */
   async isSummaryCustomized(): Promise<boolean> {
     try {
-      await this.scopedSummaryCustomizedBadge.waitFor({ timeout: 1000 });
+      // First ensure the summary section exists
+      await this.scopedSummarySection.waitFor({ state: 'visible' });
+
+      // Then check if customized badge is visible
+      await this.scopedSummaryCustomizedBadge.waitFor({ state: 'visible', timeout: 2000 });
       return true;
     } catch {
       return false;

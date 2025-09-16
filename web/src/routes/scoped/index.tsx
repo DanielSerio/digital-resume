@@ -77,14 +77,14 @@ function ScopedResumeComponent() {
   return (
     <Page className="space-y-6">
       {/* Scoped Resume Selector */}
-      <div className="flex items-center gap-4">
-        <label className="font-medium text-sm">Select Scoped Resume:</label>
+      <div className="flex items-center gap-4" data-testid="scoped-resume-selector">
+        <label className="font-medium text-sm" data-testid="resume-selector-label">Select Scoped Resume:</label>
         <Select
           value={resumeId || ""}
           onValueChange={handleSelectorChange}
           disabled={scopedResumes.length === 0}
         >
-          <SelectTrigger className="w-64">
+          <SelectTrigger className="w-64" data-testid="resume-selector-trigger">
             <SelectValue
               placeholder={
                 scopedResumes.length === 0
@@ -93,12 +93,12 @@ function ScopedResumeComponent() {
               }
             />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent data-testid="resume-selector-content">
             {scopedResumes.length > 0 && (
               <SelectItem value="null">None (show all data)</SelectItem>
             )}
             {scopedResumes.map((resume) => (
-              <SelectItem key={resume.id} value={resume.id.toString()}>
+              <SelectItem key={resume.id} value={resume.id.toString()} data-testid={`resume-option-${resume.id}`}>
                 {resume.name}
               </SelectItem>
             ))}
@@ -108,8 +108,8 @@ function ScopedResumeComponent() {
 
       {/* Display current selection info */}
       {selectedResume && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-medium text-blue-900">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4" data-testid="current-selection-info">
+          <h3 className="font-medium text-blue-900" data-testid="current-selection-title">
             Currently viewing: {selectedResume.name}
           </h3>
           <p className="text-sm text-blue-700">
