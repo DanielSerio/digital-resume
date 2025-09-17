@@ -1,87 +1,113 @@
 # Test Resolution Plan
 
-## Current Issue: "UI State Management > should disable other section edit buttons" Test Failure
+## ✅ RESOLVED: "UI State Management > should disable other section edit buttons" Test Failure
+
+**Resolution**: Updated page object to use "Add Skill" button as representative Skills section edit button and added explicit `role="button"` attributes.
+
+---
+
+## Current Issue: "Work Experience CRUD Operations > should delete a work experience entry" Test Failure
 
 ### Problem Diagnosis
 
-The test `should disable other section edit buttons during summary editing` is failing because of an **architecture mismatch** between different resume sections.
+The test `should delete a work experience entry` is failing during the work experience deletion workflow.
 
 ### Root Cause Analysis
 
-**Expected Behavior**: The test expects all sections to have edit buttons that can be disabled when other sections are being edited.
+**Expected Behavior**: The test should be able to delete a work experience entry and verify that the count decreases.
 
-**Actual Implementation**:
-- **Contact & Summary sections**: Have dedicated "Edit" buttons with `data-testid="edit-button"` that toggle edit mode
-- **Skills section**: Has multiple individual buttons ("Add Skill" button + individual skill edit buttons) that should all be disabled when other sections are editing - no section-level "Edit" button
-- **Education & Work Experience sections**: Always editable (per test comments)
+**Test Flow**:
+1. Get initial count of work experience entries
+2. Click edit button on first work experience entry
+3. Click delete button in the form
+4. Verify the count decreases by 1
 
-**Specific Technical Issue**:
-- Test selector: `mainPage.skillsEditButton = this.skillsSection.getByTestId('edit-button')`
-- Skills section DOM: No element with `data-testid="edit-button"` exists (Skills section doesn't have a section-level edit button)
-- Result: **Selector not found error**
+**Potential Issues to Investigate**:
 
-### Edit State Management Analysis
+#### 1. **API/Backend Issues**
+- Delete endpoint may not be working correctly
+- Database transaction may be failing
+- Cache invalidation may not be working properly
 
-The edit state system is working correctly:
-- `useEditState()` hook provides `canEdit` property that returns `false` when other sections are editing
-- Contact and Summary sections properly use `disabled={!canEdit}` on their edit buttons ✅
-- Skills section "Add Skill" button uses `disabled={!canEdit}` ✅
-- Skills section individual edit buttons should also use `disabled={!canEdit}` ✅
+#### 2. **React Query Cache Issues**
+- `queryClient.invalidateQueries()` may not be refreshing the UI after deletion
+- Optimistic updates may be interfering with the deletion flow
+- Stale data may be persisting in the cache
 
-### Possible Solutions
+#### 3. **Edit State Management**
+- `deleteItem()` call in `handleDelete()` may not be updating the local state correctly
+- Edit mode may not be exiting properly after deletion
+- Item edit hook may have state synchronization issues
 
-#### Option 1: Fix the Test (Architecture-Aware)
-- Update test to recognize that Skills section has no section-level edit button
-- Test should verify that individual Skills buttons ("Add Skill" + skill edit buttons) are disabled when other sections are editing
-- Update `MainPage.ts` page object to point to a representative Skills button (e.g., "Add Skill")
+#### 4. **Component Re-rendering**
+- WorkExperienceDisplay may not be re-rendering after data changes
+- Count selector `.border` may not be accurate for counting entries
+- DOM updates may be delayed or not occurring
 
-#### Option 2: Test Multiple Skills Buttons
-- Update test to check all Skills section buttons individually
-- Verify "Add Skill" button is disabled
-- Verify individual skill edit buttons are disabled when other sections are editing
-- More comprehensive but requires more test logic
+#### 5. **Test Timing Issues**
+- Test may not be waiting for API response and UI updates
+- Race condition between deletion and count verification
+- Network request may be timing out
 
-#### Option 3: Representative Button Approach
-- Point `skillsEditButton` to the "Add Skill" button as representative of Skills section edit state
-- Leverages existing disabled behavior on "Add Skill" button
-- Maintains test coverage while accommodating current architecture
-- Simpler than checking all individual buttons
+### Diagnostic Steps
 
-### Recommendation
+1. **Check API Endpoint**
+   - Verify the DELETE `/work-experiences/:id` endpoint is working in backend
+   - Test deletion manually via API client or browser dev tools
+   - Check server logs for deletion errors
 
-**Option 3** (Representative Button Approach) is most practical because:
-- Skills section's "Add Skill" button already implements the desired disabled behavior
-- No component changes required
-- Test continues to verify mutual exclusion functionality
-- Acknowledges that Skills section doesn't have a section-level edit button
-- "Add Skill" button represents the edit state for the entire Skills section
+2. **Test React Query Cache**
+   - Add temporary logging in `useDeleteWorkExperience` hook
+   - Verify `onSuccess` callback is executing
+   - Check if `invalidateQueries` is actually refreshing data
 
-### Implementation Plan
+3. **Inspect Edit State Hook**
+   - Add logging in `useItemEdit` hook's `deleteItem()` method
+   - Verify local state is being cleared after deletion
+   - Check if `editingExperienceId` is reset properly
 
-1. **Add explicit roles to UI components** (for reliable role-based selectors):
-   ```typescript
-   // In SkillsDisplay.tsx, update individual skill deletion button:
-   <button
-     role="button"  // Add explicit role
-     onClick={() => handleMarkForDeletion(skill.id)}
-     className={`ml-2 transition-colors ${
-       isMarkedForDeletion
-         ? "text-red-600 hover:text-red-800"
-         : "hover:text-red-600"
-     }`}
-   >
-     <X className="h-3 w-3" />
-   </button>
-   ```
+4. **Test Timing**
+   - Add explicit waits in test after delete button click
+   - Use `page.waitForResponse()` to wait for API call completion
+   - Add `page.waitForTimeout()` to allow UI updates
 
-2. **Update `MainPage.ts` page object**:
-   ```typescript
-   // Change from:
-   this.skillsEditButton = this.skillsSection.getByTestId('edit-button');
-   // To:
-   this.skillsEditButton = this.skillsSection.getByRole('button', { name: /Add Skill/i });
-   ```
+### Recommended Investigation Plan
 
-3. **Verify test passes** with this change
-4. **Document** that Skills section uses "Add Skill" button as representative of section edit state
-5. **Verify implementation** that individual skill edit buttons also respect `canEdit` state
+#### Step 1: Add Test Timing Fixes (Most Likely Issue)
+```typescript
+// In work-experience-editing.spec.ts
+test('should delete a work experience entry', async () => {
+  const initialEntries = await mainPage.workExperienceList.locator('.border').count();
+
+  await mainPage.getWorkExperienceEditButton(0).click();
+  await expect(mainPage.getWorkExperienceForm()).toBeVisible();
+
+  // Wait for delete API call to complete
+  const responsePromise = page.waitForResponse(response =>
+    response.url().includes('/work-experiences/') &&
+    response.request().method() === 'DELETE'
+  );
+
+  await mainPage.getDeleteButton().click();
+  await responsePromise;
+
+  // Wait for UI to update
+  await page.waitForTimeout(1000);
+
+  await expect(mainPage.workExperienceList.locator('.border')).toHaveCount(initialEntries - 1);
+});
+```
+
+#### Step 2: Verify API Endpoint (If Step 1 Fails)
+- Test deletion endpoint manually
+- Check server logs for errors
+- Verify database transaction completion
+
+#### Step 3: Fix Cache Issues (If Step 2 Passes)
+- Add temporary logging to `useDeleteWorkExperience`
+- Verify cache invalidation is working
+- Check for stale data persistence
+
+#### Step 4: Fix Edit State Management (Last Resort)
+- Debug `useItemEdit` hook's `deleteItem()` method
+- Ensure local state synchronization with API calls

@@ -140,6 +140,7 @@ export const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
                       {skill.name}
                       {isCategoryEditing && (
                         <button
+                          role="button"
                           onClick={() => handleMarkForDeletion(skill.id)}
                           className={`ml-2 transition-colors ${
                             isMarkedForDeletion

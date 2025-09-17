@@ -129,7 +129,7 @@ export class MainPage {
 
     // Skills Section
     this.skillsSection = page.getByTestId('SkillsCard');
-    this.skillsEditButton = this.skillsSection.getByTestId('edit-button');
+    this.skillsEditButton = this.skillsSection.getByRole('button', { name: /Add Skill/i });
     this.skillsList = this.skillsSection.getByTestId('skills-list');
 
     // Education Section
