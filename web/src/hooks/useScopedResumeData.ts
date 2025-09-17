@@ -199,3 +199,45 @@ export const useRemoveScopedSkill = () => {
     },
   });
 };
+
+// Hook for adding a work experience to scoped resume
+export const useAddScopedWorkExperience = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ scopedResumeId, workExperienceId }: { scopedResumeId: number; workExperienceId: number }) =>
+      apiClient.post(`/scoped-resumes/${scopedResumeId}/work-experiences`, { workExperienceId }),
+    onSuccess: async (_, { scopedResumeId }) => {
+      queryClient.removeQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+      await queryClient.refetchQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+    },
+    meta: {
+      errorMessage: 'Failed to add work experience to scoped resume',
+    },
+  });
+};
+
+// Hook for removing a work experience from scoped resume
+export const useRemoveScopedWorkExperience = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ scopedResumeId, workExperienceId }: { scopedResumeId: number; workExperienceId: number }) =>
+      apiClient.delete(`/scoped-resumes/${scopedResumeId}/work-experiences/${workExperienceId}`),
+    onSuccess: async (_, { scopedResumeId }) => {
+      queryClient.removeQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+      await queryClient.refetchQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+    },
+    meta: {
+      errorMessage: 'Failed to remove work experience from scoped resume',
+    },
+  });
+};

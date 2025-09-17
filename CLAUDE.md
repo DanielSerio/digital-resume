@@ -159,3 +159,22 @@ The project follows strict TypeScript and React conventions defined in Cursor ru
   - **Priority 3**: Unicode character handling and debug test cleanup
 - **Previous Phase**: Advanced Features (Phase 6) ✅ - All scoped resume functionality and optimistic updates completed
 - **Recent Major Accomplishment**: Phase 6C completion with optimistic updates; now focusing on test stability before next phase
+
+## MANDATORY PROCESS CHECKS (ALWAYS follow these before reporting work complete)
+
+**CRITICAL**: These verification steps are MANDATORY for every file edit. Failure to follow these processes repeatedly wastes the user's time.
+
+### 1. TypeScript Diagnostics Check
+- After editing ANY TypeScript file, ALWAYS run `mcp__ide__getDiagnostics` on the file
+- Fix ALL errors found before proceeding
+- NEVER report work as complete with TypeScript errors present
+
+### 2. Line Count Verification
+- After editing ANY component file, ALWAYS run `wc -l` to check line count
+- If over 200 lines, extract components IMMEDIATELY
+- NEVER leave component files over 200 lines
+
+### 3. Hook Signature Verification
+- When using unfamiliar hooks, search for the hook definition in the codebase FIRST
+- Verify parameter types match expected signature
+- NEVER guess hook parameters - always verify
