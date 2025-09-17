@@ -100,10 +100,10 @@ export interface ScopedProfessionalSummary {
 export interface ScopedSkill {
   id: number;
   scopedResumeId: number;
-  skillId: number;
+  technicalSkillId: number;
   createdAt: Date;
   updatedAt: Date;
-  skill: TechnicalSkill;
+  technicalSkill: TechnicalSkill;
 }
 
 export interface ScopedWorkExperience {
@@ -142,7 +142,7 @@ export interface CompleteScopedResume {
   name: string;
   createdAt: Date;
   updatedAt: Date;
-  scopedProfessionalSummaries: ScopedProfessionalSummary[];
+  scopedProfessionalSummary: ScopedProfessionalSummary | null;
   scopedSkills: ScopedSkill[];
   scopedWorkExperiences: ScopedWorkExperience[];
   scopedWorkExperienceLines: ScopedWorkExperienceLine[];

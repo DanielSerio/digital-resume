@@ -45,7 +45,7 @@ export const ScopedSummarySection: React.FC<ScopedSummarySectionProps> = ({
   const { data: scopedResume, isLoading: scopedLoading } = useScopedResumeData(scopedResumeId);
 
   // Determine display summary and customization status
-  const scopedSummary = scopedResume?.scopedProfessionalSummaries?.[0] || null;
+  const scopedSummary = scopedResume?.scopedProfessionalSummary || null;
   const displaySummary = scopedSummary || mainSummary;
   const hasCustomizations = !!scopedSummary;
 

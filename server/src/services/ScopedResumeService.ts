@@ -97,7 +97,19 @@ export class ScopedResumeService {
           },
         },
       });
-      return createSuccessResponse(scopedResume, scopedResume ? 'Scoped resume retrieved successfully' : 'Scoped resume not found');
+
+      if (!scopedResume) {
+        return createSuccessResponse(null, 'Scoped resume not found');
+      }
+
+      // Transform the data to match frontend expectations (single summary instead of array)
+      const transformedResume = {
+        ...scopedResume,
+        scopedProfessionalSummary: scopedResume.scopedProfessionalSummaries[0] || null,
+        scopedProfessionalSummaries: undefined, // Remove the array property
+      };
+
+      return createSuccessResponse(transformedResume, 'Scoped resume retrieved successfully');
     } catch (error) {
       console.error('Error fetching scoped resume:', error);
       throw new AppError('Failed to fetch scoped resume', 500);

@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import type { 
-  ScopedResume, 
-  CompleteScopedResume, 
-  ScopedResumeInput
+import type {
+  ScopedResume,
+  CompleteScopedResume,
+  ScopedResumeInput,
+  ApiResponse,
+  ScopedProfessionalSummary
 } from '@/types';
 
 // Query keys for consistent caching - simplified to avoid circular references
@@ -114,14 +116,14 @@ export const useUpdateScopedSummary = () => {
 
   return useMutation({
     mutationFn: ({ scopedResumeId, summaryText }: { scopedResumeId: number; summaryText: string }) =>
-      apiClient.put(`/scoped-resumes/${scopedResumeId}/summary`, { summaryText }),
+      apiClient.put<ApiResponse<ScopedProfessionalSummary>>(`/scoped-resumes/${scopedResumeId}/summary`, { summaryText }),
     onSuccess: async (_, { scopedResumeId }) => {
-      // Force invalidation and immediate refetch of the scoped resume detail
-      await queryClient.invalidateQueries({
+      // Remove the cached data and force a fresh fetch
+      queryClient.removeQueries({
         queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
       });
 
-      // Force refetch to ensure component gets updated data
+      // Force refetch immediately
       await queryClient.refetchQueries({
         queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
       });
@@ -152,6 +154,48 @@ export const useRemoveScopedSummary = () => {
     },
     meta: {
       errorMessage: 'Failed to reset scoped professional summary',
+    },
+  });
+};
+
+// Hook for adding a skill to scoped resume
+export const useAddScopedSkill = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ scopedResumeId, technicalSkillId }: { scopedResumeId: number; technicalSkillId: number }) =>
+      apiClient.post(`/scoped-resumes/${scopedResumeId}/skills`, { technicalSkillId }),
+    onSuccess: async (_, { scopedResumeId }) => {
+      queryClient.removeQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+      await queryClient.refetchQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+    },
+    meta: {
+      errorMessage: 'Failed to add skill to scoped resume',
+    },
+  });
+};
+
+// Hook for removing a skill from scoped resume
+export const useRemoveScopedSkill = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ scopedResumeId, technicalSkillId }: { scopedResumeId: number; technicalSkillId: number }) =>
+      apiClient.delete(`/scoped-resumes/${scopedResumeId}/skills/${technicalSkillId}`),
+    onSuccess: async (_, { scopedResumeId }) => {
+      queryClient.removeQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+      await queryClient.refetchQueries({
+        queryKey: scopedResumeQueryKeys.detail(scopedResumeId)
+      });
+    },
+    meta: {
+      errorMessage: 'Failed to remove skill from scoped resume',
     },
   });
 };
