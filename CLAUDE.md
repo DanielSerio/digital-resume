@@ -154,6 +154,7 @@ The project follows strict TypeScript and React conventions defined in Cursor ru
 - Reference `plans/schema.dbml` for database schema and relationships
 - Keep files under 200 lines
 - **Current Development Phase**: Export System (Phase 7) - READY TO BEGIN
+  - **Pre-Phase Requirement**: ✅ Verify all 70 Storybook stories are working correctly before proceeding
   - **Priority 1**: PDF generation with professional formatting and template system
   - **Priority 2**: DOCX generation with editable document export functionality
   - **Priority 3**: Template system with multiple resume formats and styling options

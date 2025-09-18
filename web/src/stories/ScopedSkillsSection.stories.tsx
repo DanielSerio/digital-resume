@@ -1,8 +1,8 @@
-import React from 'react';
+// import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ScopedSkillsSection } from '@/components/resume/ScopedSkillsSection/ScopedSkillsSection';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { within, userEvent, expect } from '@storybook/test';
+import { within, userEvent, expect } from 'storybook/test';
 
 // Mock data for stories
 const mockSkills = [
@@ -72,105 +72,19 @@ const mockScopedResume = {
   scopedWorkExperienceLines: [],
 };
 
-// Mock hooks
-const createMockHooks = (scenario: 'loading' | 'empty' | 'partial' | 'full' | 'error') => {
-  let mockSkillsHook: any;
-  let mockScopedResumeHook: any;
-  let mockSkillsEditHook: any;
-
-  const baseEditHook = {
-    isAddingSkill: false,
-    isEditingCategory: false,
-    currentEditCategory: null,
-    canEdit: true,
-    startAddSkill: () => {},
-    startEditCategory: () => {},
-    cancelEdit: () => {},
-    completeAddSkill: () => {},
-  };
-
-  switch (scenario) {
-    case 'loading':
-      mockSkillsHook = { data: [], isLoading: true, error: null };
-      mockScopedResumeHook = { data: null, isLoading: true };
-      mockSkillsEditHook = { ...baseEditHook, canEdit: false };
-      break;
-
-    case 'error':
-      mockSkillsHook = { data: [], isLoading: false, error: new Error('Failed to load') };
-      mockScopedResumeHook = { data: null, isLoading: false };
-      mockSkillsEditHook = { ...baseEditHook, canEdit: false };
-      break;
-
-    case 'empty':
-      mockSkillsHook = { data: [], isLoading: false, error: null };
-      mockScopedResumeHook = { data: { ...mockScopedResume, scopedSkills: [] }, isLoading: false };
-      mockSkillsEditHook = baseEditHook;
-      break;
-
-    case 'partial':
-      mockSkillsHook = { data: mockSkills, isLoading: false, error: null };
-      mockScopedResumeHook = { data: mockScopedResume, isLoading: false };
-      mockSkillsEditHook = baseEditHook;
-      break;
-
-    case 'full':
-      mockSkillsHook = { data: mockSkills, isLoading: false, error: null };
-      mockScopedResumeHook = {
-        data: {
-          ...mockScopedResume,
-          scopedSkills: mockSkills.map((skill, index) => ({
-            id: index + 1,
-            scopedResumeId: 123,
-            technicalSkillId: skill.id,
-          }))
-        },
-        isLoading: false
-      };
-      mockSkillsEditHook = baseEditHook;
-      break;
-  }
-
-  const mockSkillTaxonomy = {
-    getCategoryName: (categoryId: number) => {
-      const category = [
-        { id: 1, name: 'Frontend' },
-        { id: 2, name: 'Backend' },
-        { id: 3, name: 'DevOps' },
-      ].find(cat => cat.id === categoryId);
-      return category?.name || 'Unknown';
-    },
-  };
-
-  return { mockSkillsHook, mockScopedResumeHook, mockSkillsEditHook, mockSkillTaxonomy };
-};
+// Note: Mock hooks were removed since we're not using them in these stories
 
 // Story component wrapper
-const ScopedSkillsSectionWrapper = ({ scenario = 'partial' }: {
-  scenario: 'loading' | 'empty' | 'partial' | 'full' | 'error'
-}) => {
+const ScopedSkillsSectionWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
     },
   });
 
-  const { mockSkillsHook, mockScopedResumeHook, mockSkillsEditHook, mockSkillTaxonomy } = createMockHooks(scenario);
-
-  // Mock the hooks
-  React.useEffect(() => {
-    jest.doMock('@/hooks', () => ({
-      ...jest.requireActual('@/hooks'),
-      useTechnicalSkillsData: () => mockSkillsHook,
-      useScopedResumeData: () => mockScopedResumeHook,
-      useDeleteTechnicalSkill: () => ({ mutateAsync: async () => {} }),
-      useSkillTaxonomy: () => mockSkillTaxonomy,
-    }));
-
-    jest.doMock('@/hooks/edit/useSkillsEdit', () => ({
-      useSkillsEdit: () => mockSkillsEditHook,
-    }));
-  }, []);
+  // Note: In a real Storybook setup, we would use MSW or other mocking solutions
+  // For now, we'll let the components use their actual hooks
+  // const { mockSkillsHook, mockScopedResumeHook, mockSkillsEditHook, mockSkillTaxonomy } = createMockHooks(scenario);
 
   return (
     <QueryClientProvider client={queryClient}>

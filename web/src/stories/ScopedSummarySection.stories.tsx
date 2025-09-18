@@ -2,7 +2,7 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ScopedSummarySection } from '@/components/resume/ScopedSummarySection/ScopedSummarySection';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { within, userEvent, expect } from '@storybook/test';
+import { within, userEvent, expect } from 'storybook/test';
 
 // Mock data for stories
 const mockMainSummary = {
@@ -30,117 +30,18 @@ const mockScopedResume = {
   scopedWorkExperienceLines: [],
 };
 
-// Mock hooks
-const createMockHooks = (scenario: 'loading' | 'original' | 'customized' | 'error') => {
-  let mockMainSummaryHook: any;
-  let mockScopedResumeHook: any;
-  let mockEditState: any;
-
-  switch (scenario) {
-    case 'loading':
-      mockMainSummaryHook = {
-        data: null,
-        isLoading: true,
-        error: null,
-      };
-      mockScopedResumeHook = {
-        data: null,
-        isLoading: true,
-      };
-      mockEditState = {
-        isEditing: false,
-        canEdit: false,
-        startEdit: () => false,
-        cancelEdit: () => {},
-        completeEdit: () => {},
-      };
-      break;
-
-    case 'error':
-      mockMainSummaryHook = {
-        data: null,
-        isLoading: false,
-        error: new Error('Failed to load'),
-      };
-      mockScopedResumeHook = {
-        data: null,
-        isLoading: false,
-      };
-      mockEditState = {
-        isEditing: false,
-        canEdit: false,
-        startEdit: () => false,
-        cancelEdit: () => {},
-        completeEdit: () => {},
-      };
-      break;
-
-    case 'original':
-      mockMainSummaryHook = {
-        data: mockMainSummary,
-        isLoading: false,
-        error: null,
-      };
-      mockScopedResumeHook = {
-        data: { ...mockScopedResume, scopedProfessionalSummaries: [] },
-        isLoading: false,
-      };
-      mockEditState = {
-        isEditing: false,
-        canEdit: true,
-        startEdit: () => true,
-        cancelEdit: () => {},
-        completeEdit: () => {},
-      };
-      break;
-
-    case 'customized':
-      mockMainSummaryHook = {
-        data: mockMainSummary,
-        isLoading: false,
-        error: null,
-      };
-      mockScopedResumeHook = {
-        data: mockScopedResume,
-        isLoading: false,
-      };
-      mockEditState = {
-        isEditing: false,
-        canEdit: true,
-        startEdit: () => true,
-        cancelEdit: () => {},
-        completeEdit: () => {},
-      };
-      break;
-  }
-
-  return { mockMainSummaryHook, mockScopedResumeHook, mockEditState };
-};
+// Note: Mock hooks were removed since we're not using them in these stories
 
 // Story component wrapper
-const ScopedSummarySectionWrapper = ({ scenario = 'original' }: { scenario: 'loading' | 'original' | 'customized' | 'error' }) => {
+const ScopedSummarySectionWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
     },
   });
 
-  const { mockMainSummaryHook, mockScopedResumeHook, mockEditState } = createMockHooks(scenario);
-
-  // Mock the hooks
-  React.useEffect(() => {
-    // Mock useProfessionalSummaryData
-    jest.doMock('@/hooks', () => ({
-      ...jest.requireActual('@/hooks'),
-      useProfessionalSummaryData: () => mockMainSummaryHook,
-      useScopedResumeData: () => mockScopedResumeHook,
-    }));
-
-    // Mock useEditState
-    jest.doMock('@/hooks/edit/useEditState', () => ({
-      useEditState: () => mockEditState,
-    }));
-  }, []);
+  // Note: In a real Storybook setup, we would use MSW or other mocking solutions
+  // For now, we'll let the components use their actual hooks
 
   return (
     <QueryClientProvider client={queryClient}>
