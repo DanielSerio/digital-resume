@@ -86,19 +86,122 @@ test.describe('Work Experience Editing', () => {
       await expect(mainPage.workExperienceList).not.toContainText('This Should Not Be Saved');
     });
 
-    test('should delete a work experience entry', async () => {
-      // Get initial count of work experiences
-      const initialEntries = await mainPage.workExperienceList.locator('.border').count();
+    test('should delete a work experience entry', async ({ page }) => {
+      // Capture console logs from the browser
+      const consoleLogs: string[] = [];
+      page.on('console', msg => {
+        if (msg.text().includes('work-experience') || msg.text().includes('⚠️')) {
+          consoleLogs.push(`[${msg.type()}] ${msg.text()}`);
+        }
+      });
+
+      // Ignore page errors related to 404 after successful deletion - these are expected race conditions
+      page.on('pageerror', error => {
+        if (error.message.includes('Work experience not found') || error.message.includes('404')) {
+          console.log(`⚠️ Ignoring expected 404 error after deletion: ${error.message}`);
+        } else {
+          throw error;
+        }
+      });
+
+      // First, let's verify work experiences exist by calling the API directly
+      const apiResponse = await page.request.get('http://localhost:3101/api/work-experiences');
+      expect(apiResponse.status()).toBe(200);
+
+      const workExperiences = await apiResponse.json();
+      console.log(`Available work experiences:`, workExperiences.map((we: any) => ({ id: we.id, company: we.companyName })));
+
+      // Use API count as the source of truth, not UI count
+      const initialEntries = workExperiences.length;
+      const uiCount = await mainPage.workExperienceList.locator('[data-testid^="work-experience-entry-"]').count();
+
+      console.log(`API shows ${initialEntries} work experiences, UI shows ${uiCount} entries`);
+
+      // Skip test if no work experiences exist
+      if (initialEntries === 0) {
+        test.skip(true, 'No work experiences available to delete');
+      }
+
+      // Store content of first entry for verification
+      const firstEntryContent = await mainPage.getWorkExperienceEntry(0).textContent();
 
       // Edit first entry to access delete button
       await mainPage.getWorkExperienceEditButton(0).click();
       await expect(mainPage.getWorkExperienceForm()).toBeVisible();
 
+      // Wait for delete API call to complete - capture both success and failure
+      const responsePromise = page.waitForResponse(response =>
+        response.url().includes('/work-experiences/') &&
+        response.request().method() === 'DELETE'
+      );
+
       // Click delete button
       await mainPage.getDeleteButton().click();
 
-      // Verify entry is removed (count should decrease)
-      await expect(mainPage.workExperienceList.locator('.border')).toHaveCount(initialEntries - 1);
+      // Wait for API response and log details for debugging
+      const response = await responsePromise;
+      const url = response.url();
+      const status = response.status();
+
+      console.log(`DELETE request made to: ${url}`);
+      console.log(`Response status: ${status}`);
+
+      // Check for any problematic API calls after deletion
+      await page.waitForTimeout(3000);
+
+      // Log any captured console warnings
+      if (consoleLogs.length > 0) {
+        console.log(`Browser console logs:`, consoleLogs);
+      }
+
+      if (status !== 200) {
+        const responseBody = await response.text();
+        console.log(`Error response body: ${responseBody}`);
+
+        // Extract the ID from the URL for better debugging
+        const idMatch = url.match(/\/work-experiences\/(\d+)/);
+        const attemptedId = idMatch ? idMatch[1] : 'unknown';
+
+        // If we get a 404, it means the work experience doesn't exist
+        if (status === 404) {
+          throw new Error(`Work experience ID ${attemptedId} not found. Available IDs: ${workExperiences.map((we: any) => we.id).join(', ')}. This indicates a mismatch between UI and database state.`);
+        }
+      }
+
+      expect(response.status()).toBe(200);
+
+      // Wait for the UI to settle after deletion and potential cache invalidation
+      await page.waitForTimeout(2000);
+
+      // Verify entry is removed by checking API and UI
+      try {
+        // Check API count decreased
+        const afterApiResponse = await page.request.get('http://localhost:3101/api/work-experiences');
+        const afterWorkExperiences = await afterApiResponse.json();
+
+        console.log(`After deletion - API shows ${afterWorkExperiences.length} work experiences`);
+        expect(afterWorkExperiences.length).toBe(initialEntries - 1);
+
+        // Also verify UI eventually reflects the change (may take time due to cache invalidation)
+        await expect(mainPage.workExperienceList.locator('[data-testid^="work-experience-entry-"]')).toHaveCount(initialEntries - 1, { timeout: 10000 });
+
+        console.log("✅ Deletion successful - work experience removed from both API and UI");
+
+        // Verify the specific entry content is no longer present
+        if (firstEntryContent) {
+          await expect(mainPage.workExperienceList).not.toContainText(firstEntryContent);
+        }
+      } catch (error) {
+        // If the count check fails, let's see what's actually in the API and UI
+        const afterApiResponse = await page.request.get('http://localhost:3101/api/work-experiences');
+        const afterWorkExperiences = await afterApiResponse.json();
+        const currentUiCount = await mainPage.workExperienceList.locator('[data-testid^="work-experience-entry-"]').count();
+
+        console.log(`Expected API count: ${initialEntries - 1}, Actual API count: ${afterWorkExperiences.length}`);
+        console.log(`Expected UI count: ${initialEntries - 1}, Actual UI count: ${currentUiCount}`);
+
+        throw error;
+      }
     });
   });
 

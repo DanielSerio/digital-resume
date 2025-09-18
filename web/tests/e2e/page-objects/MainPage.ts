@@ -82,7 +82,7 @@ export class MainPage {
   getAllLines() { return this.page.locator('[data-testid^="line-textarea-"]'); }
 
   // Work Experience Display Selectors
-  getWorkExperienceEntry(index: number) { return this.workExperienceList.locator('.border').nth(index); }
+  getWorkExperienceEntry(index: number) { return this.workExperienceList.locator('[data-testid^="work-experience-entry-"]').nth(index); }
   getWorkExperienceEditButton(index: number) { return this.getWorkExperienceEntry(index).getByRole('button', { name: 'Edit' }); }
 
   constructor(page: Page) {

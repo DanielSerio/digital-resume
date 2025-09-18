@@ -41,6 +41,9 @@ export const WorkExperienceSection: React.FC = () => {
   const updateExperienceMutation = useUpdateWorkExperience();
   const deleteExperienceMutation = useDeleteWorkExperience();
 
+  // Prevent double deletion
+  const [deletingId, setDeletingId] = React.useState<number | null>(null);
+
   const handleAddExperience = () => {
     startAdd();
   };
@@ -82,31 +85,6 @@ export const WorkExperienceSection: React.FC = () => {
     try {
       const { lines, ...workExperience } = data;
 
-      console.log(
-        "Lines being sent to API:",
-        lines.map((line, index) => ({
-          lineText: line.lineText.substring(0, 30) + "...",
-          sortOrder: line.sortOrder,
-          arrayIndex: index,
-        }))
-      );
-
-      console.log("=== CALLING API MUTATION ===");
-      console.log("Work Experience ID:", editingExperience.id);
-      console.log("Mutation data being sent:", {
-        workExperience: {
-          companyName: workExperience.companyName,
-          jobTitle: workExperience.jobTitle,
-        },
-        lines: lines.map(
-          (line): WorkExperienceLineInput => ({
-            ...line,
-            lineText: line.lineText.substring(0, 30) + "...",
-            sortOrder: line.sortOrder,
-          })
-        ),
-      });
-
       await updateExperienceMutation.mutateAsync({
         id: editingExperience.id,
         data: {
@@ -131,7 +109,6 @@ export const WorkExperienceSection: React.FC = () => {
           ),
         },
       });
-      console.log("=== API MUTATION COMPLETED SUCCESSFULLY ===");
       toast.success("Work experience updated successfully");
       completeEditItem();
     } catch (error) {
@@ -142,13 +119,25 @@ export const WorkExperienceSection: React.FC = () => {
   };
 
   const handleDelete = async (experienceId: number) => {
+    // Prevent double deletion
+    if (deletingId === experienceId) {
+      console.log(`Already deleting work experience ${experienceId}, ignoring duplicate call`);
+      return;
+    }
+
+    setDeletingId(experienceId);
+
     try {
+      // Clear edit state BEFORE deletion to prevent race conditions
+      deleteItem();
+
       await deleteExperienceMutation.mutateAsync(experienceId);
       toast.success("Work experience deleted successfully");
-      deleteItem();
     } catch (error) {
       toast.error("Failed to delete work experience");
       console.error("Delete work experience error:", error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -231,18 +220,17 @@ export const WorkExperienceSection: React.FC = () => {
             />
           )}
 
-          {!isAdding && !editingExperience && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleAddExperience}
-              className="flex items-center gap-2"
-              disabled={!canEdit}
-            >
-              <Plus className="h-4 w-4" />
-              Add Work Experience
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAddExperience}
+            className="flex items-center gap-2"
+            disabled={!canEdit || !!editingExperience || isAdding}
+            style={{ display: isAdding ? 'none' : 'flex' }}
+          >
+            <Plus className="h-4 w-4" />
+            Add Work Experience
+          </Button>
         </div>
       </Card>
     </ErrorBoundary>

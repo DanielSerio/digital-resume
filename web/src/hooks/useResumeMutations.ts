@@ -172,11 +172,45 @@ export const useUpdateWorkExperience = () => {
   });
 };
 
+// Global deletion tracking - persists across all hook instances
+const globalDeletionState = {
+  deletingIds: new Set<number>(),
+
+  startDeletion(id: number): boolean {
+    if (this.deletingIds.has(id)) {
+      return false; // Already deleting
+    }
+    this.deletingIds.add(id);
+    return true; // Started deletion
+  },
+
+  finishDeletion(id: number): void {
+    this.deletingIds.delete(id);
+  }
+};
+
 export const useDeleteWorkExperience = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => apiClient.delete(`/work-experiences/${id}`),
+    mutationFn: async (id: number) => {
+      // Prevent duplicate calls using global state
+      if (!globalDeletionState.startDeletion(id)) {
+        throw new Error(`Already deleting work experience ${id}`);
+      }
+
+      try {
+        const result = await apiClient.delete(`/work-experiences/${id}`);
+        globalDeletionState.finishDeletion(id);
+        return result;
+      } catch (error) {
+        // Cleanup on error too, but after a delay to prevent immediate retry
+        setTimeout(() => {
+          globalDeletionState.finishDeletion(id);
+        }, 1000);
+        throw error;
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: resumeQueryKeys.workExperiences() });
       queryClient.invalidateQueries({ queryKey: resumeQueryKeys.resume() });

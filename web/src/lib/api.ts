@@ -34,6 +34,12 @@ export class ApiClient {
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
 
+    // Log any attempt to fetch individual work experience by ID
+    if (endpoint.match(/^\/work-experiences\/\d+$/) && (!options.method || options.method === 'GET')) {
+      console.warn(`⚠️ Attempting to fetch individual work experience: ${url}`);
+      console.warn(`⚠️ Call stack:`, new Error().stack?.split('\n').slice(1, 4).join('\n'));
+    }
+
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -45,26 +51,36 @@ export class ApiClient {
     try {
       const response = await fetch(url, config);
 
-      // Parse JSON response
-      const data = await response.json();
+      // Parse JSON response - handle empty/null responses
+      let data;
+      try {
+        const responseText = await response.text();
+        data = responseText ? JSON.parse(responseText) : null;
+      } catch (parseError) {
+        console.warn('Failed to parse JSON response:', parseError);
+        data = null;
+      }
 
       // Handle non-2xx responses
       if (!response.ok) {
         throw new ApiResponseError(
-          data.error || `HTTP ${response.status}`,
+          (data && data.error) || `HTTP ${response.status}`,
           response.status,
-          data.details
+          data && data.details
         );
       }
 
       // Handle API-level errors (when response is 200 but contains error)
-      if (data.error) {
+      if (data && data.error) {
         throw new ApiResponseError(data.error, response.status, data.details);
       }
 
       // Handle both wrapped (ApiResponse) and direct responses
       // If data has a 'data' field, it's wrapped - return data.data
-      // Otherwise, return data directly
+      // Otherwise, return data directly (handle null data for DELETE operations)
+      if (data === null) {
+        return null as T;
+      }
       return (data.data !== undefined ? data.data : data) as T;
     } catch (error) {
       // Re-throw ApiResponseError as-is
